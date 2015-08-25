@@ -16,25 +16,26 @@
 
 [nodejs.org](http://nodejs.org)
 
-## 安装hexo
-
-打开git-bash
-
-	npm install -g hexo-cli
-	npm install hexo --save
 
 ## 创建你的博客文件夹
 
 ### 若是全新的仓库：
 
 	mkdir my_hexo_blog.git
-	cd my_hexo_blog.git
-	hexo init（这个会初始化，如果是git clone目录，请不要初始化，会删掉_config.yml）
 
 ### 若是克隆回来的仓库
 
 	git clone https://github.com/lixingcong/my_hexo_blog.git
+
+
+## 安装hexo并初始化
+
+打开git-bash
+
 	cd my_hexo_blog.git
+	npm install -g hexo-cli
+	npm install hexo --save
+	hexo init（如果是git clone目录，请不要初始化，防止删掉_config.yml配置文件）
 
 ## 安装插件
 
@@ -157,3 +158,4 @@ hexo总配置文件：my_hexo_blog\_config.yml
 - 0.1 增加git操作描述
 - 0.2 增加安装npm hexo插件，只需输入一行命令
 - 0.3 增加图片，增加ntfs分区拷贝失败的解决方法
+- 0.3.1 更正新建仓库与hexo初始化的顺序
