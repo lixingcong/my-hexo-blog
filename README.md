@@ -103,6 +103,8 @@ hexo总配置文件：my_hexo_blog\_config.yml
 
 添加说明文件
 
+首先新建一个txt文档，改名为README.md，然后添加一行注释
+
 	echo # test my hexo blog >> README.md
 
 初始化仓库
