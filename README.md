@@ -123,16 +123,10 @@ hexo总配置文件：my_hexo_blog\_config.yml
 	git status
 
 注意将红色文件添加上
-	
-	git add xxx
 
-也可以全部添加跟踪
+可以全部添加跟踪，并且commit
 
-	git add *
-
-添加commit
-
-	git commit -m "version 1.0"
+	git commit -a -m "version 1.0"
 
 推送到远处
 
