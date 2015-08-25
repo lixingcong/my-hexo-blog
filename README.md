@@ -132,7 +132,18 @@ hexo总配置文件：my_hexo_blog\_config.yml
 
 	git push
 
-# Finish
+# Attention
+
+在文件系统为NTFS驱动器下，用windows资源管理器中对my_hexo_blog目录进行拷贝或者zip打包，会出现“文件名太长”的提示。无法进行拷贝某些文件。
+
+![](/images/readme/error_ntfs.png)
+
+此时在Git_bash里面进行cp即可
+
+	cp -R my_hexo_blog/ ./Copy_hexo_blog
+
+同理，在bash用tar打包应该没问题，我没试过，大家有空试一下。
+
 
 # Changelog
 - 0.1 增加git操作描述
