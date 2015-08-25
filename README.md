@@ -1,3 +1,9 @@
+
+[![][my_pic]][my_url]
+[my_pic]: /source/images/default_avatar.jpg
+[my_url]: http://lixingcong.github.io
+
+
 # Usage
 
 ## 安装git
@@ -136,7 +142,7 @@ hexo总配置文件：my_hexo_blog\_config.yml
 
 在文件系统为NTFS驱动器下，用windows资源管理器中对my_hexo_blog目录进行拷贝或者zip打包，会出现“文件名太长”的提示。无法进行拷贝某些文件。
 
-![](/images/readme/error_ntfs.png)
+![](/source/images/readme/error_ntfs.png)
 
 此时在Git_bash里面进行cp即可
 
@@ -148,3 +154,4 @@ hexo总配置文件：my_hexo_blog\_config.yml
 # Changelog
 - 0.1 增加git操作描述
 - 0.2 增加安装npm hexo插件，只需输入一行命令
+- 0.3 增加图片，增加ntfs分区拷贝失败的解决方法

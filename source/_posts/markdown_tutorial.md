@@ -7,56 +7,133 @@ categories: 读书笔记
 # 标题
 生成h1--h6,在文字前面加上 1--6个# 来实现
 
-![](/images/markdown_tutorial/1.png)
+	# 一级标题
+	## 二级标题
+	### 三级标题
+	#### 四级标题
+	##### 五级标题
+	###### 六级标题
+	大标题
+	=
+	小标题
+	-
 
 <!-- more -->
 
-![](/images/markdown_tutorial/2.png)
+效果：
+
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+大标题
+=
+小标题
+-
+
 # 粗体、斜体
 
+	**粗体**
+	__粗体__
+	*斜体*
+	_斜体_
 
-![](/images/markdown_tutorial/3.png)
-![](/images/markdown_tutorial/4.png)
+效果：
+
+**粗体**
+__粗体__
+*斜体*
+_斜体_
+
 # 分割线
-![](/images/markdown_tutorial/5.png)
-![](/images/markdown_tutorial/6.png)
+	---
+	***
+	~~文字删除线~~
+
+效果
+
+---
+***
+~~文字删除线~~
+
 # 列表
 ## 无序列表
-![](/images/markdown_tutorial/7.png)
+	- 无序列表项目
+	- 无序列表项目
+	- 无序列表项目
+	
+	* 无序列表项目
+	* 无序列表项目
+	* 无序列表项目
+	
+	1. 有序列表项目
+	2. 有序列表项目
+	3. 有序列表项目
+	
+	- 外层列表项目
+	 + 内层列表项目
+	 + 内层列表项目
+	 + 内层列表项目
+	- 外层列表项目
 
 效果：
 
-![](/images/markdown_tutorial/8.png)
-## 有序列表
-![](/images/markdown_tutorial/9.png)
+- 无序列表项目
+- 无序列表项目
+- 无序列表项目
 
-效果：
+* 无序列表项目
+* 无序列表项目
+* 无序列表项目
 
-![](/images/markdown_tutorial/10.png)
+1. 有序列表项目
+2. 有序列表项目
+3. 有序列表项目
+
+- 外层列表项目
+ + 内层列表项目
+ + 内层列表项目
+ + 内层列表项目
+- 外层列表项目
+
 ## 层次列表
-![](/images/markdown_tutorial/16.png)
+
+	#### 第一章
+
+	1. 第一节
+	* 第二节(你不用敲 "2"，自动就有了）
+	    * 第一小节（推荐每层次缩进四个空格）
+	        * 小小节 1
+	        * 小小节 2
+	    * 第二小节
+	
 
 “*” 后面要加空格，这是必须的，除了 *，还可以使用 + 或者 -。
 
 如果格式出现问题，多加个空行，一般就好了。
 效果：
 
+![](/images/markdown_tutorial/27.png)
 
-![](/images/markdown_tutorial/17.png)
+
 # 添加超链接、图片
 
 ## 最简单的网站链接
-![](/images/markdown_tutorial/13.png)
+	[www.baidu.com](https://www.baidu.com)
+
+如果在[baidu.com]前面加上感叹号！，不会显示文字
 
 效果：
 
 [www.baidu.com](https://www.baidu.com)
 
-如果在前面加上感叹号！，不会显示文字
 
 ## 鼠标移过，有提示文字的链接
-方法：
-![](/images/markdown_tutorial/11.png)
+
+	一种带提示的链接: [鼠标移过来，**先别单击** ~][hover]
+	[hover]: http://www.google.com.sg "Google Sg 更快，更好用。好，现在单击吧"
 
 效果：
 
@@ -64,9 +141,10 @@ categories: 读书笔记
 [hover]: http://www.google.com.sg "Google Sg 更快，更好用。好，现在单击吧"
 
 ## 点击图片进行链接
-方法：
 
-![](/images/markdown_tutorial/12.png)
+	[![][jane-eyre-pic]][jane-eyre-douban]
+	[jane-eyre-pic]: http://img3.douban.com/mpic/s1108264.jpg
+	[jane-eyre-douban]: http://book.douban.com/subject/1141406/
 
 效果：
 
@@ -75,6 +153,7 @@ categories: 读书笔记
 [jane-eyre-douban]: http://book.douban.com/subject/1141406/
 
 ## 空链接
+
 	[无链接的链接][null-link]
 	[null-link]: chrome://not-a-link
 
@@ -86,7 +165,22 @@ categories: 读书笔记
 
 # 表格
 ![](/images/markdown_tutorial/14.png)
-![](/images/markdown_tutorial/15.png)
+
+效果
+
+| ABCD | EFGH | IJKL |
+| -----|:----:| ----:|
+| a    | b    | c    |
+| d    | e    |  f   |
+| g    | h    |   i  |
+
+
+ABCD | EFGH | IGKL
+-----|------|----
+a    | b    | c
+d    | e    | f
+g    | h    | i
+
 
 # 添加代码框
 ## 一行代码框
@@ -95,12 +189,13 @@ categories: 读书笔记
 
 `These words`（加框！！！）
 
-`#include <cstdio>`（添加框！！！）
 ## 多行代码
 方法一：拷贝源代码进来，然后给每行前面加tab，可以通过MarkdownPad软件实现，选中代码，按一下tab即可，很方便。
 
 方法二：
-![](/images/markdown_tutorial/19.png)
+
+每行前面加四个空格
+
 效果：
 
 	#include <cstdio>
@@ -111,6 +206,7 @@ categories: 读书笔记
 
 方法三：
 首尾加三个`，如图所示
+
 ![](/images/markdown_tutorial/26.png)
 
 优点：在gitbub能显示行号。
@@ -123,7 +219,12 @@ generate
 
 # 引用
 方法：
-![](/images/markdown_tutorial/20.png)
+
+	> 引用的文字
+	> 引用的文字
+	> 引用的文字
+
+效果
 
 > 引用的文字
 > 引用的文字
@@ -133,7 +234,15 @@ generate
 
 若在引用内，还有引用（嵌套），加>>
 
-![](/images/markdown_tutorial/21.png)
+
+	> 引用的文字A
+	
+	
+	 >> 引言内的引言---嵌套
+	
+	
+	> 引用的文字B
+
 
 效果：
 
@@ -149,14 +258,12 @@ generate
 # 单行长文字
 方法一：只需在需要单行长文字的首尾两端加上三个`即可
 
-![](/images/markdown_tutorial/22.png)
-
 方法二：在需要以单行长文字显示的文字段落前加四个空格，类似于代码框
 
 # 首行缩进
 行首输入这个，即可缩进，输入多少个就是缩进多少字符
 
-![](/images/markdown_tutorial/23.png)
+	&nbsp;
 
 &nbsp;缩进一个字符缩进一个字符缩进一个字符缩进一个字符缩进一个字符缩进一个字符
 
@@ -167,7 +274,10 @@ generate
 其他：Markdown语法会忽略首行开头的空格，如果要体现出首行开头空两个的效果，可以使用全角符号下的空格，windows下使用shift+空格切换。
 
 # 脚注（注脚）
-![](/images/markdown_tutorial/24.png)
+
+	这是一个注脚测试[^footer1]
+	
+	[^footer1]: 这是一个测试，用来阐释注脚。
 
 效果：
 
@@ -218,7 +328,7 @@ markdownpad很多时候的效果不理想，大部分可能不是你语法的问
 
 推荐“stackedit”，一个在线markdown网站
 
-## 摘自
+## 本文摘自
 [www.jianshu.com/p/21d355525bdf](http://www.jianshu.com/p/21d355525bdf)
 
 
