@@ -1,2 +1,145 @@
-# my_hexo_blog
-Hexo Blog 
+# Usage
+
+## 安装git
+
+[github for windows](https://windows.github.com)
+
+或者使用绿色版git
+
+## 安装node.js
+
+[nodejs.org](http://nodejs.org)
+
+## 安装hexo
+
+打开git-bash
+
+	npm install -g hexo-cli
+	npm install hexo --save
+
+## 创建你的博客文件夹
+
+### 若是全新的仓库：
+
+	mkdir my_hexo_blog.git
+	cd my_hexo_blog.git
+	hexo init（这个会初始化，如果是git clone目录，请不要初始化，会删掉_config.yml）
+
+### 若是克隆回来的仓库
+
+	git clone https://github.com/lixingcong/my_hexo_blog.git
+	cd my_hexo_blog.git
+
+## 安装插件
+
+	npm install hexo-generator-index --save
+	npm install hexo-generator-archive --save
+	npm install hexo-generator-category --save
+	npm install hexo-generator-tag --save
+	npm install hexo-server --save
+	npm install hexo-deployer-git --save
+	npm install hexo-deployer-heroku --save
+	npm install hexo-deployer-rsync --save
+	npm install hexo-deployer-openshift --save
+	npm install hexo-renderer-marked@0.2 --save
+	npm install hexo-renderer-stylus@0.2 --save
+	npm install hexo-generator-feed@1 --save
+	npm install hexo-generator-sitemap@1 --save
+
+**P.S.** 可以用一句话安装：
+
+	npm install hexo-generator-index hexo-generator-archive hexo-generator-category hexo-generator-tag hexo-server hexo-deployer-git hexo-deployer-heroku hexo-deployer-rsync hexo-deployer-openshift hexo-renderer-marked@0.2 hexo-renderer-stylus@0.2 hexo-generator-feed@1 hexo-generator-sitemap@1 --save
+
+## 开启本地预览
+
+	hexo s
+
+浏览器打开localhost:4000是否正常运行！！
+
+按ctrl_c退出
+
+## 修改配置文件
+
+这里不详述，自己爬文搜索怎么修改配置，毕竟太难总结，我只给出文件位置
+
+hexo总配置文件：my_hexo_blog\_config.yml
+
+主题文件\theme\xxxx\_config.yml
+
+## 使用MarkdownPad书写你的博客
+
+[MarkdownPad下载](http://markdownpad.com/)
+
+[Markdown语法学习](https://www.zybuluo.com/AntLog/note/63228)
+
+日志位置在\source\_posts\，格式为md文件
+
+建议保存为英文名字的文件，有时候浏览器中显示地址很难看
+
+## 生成静态博客
+
+	hexo g
+
+## 打开本地预览
+
+	hexo s
+
+## 提交到Git仓库
+
+注意只需要提交\public目录下所有文件
+
+	mv public D:\lixingcong.github.io
+	cd d:\lixingcong.github.io
+
+### 若是新仓库，需要新建仓库
+
+参考官方帮助：
+
+添加说明文件
+
+	echo # test my hexo blog >> README.md
+
+初始化仓库
+
+	git init
+
+添加所有文件，跟踪所有文件
+
+	git add *
+
+添加commit
+
+	git commit -m "version 1.0"
+
+添加到远程仓库
+
+	git remote add origin https://github.com/lixingcong/lixingcong.github.io
+	git push -u origin master
+
+### 若是已创建仓库
+
+查看修改状态
+	
+	git status
+
+注意将红色文件添加上
+	
+	git add xxx
+
+也可以全部添加跟踪
+
+	git add *
+
+添加commit
+
+	git commit -m "version 1.0"
+
+推送到远处
+
+	git push
+
+# Finish
+
+# Changelog
+- 0.1 增加git操作描述
+- 0.2 增加安装npm hexo插件，只需输入一行命令
