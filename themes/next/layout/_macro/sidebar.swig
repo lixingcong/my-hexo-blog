@@ -62,6 +62,7 @@
 
         <div class="links-of-author motion-element">
           {% if theme.social %}
+			<p class="site-description motion-element" itemprop="description">{{ theme.please_contract_me }}</p>
             {% for name, link in theme.social %}
               <span class="links-of-author-item">
                 <a href="{{ link }}" target="_blank">{{ name }}</a>

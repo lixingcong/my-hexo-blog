@@ -5,10 +5,12 @@
 # Site
 title: 我叫Lixingcong
 subtitle: 子标题
-description: 推特宅男一枚，无业。
+description: 推特宅男一枚，失业中
 author: Lixingcong
 language: zh-Hans
 timezone:
+please_contract_me: 联系方式
+last_update_date: 最近更新：
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -84,6 +86,13 @@ theme: next
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type:
+  
+  
+# 社交链接
+social:
+  Twitter: https://twitter.com/lixingcong
+  Facebook: https://www.facebook.com/xingcong.li
+  Instagram: https://instagram.com/lixingcong_
   
 
 
