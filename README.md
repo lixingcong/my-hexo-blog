@@ -152,3 +152,7 @@ hexo总配置文件：my_hexo_blog\_config.yml
 	cp -R my_hexo_blog/ ./Copy_hexo_blog
 
 同理，在bash用tar打包应该没问题，我没试过，大家有空试一下。
+
+# 更新日志
+
+参见[Changelog.md](/ChangeLog.md)
