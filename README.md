@@ -1,4 +1,4 @@
-
+﻿
 [![][my_pic]][my_url]
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
@@ -152,11 +152,3 @@ hexo总配置文件：my_hexo_blog\_config.yml
 	cp -R my_hexo_blog/ ./Copy_hexo_blog
 
 同理，在bash用tar打包应该没问题，我没试过，大家有空试一下。
-
-
-# Changelog
-- 0.1 增加git操作描述
-- 0.2 增加安装npm hexo插件，只需输入一行命令
-- 0.3 增加图片，增加ntfs分区拷贝失败的解决方法
-- 0.3.1 更正新建仓库与hexo初始化的顺序
-- 0.3.2 添加联系方式（右栏），删除页眉的“强力驱动”，底部添加“博主最近更新日期”功能。
