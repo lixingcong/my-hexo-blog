@@ -1,4 +1,3 @@
-﻿
 [![][my_pic]][my_url]
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
@@ -38,22 +37,7 @@
 	hexo init（如果是git clone目录，请不要初始化，防止删掉_config.yml配置文件）
 
 ## 安装插件
-
-	npm install hexo-generator-index --save
-	npm install hexo-generator-archive --save
-	npm install hexo-generator-category --save
-	npm install hexo-generator-tag --save
-	npm install hexo-server --save
-	npm install hexo-deployer-git --save
-	npm install hexo-deployer-heroku --save
-	npm install hexo-deployer-rsync --save
-	npm install hexo-deployer-openshift --save
-	npm install hexo-renderer-marked@0.2 --save
-	npm install hexo-renderer-stylus@0.2 --save
-	npm install hexo-generator-feed@1 --save
-	npm install hexo-generator-sitemap@1 --save
-
-**P.S.** 可以用一句话安装：
+可以用一句命令安装：
 
 	npm install hexo-generator-index hexo-generator-archive hexo-generator-category hexo-generator-tag hexo-server hexo-deployer-git hexo-deployer-heroku hexo-deployer-rsync hexo-deployer-openshift hexo-renderer-marked@0.2 hexo-renderer-stylus@0.2 hexo-generator-feed@1 hexo-generator-sitemap@1 --save
 
@@ -73,9 +57,11 @@ hexo总配置文件：my_hexo_blog\_config.yml
 
 主题文件\theme\xxxx\_config.yml
 
-## 使用MarkdownPad书写你的博客
+## 使用Haroopress(推荐)或者MarkdownPad书写你的博客
 
-[MarkdownPad下载](http://markdownpad.com/)
+[Haroopress for Linux/Win](http://pad.haroopress.com/)
+
+[MarkdownPad for Windows](http://markdownpad.com/)
 
 [Markdown语法学习](https://www.zybuluo.com/AntLog/note/63228)
 
