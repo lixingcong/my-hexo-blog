@@ -8,12 +8,20 @@
 ## 安装git
 
 [github for windows](https://windows.github.com)
-
 或者使用绿色版git
+
+ubuntu运行
+
+	sudo apt-get install git
+
 
 ## 安装node.js
 
 [nodejs.org](http://nodejs.org)
+
+Win直接安装，ubuntu则需要安装
+
+	sudo apt-get install nodejs npm
 
 
 ## 创建你的博客文件夹
@@ -32,8 +40,8 @@
 打开git-bash
 
 	cd my_hexo_blog.git
-	npm install -g hexo-cli
-	npm install hexo --save
+	sudo npm install -g hexo-cli
+	sudo npm install hexo --save
 	hexo init（如果是git clone目录，请不要初始化，防止删掉_config.yml配置文件）
 
 ## 安装插件
@@ -67,7 +75,11 @@ hexo总配置文件：my_hexo_blog\_config.yml
 
 日志位置在\source\_posts\，格式为md文件
 
-建议保存为英文名字的文件，有时候浏览器中显示地址很难看
+日志中添加下列代码可以剪短预览
+
+	<!-- more -->
+
+建议保存为英文名字的文件，有时候浏览器中显示中文地址很难看
 
 ## 生成静态博客
 
@@ -126,8 +138,14 @@ hexo总配置文件：my_hexo_blog\_config.yml
 推送到远处
 
 	git push
+    
+有时候需要备份成gz，避免重复安装hexo
 
-# Attention
+	tar -zcvf /tmp/my_hexo_blog.tar.gz my_hexo_blog/
+
+# Some Problems
+
+### Win下的文件名太长？
 
 在文件系统为NTFS驱动器下，用windows资源管理器中对my_hexo_blog目录进行拷贝或者zip打包，会出现“文件名太长”的提示。无法进行拷贝某些文件。
 
@@ -138,6 +156,16 @@ hexo总配置文件：my_hexo_blog\_config.yml
 	cp -R my_hexo_blog/ ./Copy_hexo_blog
 
 同理，在bash用tar打包应该没问题，我没试过，大家有空试一下。
+
+### Ubuntu下提示/usr/bin/env: node: 没有那个文件或目录?
+
+出现在hexo new “NEW POST”命令中
+
+解决方法：
+
+由于Ubuntu下已经有一个名叫node的库，因此Node.js在ubuntu下默认叫nodejs，需要额外处理一下
+
+	sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 # 更新日志
 
