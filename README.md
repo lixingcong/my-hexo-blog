@@ -14,6 +14,10 @@ ubuntu运行
 
 	sudo apt-get install git
 
+安装后配置一下提交者的邮箱和名字
+
+    git config --global user.name "username"
+    git config --global user.email "email"
 
 ## 安装node.js
 
@@ -36,34 +40,41 @@ Win直接安装，ubuntu则需要安装
 
 
 ## 安装hexo并初始化
+首先打开git-bash，把hexo安装到系统里面
 
-打开git-bash
+	sudo npm install -g hexo-cli
+    
+把hexo的模块modules安装到blog文件夹下
 
 	cd my_hexo_blog.git
-	sudo npm install -g hexo-cli
 	sudo npm install hexo --save
-	hexo init（如果是git clone目录，请不要初始化，防止删掉_config.yml配置文件）
+
+此时目录出现modules文件夹
+
+这时候根据需要初始化hexo文件夹,如果是git clone目录，请不要初始化，防止删掉_config.yml配置文件
+
+	hexo init
 
 ## 安装插件
 可以用一句命令安装：
 
 	npm install hexo-generator-index hexo-generator-archive hexo-generator-category hexo-generator-tag hexo-server hexo-deployer-git hexo-deployer-heroku hexo-deployer-rsync hexo-deployer-openshift hexo-renderer-marked@0.2 hexo-renderer-stylus@0.2 hexo-generator-feed@1 hexo-generator-sitemap@1 --save
 
-## 开启本地预览
+安装完插件后，blog目录下多了package.json，还有modules目录下多了很多插件
+
+## 测试本地预览是否正常使用
 
 	hexo s
 
-浏览器打开localhost:4000是否正常运行！！
-
-按ctrl_c退出
+浏览器打开localhost:4000是否正常运行，如果不正常使用，重新做一次安装
 
 ## 修改配置文件
 
 这里不详述，自己爬文搜索怎么修改配置，毕竟太难总结，我只给出文件位置
 
-hexo总配置文件：my_hexo_blog\_config.yml
++ hexo总配置文件：my_hexo_blog\_config.yml
 
-主题文件\theme\xxxx\_config.yml
++ 主题文件：\theme\xxxx\_config.yml
 
 ## 使用Haroopress(推荐)或者MarkdownPad书写你的博客
 

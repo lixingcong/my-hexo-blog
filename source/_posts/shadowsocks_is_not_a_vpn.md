@@ -1,6 +1,7 @@
 title: Shadowsocks：一个混淆工具
 date: 2015-08-31 23:27:43
 tags: shadowsocks
+categories: 网络
 ---
 
 shadowsocks是被设计来混淆数据，增加某Wall检查出流量特征所需的计算量，提高实时检测的成本，而不是加密。ss的作者多次强调过这一点。
