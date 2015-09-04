@@ -156,6 +156,14 @@ Win直接安装，ubuntu则需要安装
 
 # Some Problems
 
+### Git Push总是失败？
+
+很明显，被墙了，该补充一下科学上网的知识了
+
+用过shadowsocks，偶尔push成功，不过听说这ss被GFW盯上了，很不稳定
+
+所以尽早肉身翻墙吧骚年！
+
 ### Win下的文件名太长？
 
 在文件系统为NTFS驱动器下，用windows资源管理器中对my_hexo_blog目录进行拷贝或者zip打包，会出现“文件名太长”的提示。无法进行拷贝某些文件。
