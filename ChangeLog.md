@@ -1,5 +1,10 @@
 ﻿# 版本更新
 
+## 0.3.4
+
+添加几篇写python的日志，整理一下目录
+添加del_files.sh和w_del_files.cmd，方便上传public文件夹前的清除工作
+
 ## 0.3.3
 
 添加modules安装提示
