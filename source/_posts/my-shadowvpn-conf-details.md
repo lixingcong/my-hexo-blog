@@ -9,7 +9,7 @@ categories: 网络
 安装必要的编译工具
 
 	sudo apt-get install build-essential mingw-w64 autoconf libtool
-
+<!-- more -->
 获取源码（截止2015.9.8,作者已经停止维护，因为众所周知的喝茶原因）
 
     wget http://entware.dyndns.info/sources/shadowvpn-0.1.6-20150721.tar.bz2
