@@ -100,7 +100,7 @@ Win直接安装，ubuntu则需要安装
 
 	hexo s
 
-## 提交到Git仓库
+## 提交到lixingcong.github.io
 
 注意只需要提交\public目录下所有文件
 
