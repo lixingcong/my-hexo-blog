@@ -13,7 +13,7 @@ categories: 网络
 获取源码（截止2015.9.8,作者已经停止维护，因为众所周知的喝茶原因）
 
     wget http://entware.dyndns.info/sources/shadowvpn-0.1.6-20150721.tar.bz2
-    tar -xzvf shadowvpn-0.1.6-20150721.tar.bz2
+    tar -xvf shadowvpn-0.1.6-20150721.tar.bz2
     cd shadowvpn-0.1.6-20150721/
     sh ./autogen.sh
 
