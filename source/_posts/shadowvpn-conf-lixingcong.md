@@ -36,22 +36,25 @@ categories: 网络
 配置方法：
 
 - 打开server.conf
-- 修改port=78
+- 修改port=666
 - 修改mtu=1432
 - 修改密码
     
-### 单用户服务端
+### 运行服务端
 
 	/usr/local/bin/shadowvpn -c /etc/shadowvpn/server.conf -s start
     
 ### 多用户客户端
 
-#### VPS多用户服务端 编译版：
+#### 多用户服务端
 
-- 把server.conf sever_up.sh sever_down.sh 拷贝一份，例如放到/root/vpn
+*以编译成功的0.1.6版本为例，不适合源安装的最新版本*
+服务器上面操作：
+
+- 把server.conf sever_up.sh sever_down.sh 拷贝一份，我放到/root/vpn
 - 然后打开server.conf
 - 修改tun0为tun1
-- 修改port=778
+- 修改port=777
 - 修改mtu=1432
 - 修改up=/root/vpn/server_up.sh
 - 修改down=/root/vpn/server_down.sh
@@ -69,10 +72,11 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 
 优点：
 - 版本比较新
+- 有daemon守护进程
 
 缺点：
-- 有daemon守护进程，很难配置非user_token的多用户实例
-- 无法在windows上面使用user——token
+- 因带有token，只适合路由器多客户端
+- 无法在windows上面使用user——token进行多客户端
 
 方法:
 
@@ -101,7 +105,7 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
     sudo make install
     
 #### ubuntu客户端配置
-改动密码，端口,mtu等
+改动密码，端口，mtu等（跟服务器一致）
 
 	sudo gedit /etc/shadowvpn/client.conf
 
@@ -119,6 +123,8 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 	sudo shadowvpn -c /etc/shadowvpn/client.conf -s start
     
 ### Windows客户端
+
+[下载我的预编译版本](/attachments/my_conf_of_shadowvpn/shadowvpn_0.1.6.zip)
 
 #### 交叉编译
 
@@ -142,22 +148,19 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 ![](/images/shadowvpn_conf/s_vpn3.png)
 
 把编译后的shadowvpn.exe放到一个目录下
-下载Shadowvpn工程中/sample/windows/下
-[下载地址](https://github.com/lixingcong/shadowVPN/tree/master/samples/windows)
+然后[下载client.conf等文件](https://github.com/lixingcong/shadowVPN/tree/master/samples/windows)，放到同目录
 	
     client.conf
     client_up.bat
     client_down.bat
     
-放到同样目录下
-
 
 改动client.conf使得跟服务端一样
-tunip=服务端的ip+0.0.0.1
+**tunip=服务端的ip+0.0.0.1**
 
 	tunip=10.7.0.2
 
-改动接口名称（就是改名后的tun通道）
+改动接口名称（就是**改名后的tun通道**）
 
 	intf=vpn
     

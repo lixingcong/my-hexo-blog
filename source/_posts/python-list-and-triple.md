@@ -3,8 +3,6 @@ date: 2015-09-01 17:12:32
 tags: python
 categories: 编程
 ---
-# Python——列表，元组
-
 
 ### 列表简介
 列表（list）是Python以及其他语言中最常用到的数据结构之一。Python使用使用中括号 [ ] 来解析列表。列表是可变的（mutable）——可以改变列表的内容。

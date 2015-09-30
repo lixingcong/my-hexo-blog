@@ -3,12 +3,12 @@ date: 2015-09-06 16:21:04
 tags: shadowsocks
 categories: 网络
 ---
-# Configuring the Server
+## Configuring the Server
 
 If you are running a VPS, ensure you have the TUN / TAP interface enabled in your VPS control panel.
 <!-- more -->
 
-## Generate the User token and Password
+### Generate the User token and Password
 
 User tokens are hex representations of 8 byte values, you can generate one with the following command:
 
@@ -20,7 +20,7 @@ A long, random password for encrypting traffic can be generated with the followi
 
 Keep those two values handy, you will need them for the server and client configuration.
 
-## Modify the default server config file
+### Modify the default server config file
 
 	sudo vi /etc/shadowvpn/server.conf
 
@@ -30,7 +30,7 @@ Change **# user_token=7e335d67f1dc2c01,ff593b9e6abeb2a5,e3c7b8db40a96105** (Line
 
 Change **password=my_password** (Line 18) to **password=[GENERATED_PASSWORD]**
 
-## Check the configuration
+### Check the configuration
 
 You can check the configuration file for errors by starting up a server in the console in verbose mode:
 
@@ -38,15 +38,15 @@ You can check the configuration file for errors by starting up a server in the c
     
 If you see something along the lines of **Sat Aug 22 14:03:32 2015 VPN started**, then it's all good, quit the console server with CTRL+C
 
-## Start the server daemon
+### Start the server daemon
 
 Start the server as a background process with 
 
 	sudo shadowvpn -c /etc/shadowvpn/server.conf -s start
 
-# Configuring the client
+## Configuring the client
 
-## Modify the default client config file
+### Modify the default client config file
 
     sudo vi /etc/shadowvpn/client.conf
     
@@ -56,7 +56,7 @@ Change** # user_token=7e335d67f1dc2c01,ff593b9e6abeb2a5,e3c7b8db40a96105** (Line
 Change **password=my_password** (Line 18) to **password=[GENERATED_PASSWORD]**
 Change **net=10.7.0.2/24** (Line 36) to **net=10.7.0.1/16**
 
-## Check the configuration
+### Check the configuration
 
 You can check the configuration file for errors by starting up a client in the console in verbose mode:
     
@@ -65,7 +65,7 @@ You can check the configuration file for errors by starting up a client in the c
 If you get something along the lines of **Sat Aug 22 14:03:54 2015 VPN started** then you are now connected to the VPN !
 Quit the console client by pressing CTRL+C.
 
-## Start the client daemon
+### Start the client daemon
 
 Start the client as a background process with 
 
