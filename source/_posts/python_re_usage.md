@@ -36,7 +36,7 @@ categories: 编程
         else:
             print 'no match'
  
-### 多重匹配
+### 多重匹配findall
  
     text = 'abbaaabbbbaaaaa'
     pattern = 'ab'
@@ -135,7 +135,7 @@ categories: 编程
      \W                                    非字母数字(符号、制表符、空格、换行符)
     '''
  
-### 锚定
+### 锚定----定位
  
     '''
     锚定码                               含义
@@ -169,7 +169,7 @@ categories: 编程
         print '  %d : %d = "%s"' % (s,e-1,text[s:e]) 
         pos = e
 
-### 用户组解析匹配
+### 用户组解析匹配----嵌套
 
 	#任何一个正则都可以为组并嵌套在一个更大的表达式中
     regex = re.compile(r'(\bt\w+)\W+(\w+)')
@@ -223,7 +223,7 @@ categories: 编程
     '''
 
 
-### 搜索选项（忽略大小写）
+### 搜索忽略大小写
 
     '''
     re.IGNORECASE 忽略大小写
@@ -241,7 +241,7 @@ categories: 编程
     for match in whitout_case.findall(text):
         print ' %r' % match
  
-### 多行输入
+### 多行输入匹配
 
     '''
     MULTILINE  多行匹配
@@ -481,7 +481,7 @@ categories: 编程
     for match in twitter.findall(text):
         print 'handle:',match
 
-### 自引用表达式 
+### 自引用
 
 	#可以把表达式编号后面来引用
     address = re.compile(
@@ -564,7 +564,7 @@ categories: 编程
         else:
             print 'No match'
 
-### 用模式修改字符串
+###  替换字符串
 
     '''
     re支持使用正则表达式作为搜索机制来修改文本，而且可以替换可以引用正则表达式中的匹配组作为替换文本的一部分。
