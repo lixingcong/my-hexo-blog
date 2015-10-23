@@ -14,9 +14,7 @@ goproxy是两款同名的代理
 	wget https://storage.googleapis.com/golang/go1.5.linux-amd64.tar.gz
 	tar xf go1.5.linux-amd64.tar.gz -C /usr/local
 
-设置环境变量 其中GOROOT为安装go的目录，GOPATH为一般工程目录
-
-把以下内容，追加到/etc/profile文件末尾：
+设置环境变量 其中GOROOT为安装go的目录，GOPATH为一般工程目录，操作步骤：*把以下内容，追加到/etc/profile文件末尾：*
 
 	export GOROOT=/usr/local/go
 	export GOPATH=/root/go_path
