@@ -12,9 +12,9 @@ POSIX定义正则表达式两个标准：BRE（基本re）和ERE（扩展re）
 
 |Is support|grep|sed|ed|ex/vi|more|egrep|awk|lex|
 |----------|----|---|--|-----|----|-----|---|---|
-|BRE|yes|yes|yes|yes|yes|-|-|-|
-|ERE|-|-|-|-|-|yes|yes|yes|
-|\< .. \\>|yes|yes|yes|yes|yes|-|-|-|
+|BRE|y|y(default)|y|y|y|-|-|-|
+|ERE|-|y|-|-|-|y|y|y|
+|\< .. \\>|y|y|y|y|y|-|-|-|
 
 
 ## RE基础操作meta字符
@@ -57,10 +57,16 @@ POSIX定义正则表达式两个标准：BRE（基本re）和ERE（扩展re）
 
 ## POSIX字符集
 
+使用时候，注意再外层套一个方括号：
+	
+    sed 's;[[:alnum:]];####;g' 1.txt   #所有字符替换成井号
+    
+如下表：
+
 |字符|功能|字符|功能
 |--|--|--|--|
-|[:alnum:]|数字|[:digit:]|数字|
-|[:aplha:]|字母|[:lower:]|小写字母|
+|[:alnum:]|字母加数字|[:digit:]|数字|
+|[:alpha:]|字母|[:lower:]|小写字母|
 |[:blank:]|空格/tab|[:space:]|空白字符|
 |[:cntrl:]|控制字符|[:graph:]|非空格字符|
 |[:print:]|可显示的字符|[:punct:]|标点符号|
@@ -98,6 +104,27 @@ POSIX定义正则表达式两个标准：BRE（基本re）和ERE（扩展re）
 
 
 ## 其他
+
+### 匹配任意字符 包括换行符
+众所周知 .* 是匹配任意字符，不包括换行符，如果想跨行搜索，就很难进行匹配了，使用以下任意一种表达式进行匹配包括换行符。
+
+	([\w\W]*)
+    ([\s\S]*)
+    ([\d\D]*)
+    
+But I found it works well on gedit, while terribly on sed. 
+
+类似的使用方法：
+这个表达式可以匹配所有的英文：
+
+	[ -~]
+    
+这个表达式可以匹配所有的非英文(比如中文)
+
+	[^ -~]
+
+非常巧妙！参考链接：[点击这里](http://www.jb51.net/article/19713.htm)
+
 
 ### 字符
 

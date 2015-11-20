@@ -37,9 +37,22 @@ categories: 网络
 
 - 打开server.conf
 - 修改port=666
-- 修改mtu=1432
+- 修改mtu
 - 修改密码
     
+*PS:修改mtu这一步很重要，会直接影响vpn速度。*
+详细的mtu设置讨论帖子：[点击这里](https://github.com/clowwindy/ShadowVPN/issues/77)
+大概意思就是如[@linhua55](https://github.com/linhua55)所说的方法：
+
+    MTU of PPPoE is 1452, But it differs between your network.
+    首先用Windows插上网线
+    进行正常的拨号（若是DHCP，则跳过这步，主要目的是模拟路由器拨号）
+    cmd执行 ping -f -l 1452 www.baidu.com
+    逐步加大或者减少该值，直到恰好不会出现DF拆包的提示。记下这个mtu
+    例如，记下的mtu是1452，计算得到1452-20-8-24=1400
+    那么在服务端的server.conf填入1400
+    客户端建议也一致填写1400
+
 ### 运行服务端
 
 	/usr/local/bin/shadowvpn -c /etc/shadowvpn/server.conf -s start
@@ -55,7 +68,7 @@ categories: 网络
 - 然后打开server.conf
 - 修改tun0为tun1
 - 修改port=777
-- 修改mtu=1432
+- 修改mtu
 - 修改up=/root/vpn/server_up.sh
 - 修改down=/root/vpn/server_down.sh
 - 修改指向不同的pid和log文件
@@ -105,6 +118,10 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
     sudo make install
     
 #### ubuntu客户端配置
+如果是从源安装的，需要修改/etc/init.d/shadowvpn的启动参数为加载client.conf配置文件。否则开机自动启动是server模式，以下内容不适合daemon的实例。
+
+编译版shadowvpn的设置：
+
 改动密码，端口，mtu等（跟服务器一致）
 
 	sudo gedit /etc/shadowvpn/client.conf
@@ -156,7 +173,7 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
     
 
 改动client.conf使得跟服务端一样
-**tunip=服务端的ip+0.0.0.1**
+**tunip=服务端的server.conf中的网关+0.0.0.1**
 
 	tunip=10.7.0.2
 

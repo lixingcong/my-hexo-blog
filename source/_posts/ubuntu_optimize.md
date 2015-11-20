@@ -102,3 +102,12 @@ cpu表格指示 for gnome:
 
 	sudo apt-get install indicator-multiload
     
+安装星际词典：
+
+	sudo apt-get install stardict
+   
+然后到[这里](http://blog.sciencenet.cn/blog-203570-722938.html)下载一个字典包，解压到一个文件夹，比如/home/ubuntu/dicts/stardict-oxford-gb-formated-2.4.2，创建硬链接：
+
+	 sudo ln -s ~/programs/Stardict_dicts/stardict-oxford-gb-formated-2.4.2/ /usr/share/stardict/dic
+     
+打开星际词典就可以查字典了。
