@@ -5,22 +5,40 @@ categories: 网络
 ---
 ## 服务端设置
 
-在vps（ubuntu 12.04.5 x64）上面操作：
+在vps（ubuntu 14.04.3 x64）上面操作：
 安装必要的编译工具
 
 	sudo apt-get install build-essential mingw-w64 autoconf libtool
 <!-- more -->
 获取源码（截止2015.9.8,作者已经停止维护，因为众所周知的喝茶原因）
 
+	cd ~
     wget http://entware.dyndns.info/sources/shadowvpn-0.1.6-20150721.tar.bz2
     tar -xvf shadowvpn-0.1.6-20150721.tar.bz2
     cd shadowvpn-0.1.6-20150721/
+	rm -rf ./libsodium	
+	
+*这里有[clowwindy](https://github.com/clowwindy)喝茶前最后一版的0.2.0的源码：*[下载地址](https://github.com/rains31/ShadowVPN/archive/0.2.0.tar.gz)，但是我没有试过。
+
+更新libsodium：[下载地址](https://github.com/jedisct1/libsodium/releases) ，这里以1.0.6版本为例。
+
+	cd /tmp
+	wget https://github.com/jedisct1/libsodium/releases/download/1.0.6/libsodium-1.0.6.tar.gz
+	tar -zxf libsodium-1.0.6.tar.gz
+	mv libsodium-1.0.6 ~/shadowvpn-0.1.6-20150721/libsodium
+	
+进行AutoGen生成makefile
+
     sh ./autogen.sh
 
 ### 编译linux服务端
 
 	./configure --enable-static --sysconfdir=/etc
 	make && make install
+	
+提示：安装后建议不删shadowvpn-0.1.6-20150721文件夹，方便日后卸载：
+
+	make uninstall
     
 ### 编辑服务端配置
 
@@ -39,6 +57,7 @@ categories: 网络
 - 修改port=666
 - 修改mtu
 - 修改密码
+- 修改内网netmask(在server_up.bat或者server.conf)
     
 *PS:修改mtu这一步很重要，会直接影响vpn速度。*
 详细的mtu设置讨论帖子：[点击这里](https://github.com/clowwindy/ShadowVPN/issues/77)
@@ -52,6 +71,14 @@ categories: 网络
     例如，记下的mtu是1452，计算得到1452-20-8-24=1400
     那么在服务端的server.conf填入1400
     客户端建议也一致填写1400
+    
+*PS:设置内网netmask这一步很重要，避免shadowvpn与isp分配到的地址冲突。*
+参考[维基百科](https://en.wikipedia.org/wiki/Private_network)进行内网的设置。这里都是假设你具有基本的网络层ip知识。如果你对计算机网络ip不那么熟悉，建议保持shadowvpn默认值网关。
+
+	首先在电脑上拨号，查看isp给的是否是内网地址
+    若是公网地址，那么恭喜你，保留默认的netmask即可
+    若是内网地址（10、100、172开头的ip地址），需要参考维基百科的地址设置一个不冲突的内网地址
+    比如我的isp分配的地址是10.9.120.2，那我可以在server.conf设netmask为为172.16.0.1/16
 
 ### 运行服务端
 
@@ -72,7 +99,7 @@ categories: 网络
 - 修改up=/root/vpn/server_up.sh
 - 修改down=/root/vpn/server_down.sh
 - 修改指向不同的pid和log文件
-- 然后打开server_up.sh修改网关地址10.8.0.1
+- 然后打开server_up.sh修改网关地址和netmask(有可能在server.conf内)
 - 执行第二个服务端进程实例
 		/usr/local/bin/shadowvpn -c /root/vpn/server.conf -s start
         
@@ -122,7 +149,7 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 
 编译版shadowvpn的设置：
 
-改动密码，端口，mtu等（跟服务器一致）
+改动密码，端口，mtu、内网地址netmask等（跟服务器一致）
 
 	sudo gedit /etc/shadowvpn/client.conf
 
@@ -133,7 +160,7 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 添加一句
 
 	# Change DNS server to 8.8.8.8
-	grep -q "8.8.8.8" /etc/resolv.conf||echo "nameserver 8.8.8.8">>/etc/resolv.conf
+	grep -q "8.8.8.8" /etc/resolv.conf || echo "nameserver 8.8.8.8">>/etc/resolv.conf
     
 #### 运行
 
@@ -174,6 +201,7 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
 
 改动client.conf使得跟服务端一样
 **tunip=服务端的server.conf中的网关+0.0.0.1**
+如果我的Shadowvpn服务端netmask设置为10.7.0.1，那么：
 
 	tunip=10.7.0.2
 
