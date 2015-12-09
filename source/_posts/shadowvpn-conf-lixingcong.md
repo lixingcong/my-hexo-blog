@@ -168,13 +168,14 @@ win客户端的修改local subnet在server_up.bat和down两个文件里
     
 ### Windows客户端
 
-[下载我的预编译版本](/attachments/my_conf_of_shadowvpn/shadowvpn_0.1.6.zip)
+[下载我的预编译版本](/attachments/my_conf_of_shadowvpn/shadowvpn-win-0.2.0.tar)
 
 #### 交叉编译
 
 在ubuntu 14.04.3 x64下操作：
 获取源码方法跟上面linux客户端一致
 
+	make clean
 	./configure --host=i686-w64-mingw32 --enable-static
 	make
     
