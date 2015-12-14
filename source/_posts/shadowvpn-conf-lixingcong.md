@@ -54,6 +54,7 @@ categories: 网络
 配置方法：
 
 - 打开server.conf
+- 若要监听ipv6，修改server=::0
 - 修改port=666
 - 修改mtu
 - 修改密码
@@ -68,9 +69,10 @@ categories: 网络
     进行正常的拨号（若是DHCP，则跳过这步，主要目的是模拟路由器拨号）
     cmd执行 ping -f -l 1452 www.baidu.com
     逐步加大或者减少该值，直到恰好不会出现DF拆包的提示。记下这个mtu
-    例如，记下的mtu是1452，计算得到1452-20-8-24=1400
-    那么在服务端的server.conf填入1400
-    客户端建议也一致填写1400
+    例如，记下的mtu是1492，计算得到1492-20-8-24=1440（这是ipv4，对ipv6再减20,）
+	注意：mtu减去多少，取决于你的shadowvpn版本，详细看server.conf里面的mtu注释
+    那么在服务端的server.conf填入1440
+    客户端建议也一致填写1440
     
 *PS:设置内网netmask这一步很重要，避免shadowvpn与isp分配到的地址冲突。*
 参考[维基百科](https://en.wikipedia.org/wiki/Private_network)进行内网的设置。这里都是假设你具有基本的网络层ip知识。如果你对计算机网络ip不那么熟悉，建议保持shadowvpn默认值网关。

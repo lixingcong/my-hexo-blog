@@ -1,4 +1,4 @@
-title: Python列表，元组，字典，数组
+title: Python列表，元组，字典，数组，set,struct
 date: 2015-09-01 17:12:32
 tags: python
 categories: 编程
@@ -362,3 +362,98 @@ byteswap()会交换C数组中元素的字节顺序，比在python中循环处理
       04000000          4   00000004   67108864
 
 [参考资料：array原文链接](http://my.oschina.net/u/1449160/blog/199275)
+
+## Set：集合
+
+python的set和其他语言类似, 是一个无序不重复元素集, 基本功能包括关系测试和消除重复元素. 集合对象还支持union(联合), intersection(交), difference(差)和sysmmetric difference(对称差集)等数学运算.  
+  
+sets 支持 x in set, len(set),和 for x in set。作为一个无序的集合，sets不记录元素位置或者插入点。因此，sets不支持 indexing, slicing, 或其它类序列（sequence-like）的操作。  
+
+### 基本的操作：
+
+	set.add('x') #添加一项
+    set.update([10, 3, 32]) # 添加更多项
+    set.remove('x') #删掉一项
+    len(s) #长度
+
+### 判断元素：
+
+    x in set #判断是否在里面
+    s.issubset(t) #测试是否 s 中的每一个元素都在 t 中 
+    s.issuperset(t)  #测试是否 t 中的每一个元素都在 s 中  
+    
+### 简单应用：
+
+	x = set('spam')
+    y = set(['h','a','m'])
+    print x,y
+    
+运行结果：
+
+	(set(['a', 'p', 's', 'm']), set(['a', 'h', 'm']))  
+    
+求交集，并集，差集：
+
+	print x & y
+    print x | y
+    print x -y
+    
+结果就不列出来了。
+
+使用set去除list里面的重复元素：
+
+	a = [11,22,33,44,11,22]  
+    b = set(a)
+    print b
+    c = [i for i in b]
+    print c
+    
+运行结果：
+
+	set([33, 11, 44, 22])  
+    [33, 11, 44, 22] 
+    
+[参考链接:set](http://blog.csdn.net/business122/article/details/7541486)
+
+## struct:打包为c结构体
+
+struct结构体在c语言中的作用，它定义了一种结构，里面包含不同类型的数据(int,char,bool等等)，方便对某一结构对象进行处理。
+
+而在网络通信当中，大多传递的数据是以二进制流（binary data）存在的。当传递字符串时，不必担心太多的问题，而当传递诸如int、char之类的基本数据的时候，就需要有一种机制将某些特定的结构体类型打包成二进制流的字符串然后再网络传输，而接收端也应该可以通过某种机制进行解包还原出原始的结构体数据。
+
+python中的struct模块就提供了这样的机制，该模块的主要作用就是对python基本类型值与用python字符串格式表示的C struct类型间的转化
+
+简单例子：
+
+    import struct
+    import binascii
+    values = (1, 'abc', 2.7)
+    s = struct.Struct('I3sf')
+    packed_data = s.pack(*values)
+    unpacked_data = s.unpack(packed_data)
+
+    print 'Original values:', values
+    print 'Format string :', s.format
+    print 'Uses :', s.size, 'bytes'
+    print 'Packed Value :', binascii.hexlify(packed_data)
+    print 'Unpacked Type :', type(unpacked_data), ' Value:', unpacked_data
+    
+输出：
+
+Original values: (1, 'abc', 2.7) 
+Format string : I3sf 
+Uses : 12 bytes 
+Packed Value : 0100000061626300cdcc2c40 
+Unpacked Type : <type 'tuple'>  Value: (1, 'abc', 2.700000047683716)
+
+对应的c结构体：
+![](/images/python_struct/struct_api1.png)
+
+另一方面，打包的后的字节顺序默认上是由操作系统的决定的，当然struct模块也提供了自定义字节顺序的功能，可以指定大端存储、小端存储等特定的字节顺序
+   
+不同的字节顺序和存储方式也会导致字节大小的不同。在format字符串前面加上特定的符号即可以表示不同的字节顺序存储方式，例如采用小端存储：
+   
+	s = struct.Struct(‘<I3sf’)
+    
+![](/images/python_struct/struct_api2.png)
+
