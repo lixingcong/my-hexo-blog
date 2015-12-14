@@ -5,6 +5,7 @@ categories: 编程
 ---
 以下所有例子都有import re这一句，妇孺皆知。
 
+
 ### 查找文本中的字符
 <!-- more -->
 
@@ -24,7 +25,31 @@ categories: 编程
     '''
  
 ### 编译表达式
+
+使用re.compile()函数，将正则表达式的字符串形式编译为Pattern实例（Regexobject），然后使用Pattern实例处理文本并获得匹配结果（一个Match实例），最后使用Match实例获得信息，进行其他的操作。
+
+re.compile(pattern[, flags])
+把一个正则表达式pattern编译成正则对象，以便可以用正则对象的match和search方法。
+得到的正则对象的行为（也就是模式）可以用flags来指定，值可以由几个下面的值OR得到。
+
+以下result1,result2在语法上是等效的：
+
+    prog = re.compile(pattern)
+    result1 = prog.match(string)
+    result2 = re.match(pattern, string)
+
+区别是，用了re.compile以后，正则对象会得到保留，这样在需要多次运用这个正则对象的时候，效率会有较大的提升。再用上面用过的例子来演示一下，用相同的正则匹配相同的字符串，执行100万次，就体现出compile的效率了
+
+
+寻找一个字符串中所有的英文字符：
+
+    pattern = re.compile('[a-zA-Z]')
+    result = pattern.findall('as3SiOPdj#@23awe')
+    print result
+	# ['a', 's', 'S', 'i', 'O', 'P', 'd', 'j', 'a', 'w', 'e']
  
+另一个例子：
+
     regexes = [ re.compile(p)
                 for p in ['this','that']              
     ] #把字符转换Regexobject格式
@@ -606,6 +631,24 @@ categories: 编程
     for num,para in enumerate(re.split(r'\n{2,}',text)):
         print num,repr(para)
         print
+        
+        
+### 其他：
 
+#### Raw String Notation
+Raw string notation (r"text") keeps regular expressions sane. Without it, every backslash ('\') in a regular expression would have to be prefixed with another one to escape it. For example, the two following lines of code are functionally identical:
+
+    >>> re.match(r"\W(.)\1\W", " ff ")
+    <_sre.SRE_Match object at ...>
+    >>> re.match("\\W(.)\\1\\W", " ff ")
+    <_sre.SRE_Match object at ...>
+    
+When one wants to match a literal backslash, it must be escaped in the regular expression. With raw string notation, this means r"\\". Without raw string notation, one must use "\\\\", making the following lines of code functionally identical:
+
+    >>> re.match(r"\\", r"\\")
+    <_sre.SRE_Match object at ...>
+    >>> re.match("\\\\", r"\\")
+    <_sre.SRE_Match object at ...>
+    
 ### 鸣谢
 本文为转载，原文地址：[点我直达](http://brotherxing.blog.51cto.com/3994225/1576216/)
