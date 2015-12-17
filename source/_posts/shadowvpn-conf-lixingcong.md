@@ -29,7 +29,7 @@ categories: 网络
 	
 进行AutoGen生成makefile
 
-    sh ./autogen.sh
+    cd ~ && sh ./autogen.sh
 
 ### 编译linux服务端
 
