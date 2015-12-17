@@ -94,6 +94,18 @@ vi /etc/apt/sources.list   添加
     
 耗时大概一分钟，然后从src目录下获得一个shadowvpn.exe，使用winscp复制到win系统备用。
 
+#### 编译出openwrt客户端
+
+先进入 [SDK](https://wiki.openwrt.org/doc/howto/obtain.firmware.sdk) 根目录，然后：
+
+    pushd package
+    git clone https://github.com/clowwindy/ShadowVPN.git
+    popd
+    make menuconfig # select Network/ShadowVPN
+    make V=s
+
+最后安装ipk即可。
+
 ## 配置
 
 ### 服务端
@@ -224,15 +236,29 @@ vi /etc/apt/sources.list   添加
 #### openwrt版
 详见[openwrt-shadowvpn项目](https://github.com/aa65535/openwrt-shadowvpn/releases)，自行参考上文的配置
 
+对于 DNS 污染，可以直接使用 Google DNS 8.8.8.8，或者使用 ChinaDNS 综合使用国内外 DNS 得到更好的解析结果。
+
+可以采用Chinadns设置上游服务器114.114.114.114,8.8.8.8，然后让dns走加密隧道
+
+    route add -host 8.8.8.8 dev tunX （tunX是你ShadowVPN的interface） 
+   
+路由追踪一下是否走Shadowvpn：
+
+	traceroute 8.8.8.8 
+
 ## 多用户
+
+需要注意的是 ShadowVPN 是一个点对点 VPN。意味着对于每个客户端，需要一个对应的服务端。 
+可以开启多个服务端进程，用 -c 参数指定不同的配置文件。
+请确保对于不同的服务端和客户端， 在 up 和 down 脚本中指定了不同的 IP。
 
 ### 服务端
 
-若是源安装，修改server.conf中的token即可，先生成token
+若是源安装比较方便，修改server.conf中的token即可，先生成token
 
 	xxd -l 8 -p /dev/random
     
-填入user_token即可，逗号分隔。
+填入user_token即可，逗号分隔。即可完成。
 
 若是编译安装：*以编译成功的0.1.6版本为例，不适合源安装*
 
