@@ -3,12 +3,16 @@ date: 2015-12-17 16:41:48
 tags: shadowsocks
 categories: 网络
 ---
+无论什么时候，我总希望梯子要多备一把，防止某天走出不去。
+
+本人日常使用的是SS，发现在代理某些udp流量（例如youtube、外服游戏数据包）有点力不从心，因此尝鲜试了这个Shadowvpn，可以做到全局代理
+<!-- more -->
 ## 安装
 
 在vps（ubuntu 14.04.3 x64）上面操作：
 
 ### 源安装
-<!-- more -->
+
 特点：
 - daemon守护进程
 - 因带有token，适合多客户端
@@ -128,7 +132,7 @@ vi /etc/apt/sources.list   添加
 - 修改port=666
 - 修改密码
 - 修改mtu
-- 修改子网netmask(在server_up.bat或者server.conf)
+- 修改子网netmask(在server_up.sh或者server.conf)
 
 *PS 1:修改mtu这一步很重要，会直接影响vpn速度。*
 详细的mtu设置讨论帖子：[帖子点击这里](https://github.com/clowwindy/ShadowVPN/issues/77)
@@ -142,7 +146,7 @@ vi /etc/apt/sources.list   添加
     例如，记下的mtu是1492，计算得到1492-20-8-24=1440（这是ipv4，对ipv6再减20,）
 	注意：mtu减去多少，取决于你的shadowvpn版本，详细看server.conf里面的mtu注释
     那么在服务端的server.conf填入1440
-    客户端建议也一致填写1440
+    客户端也一致填写1440
     
 *PS 2:设置内网netmask这一步也很重要，避免shadowvpn与isp分配到的地址冲突。*
 参考[维基百科](https://en.wikipedia.org/wiki/Private_network)进行内网的设置。这里都是假设你具有基本的网络层ip知识。如果你对计算机网络ip不那么熟悉，建议保持shadowvpn默认值网关10.7.0.1。
@@ -151,18 +155,20 @@ vi /etc/apt/sources.list   添加
     若是公网地址，那么恭喜你，保留默认的netmask即可
     若是内网地址（10、100、172开头的ip地址），需要参考维基百科的地址设置一个不冲突的内网地址
     比如我的isp分配的地址是10.9.120.2，那我可以在server.conf设netmask为为172.16.0.1/16（不唯一）
+    客户端的mtu与服务端一致
 
 ### 客户端
 
 #### linux版
-修改配置文件与服务器配置一致：(如：ip,port,MTU,password)
+修改配置文件与服务器配置一致：
+(如：ip,port,MTU,password,netmask,CIDR地址)
 
 	vi /etc/shadowvpn/client.conf
 	vi /etc/shadowvpn/client_up.sh
 
 注意conf文件中，net=10.7.0.2/xx设置
 
-	10.7.0.2/xx计算规则是把服务端net=10.7.0.1/xx加一
+	10.7.0.2/xx计算规则是把服务端net=10.7.0.1/xx网关加一
 
 
 若是源安装，修改启动模式为客户端。然后重启一下进程
@@ -206,12 +212,15 @@ vi /etc/apt/sources.list   添加
     
 
 改动client.conf使得跟服务端一样
+
+若有user_token，也要照样在client.conf里填上。
+
 **tunip=服务端的server.conf中的网关+0.0.0.1**
 如果我的Shadowvpn服务端netmask设置为10.7.0.1，那么：
 
 	tunip=10.7.0.2
 
-改动接口名称（就是**改名后的tun通道**）
+改动tun接口名称（就是**改名后的tun通道**）
 
 	intf=vpn
     
@@ -219,12 +228,14 @@ vi /etc/apt/sources.list   添加
 打开client_up.bat和client_down.bat，**同时改动两个文件里面的两个值**
 改动服务端的网关
 
-	remote_ip=10.7.0.1 
+	remote_ip=10.7.0.1
     
-改动“无线网络”英文名
+改动“无线网络”英文名：（若使用有线，请改为以太网对应的名称）
 
 	orig_intf="Wi-Fi"
     
+注意在server_up.bat中修改与服务端一致的netmask：如255.255.255.0
+
 创建一个快捷方式，输入
 
 	shadowvpn.exe -c client.conf -s start
@@ -260,7 +271,7 @@ vi /etc/apt/sources.list   添加
     
 填入user_token即可，逗号分隔。即可完成。
 
-若是编译安装：*以编译成功的0.1.6版本为例，不适合源安装*
+若是编译安装：*以编译成功的0.1.6版本为例*
 
 - 把server.conf sever_up.sh sever_down.sh 拷贝一份，我放到/root/vpn
 - 然后打开server.conf
@@ -278,16 +289,16 @@ vi /etc/apt/sources.list   添加
 
 填入对应的token，或者对应的ip+端口。
 linux貌似不需要太大改变配置。
-windows版注意及时修改同样的conf文件和server_up.bat
+windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 
 #### 后记
 
 截止2015.8.22,作者已经停止维护ShadowVPN，并删除相关代码，因为众所周知的喝茶原因。
 ![](/images/shadowvpn_conf/tea.png)
 
-我觉得，Shadowvpn是一个比Shadowsocks更强大的工具，可惜，流产了。留下给我们的，是一个早产、有各种bug的版本，使用上有各种不方便，还有难以开展多用户，不适合商家售卖。
+窃认为，Shadowvpn是一个比Shadowsocks更强大的工具，可惜的是，在遭受政府审查中流产了。留下给我们的，是一个早产、带有各种未知bug的版本，使用上会出现各种不方便，难以开展多用户，不适合商家售卖等诸多缺点。
 
-需要各位勇士对其进行维护，当然，互联网上做这样擦边球的应用，切记要小号，匿名。
+因此，各位与GFW斗争的勇士应该知道，在互联网上做这样擦边球的应用，切记人身安全第一，要开小号，匿名。参考“编程随想”博客的匿名方法：如何防止跨省追捕。
 
 
 
