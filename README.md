@@ -2,8 +2,9 @@
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
 
+使用主题：[Next](https://github.com/iissnan/hexo-theme-next)
 
-# Usage
+# Hexo部署
 
 ## 安装git
 

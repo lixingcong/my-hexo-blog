@@ -291,7 +291,19 @@ vi /etc/apt/sources.list   添加
 linux貌似不需要太大改变配置。
 windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 
-#### 后记
+## 优化
+
+若vps是kvm或者xen可以采用以下优化：[clowwindy的优化方法](https://github.com/shadowsocks/shadowsocks/wiki/Optimizing-Shadowsocks)
+
+	vi/etc/security/limits.conf
+    * soft nofile 51200 #追加这句
+	* hard nofile 51200 #追加这句
+	vi /etc/profile
+    ulimit -SHn 51200 #追加这句
+
+当然，最好打开fast_open。
+
+### 后记
 
 截止2015.8.22,作者已经停止维护ShadowVPN，并删除相关代码，因为众所周知的喝茶原因。
 ![](/images/shadowvpn_conf/tea.png)
