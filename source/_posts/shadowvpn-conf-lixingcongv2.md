@@ -98,6 +98,13 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 
 	dpkg -i shadowvpn*.deb #根据编译出的deb确定文件名
     apt-get install -f #修复依赖关系
+    
+卸载dpkg包（升级前才用到删除）
+
+	dpkg -l | grep shadowvpn #理论上应该显示shadowvpn包的名称
+    dpkg -r shadowvpn #仅删除程序
+    dpkg -P shadowvpn #把残留的配置文件删掉
+    
 
 #### 编译出windows客户端
 
