@@ -35,6 +35,8 @@ vi /etc/apt/sources.list   添加
 
 	/etc/init.d/shadowvpn start
     
+P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就是从仓库下载deb而已。
+    
 ### 编译安装
 
 #### 获取源码
@@ -84,6 +86,18 @@ vi /etc/apt/sources.list   添加
 提示：安装后建议不删shadowvpn-0.1.6-20150721文件夹，方便日后卸载：
 
 	make uninstall
+    
+#### 编译出deb package
+
+    apt-get install libssl-dev gawk debhelper dh-systemd init-system-helpers pkg-config
+    dpkg-buildpackage -us -uc -i
+    cd ..
+    ls | grep shadowvpn
+    
+安装deb
+
+	dpkg -i shadowvpn*.deb #根据编译出的deb确定文件名
+    apt-get install -f #修复依赖关系
 
 #### 编译出windows客户端
 
@@ -291,9 +305,10 @@ vi /etc/apt/sources.list   添加
 linux貌似不需要太大改变配置。
 windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 
-## 优化
+## 其他
 
-若vps是kvm或者xen可以采用以下优化：[clowwindy的优化方法](https://github.com/shadowsocks/shadowsocks/wiki/Optimizing-Shadowsocks)
+### 梯子优化
+若vps是kvm或者xen可以参考以下优化：[clowwindy的优化方法](https://github.com/shadowsocks/shadowsocks/wiki/Optimizing-Shadowsocks)
 
 	vi/etc/security/limits.conf
     * soft nofile 51200 #追加这句
@@ -301,17 +316,37 @@ windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 	vi /etc/profile
     ulimit -SHn 51200 #追加这句
 
-当然，最好打开fast_open。
+当然，最好打开fast_open（如果发现反而变慢了，关闭之）
+
+	vi /etc/sysctl.conf
+    net.ipv4.tcp_fastopen = 3
+    sysctl -p
+
+### 配合ChinaDNS自建dns服务器
+
+安装pdnsd或者dnsmasq，在vps监听5353端口的dns请求避免污染
+
+假设vps的tun0网关是10.7.0.1/24，那么
+在路由器的ChinaDNS上游dns填入
+
+	114.114.114.114,10.7.0.1:5353
+
+效果：vps作为dns查询服务器，与路由器通信走的是Shadowvpn的加密流量。
+
+### 未知问题
+
+目前使用ShadowVPN遇到的问题：
+- 搬瓦工使用ipv6地址时候，客户端填入xxxx:xxxx:xxxx:xxxx::1会失败，填入xxxx:xxxx:xxxx:xxxx::成功。好诡异。差一个1就这样
+- 加载并发多线程的网页（例如tumblr加载图片）的效率明显不如shadowsocks，而对于连续的udp数据流，则比ss流畅（例Youtube）
 
 ### 后记
 
-截止2015.8.22,作者已经停止维护ShadowVPN，并删除相关代码，因为众所周知的喝茶原因。
-![](/images/shadowvpn_conf/tea.png)
-
 窃认为，Shadowvpn是一个比Shadowsocks更强大的工具，可惜的是，在遭受政府审查中流产了。留下给我们的，是一个早产、带有各种未知bug的版本，使用上会出现各种不方便，难以开展多用户，不适合商家售卖等诸多缺点。
 
-因此，各位与GFW斗争的勇士应该知道，在互联网上做这样擦边球的应用，切记人身安全第一，要开小号，匿名。参考“编程随想”博客的匿名方法：如何防止跨省追捕。
+因此，各位与GFW斗争的勇士应该知道，在互联网上做这样擦边球的应用，切记人身安全第一，要开小号，匿名。参考[“编程随想”博客:《如何防止跨省追捕》](https://program-think.blogspot.com/2010/04/howto-cover-your-tracks-0.html)
 
+截止2015.8.22,作者已经停止维护ShadowVPN，并删除相关代码，因为众所周知的喝茶原因。
+![](/images/shadowvpn_conf/tea.png)
 
 
 
