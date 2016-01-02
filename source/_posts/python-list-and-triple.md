@@ -1,4 +1,4 @@
-title: Python列表，元组，字典，数组，set,struct
+title: Python列表,元组,字典,数组,set,struct
 date: 2015-09-01 17:12:32
 tags: python
 categories: 编程

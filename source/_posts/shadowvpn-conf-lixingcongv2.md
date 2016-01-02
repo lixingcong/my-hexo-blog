@@ -5,7 +5,7 @@ categories: 网络
 ---
 无论什么时候，我总希望梯子要多备一把，防止某天走出不去。
 
-本人日常使用的是SS，发现在代理某些udp流量（例如youtube、外服游戏数据包）有点力不从心，因此尝鲜试了这个Shadowvpn，可以做到全局代理
+本人日常使用的是SS，发现在代理某些udp流量（例如youtube、外服游戏数据包）有点力不从心，因此尝鲜试了这个ShadowVPN，可以做到全局代理
 <!-- more -->
 ## 安装
 
@@ -90,16 +90,20 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 #### 编译出deb package
 
     apt-get install libssl-dev gawk debhelper dh-systemd init-system-helpers pkg-config
+	./configure --enable-static --sysconfdir=/etc
+	make clean
     dpkg-buildpackage -us -uc -i
     cd ..
     ls | grep shadowvpn
+	
+0.2.0版本(clowwindy最后一版)没有更新debian/changelog中的版本号码，编译出来的是0.1.7，所以打开debian/changelog自己手动加上版本号0.2.0即可编译出来
     
 安装deb
 
 	dpkg -i shadowvpn*.deb #根据编译出的deb确定文件名
     apt-get install -f #修复依赖关系
     
-卸载dpkg包（升级前才用到删除）
+某一天不想用Shadowvpn了，可以卸载dpkg包
 
 	dpkg -l | grep shadowvpn #理论上应该显示shadowvpn包的名称
     dpkg -r shadowvpn #仅删除程序
@@ -113,23 +117,17 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 获取源码方法跟上面linux客户端一致
 
 	cd ~/shadowvpn-0.1.6-20150721/
-	make clean
 	./configure --host=i686-w64-mingw32 --enable-static
+	make clean
 	make
     
 耗时大概一分钟，然后从src目录下获得一个shadowvpn.exe，使用winscp复制到win系统备用。
 
 #### 编译出openwrt客户端
 
-先进入 [SDK](https://wiki.openwrt.org/doc/howto/obtain.firmware.sdk) 根目录，然后：
+这里假设你已经掌握了Openwrt SDK的使用方法，没有的话自行学习，比较简单，先试试路由器上移植ipk，实现在路由上面printf("hello world")，参考这篇文章：[Print Hello on Openwrt](https://www.componentality.com/res/Step-By-Step-Instruction-To-Run-Apps-On-FlexRoad-HW.en.pdf)
 
-    pushd package
-    git clone https://github.com/clowwindy/ShadowVPN.git
-    popd
-    make menuconfig # select Network/ShadowVPN
-    make V=s
-
-最后安装ipk即可。
+编译ShadowVPN openwrt客户端，请移步至[《从Openwrt SDK编译出ShadowVPN包》](/2016/01/02/compile_shadowvpn_for_openwrt)
 
 ## 配置
 
@@ -271,6 +269,7 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 对于 DNS 污染，可以直接使用 Google DNS 8.8.8.8，或者使用 ChinaDNS 综合使用国内外 DNS 得到更好的解析结果。
 
 可以采用Chinadns设置上游服务器114.114.114.114,8.8.8.8，然后让dns走加密隧道
+我记得默认配置就能走加密隧道了。
 
     route add -host 8.8.8.8 dev tunX （tunX是你ShadowVPN的interface） 
    
@@ -323,15 +322,18 @@ windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 	vi /etc/profile
     ulimit -SHn 51200 #追加这句
 
-当然，最好打开fast_open（如果发现反而变慢了，关闭之）
+当然，最好打开fast_open
 
 	vi /etc/sysctl.conf
     net.ipv4.tcp_fastopen = 3
     sysctl -p
+	
+哈哈哈，没有效果的话不要骂我，纯属心理安慰而已。。
+fast_open是给tcp用的，对udp没什么卵用。
 
 ### 配合ChinaDNS自建dns服务器
 
-安装pdnsd或者dnsmasq，在vps监听5353端口的dns请求避免污染
+在vps上面安装pdnsd（带有缓存功能）或者dnsmasq（没有缓存功能），监听5353端口的dns请求。
 
 假设vps的tun0网关是10.7.0.1/24，那么
 在路由器的ChinaDNS上游dns填入
