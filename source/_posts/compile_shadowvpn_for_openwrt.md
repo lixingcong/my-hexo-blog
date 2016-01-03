@@ -187,7 +187,7 @@ categories: 网络
 
 总结思路：
 
-在openwrt-shadowvpn目录下的Makefile中的URL改为本机目录/tmp/。
+在openwrt-shadowvpn目录下的Makefile中的URL改为本机目录/home/test/openwrt/dl/。
 作者aa65535的思路是：每次编译都是从自己的github-releases页面下载源码。因此想要自己修改代码，必须替换下载URL，指向本机，达到自定义代码的效果。
 
 在工程openwrt-shadowvpn中的Makefile是自动调用下载源码的命令。想把源代码直接放进去build_dir是不可能的，每次进行make都是自动下载源码会将build_dir清空。同理，将Shadowvpn源代码放进去package目录或者dl目录也是不行的。只能打包后放dl文件夹内。
