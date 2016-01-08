@@ -6,7 +6,14 @@ categories: 读书笔记
 Makefile是帮助我们进行编译的工具，可以简化流程，易于维护，编译不必依赖IDE，当源文件数量较多时候，使用Makefile更适合管理Project的开发。在开源软件中大多采用Makefile进行管理。
 <!-- more -->
 
-### 基本格式
+花时间读了两本书，讲的很明白。做个笔记
+
+|书名|《Managing Projects with GNU Make》|《跟我一起写makefile》|
+|---|---|---|
+|作者|Robert Mecklenburg|陈皓|
+|地址|[暂无]()|[ubuntu社区](http://wiki.ubuntu.org.cn/%E8%B7%9F%E6%88%91%E4%B8%80%E8%B5%B7%E5%86%99Makefile)|
+
+### 入门
 每一条命令都是这样格式
 
     targets : prerequisites
@@ -132,7 +139,7 @@ clean目标的编写
 
 ### 自动化变量
 
-|名称|说明|
+|名称 |  说明|
 |--|--|
 |$@|目的文件名|
 |$<|依赖列表的第一个文件|
