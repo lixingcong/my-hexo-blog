@@ -1,6 +1,6 @@
 title: POSIX正则表达式
 date: 2015-10-29 23:41:20
-tags: [python, ubuntu]
+tags: [python, ubuntu, shell]
 categories: 编程
 ---
 

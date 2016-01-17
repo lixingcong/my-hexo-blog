@@ -90,8 +90,7 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 #### 编译出deb package
 
     apt-get install libssl-dev gawk debhelper dh-systemd init-system-helpers pkg-config
-	./configure --enable-static --sysconfdir=/etc
-	make clean
+	make clean #可选步骤
     dpkg-buildpackage -us -uc -i
     cd ..
     ls | grep shadowvpn

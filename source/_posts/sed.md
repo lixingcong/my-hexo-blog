@@ -1,6 +1,6 @@
 title: linux简单的文本处理
 date: 2015-10-31 22:13:37
-tags: ubuntu
+tags: [ubuntu, shell]
 categories: 读书笔记
 ---
 本文为读书摘录。
@@ -16,7 +16,7 @@ categories: 读书笔记
 	ifconfig | grep '\([0-9]*\)\.'
     ifconfig | grep -e '[0-9]*\.'
     
-相关文章：[正则表达式学习](http://lixingcong.github.io/2015/10/29/RE_POSIX/)
+相关文章：[正则表达式学习](/2015/10/29/RE_POSIX/)
 ## sed
 
 什么时候改用/g什么时候不需要：sed对每一行进行一轮匹配。若是一行有多个结果，要加上/g。
