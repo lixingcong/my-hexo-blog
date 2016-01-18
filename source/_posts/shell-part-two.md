@@ -9,6 +9,7 @@ categories: 读书笔记
 |书名|作者|下载地址|
 |--|--|--|
 |Classic Shell Scripting|Arnold R. & Nelson H.F.B|[暂无]()|
+|Advanced Bash-Scripting Guide|Mendel Cooper|[PDF](http://www.tldp.org/LDP/abs/abs-guide.pdf)|
 
 shell主流版本有几个：sh bash csh ksh等，有一定的区别，我使用ubuntu默认就是bash，可以在脚本第一行加上这个"shebang"指示shell用到哪个版本
 
@@ -36,6 +37,7 @@ Unix特殊字符有如下：使用其时要进行转义
 |0|Shell程序的名称|
 |!|最后一个后台命令的进程编号|
 |IFS|内部的字段分隔器，例如读取/etc/passwd可以用|
+|PWD|当前工作目录|
 
 ### 变量的赋值与修改
 shell的默认赋值是字符串赋值。比如：
@@ -48,7 +50,7 @@ shell的默认赋值是字符串赋值。比如：
 
 	let "var+=1" #let表示数学运算
 	var=$[$var+1] #$[]将中括号内的表达式作为数学运算先计算结果再输出
-	var=`expr $var +1` #expr用于整数值运算，注意加号两边的空格，否则还是按照字符串的方式赋值。 
+	var=`expr $var + 1` #expr用于整数值运算，注意加号两边的空格，否则还是按照字符串的方式赋值。 
 
 若要修改字符串
 
@@ -127,6 +129,10 @@ unset -f function
         echo $i
         mv $i /tmp
     done
+    
+嵌套循环中，break 命令后面还可以跟一个整数，表示跳出第几层循环
+
+	break 2 # jump out of loop 2
     
 ### while语句
 
@@ -336,6 +342,24 @@ read可以读取多个变量
 （2）单大括号，{ cmd1;cmd2;cmd3;} 在当前shell顺序执行命令cmd1,cmd2,cmd3, 各命令之间用分号隔开, 最后一个命令后必须有分号, 第一条命令和左括号之间必须用空格隔开。
 （3）对{}和()而言, 括号中的重定向符只影响该条命令， 而括号外的重定向符影响到括号中的所有命令。
 
+## 执行顺序与eval
+
+这部分需要参考书籍《Classic Shell Scripting》了，无法用Markdown写成日志。
+大致就是这个意思：将字符串转成shell执行的正常解析命令
+
+例子：
+
+	listfile="ls | less"
+    $listfile
+	# 结果： 
+    # ls: 无法访问|: 没有那个文件或目录
+    # ls: 无法访问less: 没有那个文件或目录
+    
+说明shell执行字符串时候把“|” 和 “less” 看成ls的参数了，使得ls尝试在目录寻找 | 和 less 文件。。。
+使用eval执行顺序可以重新解析成shell命令。
+
+	eval $listpage
+    
 ## 其他
 
 getopts shift $# 提供处理命令行的工具：自行查阅相关文档

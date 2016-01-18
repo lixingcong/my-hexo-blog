@@ -1,10 +1,15 @@
-title: linux简单的文本处理
+title: shell简单的文本处理
 date: 2015-10-31 22:13:37
 tags: [ubuntu, shell]
 categories: 读书笔记
 ---
-本文为读书摘录。
-参考书籍：Classic Shell Scripting
+使用Shell脚本处理文本很方便。通常情况下，若处理文本，一句shell脚本能解决的问题，换成python要十行代码，因此在某些情况下选择shell文本处理能提高效率。
+
+|书名|作者|下载地址|
+|--|--|--|
+|Classic Shell Scripting|Arnold R. & Nelson H.F.B|[暂无]()|
+|Advanced Bash-Scripting Guide|Mendel Cooper|[PDF](http://www.tldp.org/LDP/abs/abs-guide.pdf)|
+
 ## grep
 打印出某行。
 <!-- more -->
@@ -17,13 +22,24 @@ categories: 读书笔记
     ifconfig | grep -e '[0-9]*\.'
     
 相关文章：[正则表达式学习](/2015/10/29/RE_POSIX/)
+
 ## sed
 
-什么时候改用/g什么时候不需要：sed对每一行进行一轮匹配。若是一行有多个结果，要加上/g。
 加载多个命令需要-e参数。每一个-e后面跟者一个命令
 定界符可以是逗号，也可以分号，总之不要跟替换内容重复。
 启用overwrite模式，将改动写入到源文件: -i 参数
-启用ERE表达式 -r 参数
+启用ERE表达式 -r 参数。但并不是完整支持ERE，比如：无法使用\d匹配数字，可以用[:alnum:]代替
+
+++sed默认只对一行进行一次匹配。++
+- 若要一行内多次匹配，要加上g，比如
+		
+        sed 's/hello/hi/g' test.txt
+        
+- 若跨行搜索，使用以下命令将所有换行符替换成逗号
+
+		sed ':a;{N;s/\n/,/};ba'
+        
+上面这是一种label的用法，参考[这篇文章](http://stackoverflow.com/questions/1251999/how-can-i-replace-a-newline-n-using-sed)
 
 备份/home/ubuntu的目录结构到/tmp/backup
 
@@ -35,7 +51,7 @@ categories: 读书笔记
 
 删掉空行
 
-	sed '/^$/d' ./1.txt
+	sed '/^$/d' ./1.txt # d命令是删除整行，不是删除pattern
     
 从文件加载命令
 
@@ -79,7 +95,7 @@ categories: 读书笔记
     
 ## tr
 进行替换、压缩和删除。它可以将一组字符变成另一组字符。
-注意是一组字符，不是一个字符串
+++注意是一组字符，不是一个字符串++
 
 选项
 
@@ -136,6 +152,8 @@ categories: 读书笔记
     join text1.sort text2.sort
 
 ## awk
+分为mawk gawk 等几个版本，用法大同小异。
+++awk是在文字缓冲区逐行处理++
 打印非空行：
 
 	awk 'NF > 0 {print $0}'
@@ -146,6 +164,10 @@ categories: 读书笔记
     # 改动一下，-v设置**为输出分隔符
     awk -F: -v 'OFS=**' '{print $1,$5}' /etc/passwd | head
    
+将每行的回车符替换为逗号，并将所有行合并到一行
+
+	awk '{{printf"%s,",$0}}'  #没有跨行概念
+    
 ## sort
 排序。
 修饰符如下：
@@ -212,7 +234,7 @@ categories: 读书笔记
     
     
 ## fmt
-打开字典，格式化段落为30个字为一行：
+打开ubuntu的默认字典，格式化段落为30个字为一行：
 
 	sed -n '999,1020p' /usr/share/dict/words | fmt -w 30
     
