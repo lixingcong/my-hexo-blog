@@ -111,3 +111,16 @@ cpu表格指示 for gnome:
 	 sudo ln -s ~/programs/Stardict_dicts/stardict-oxford-gb-formated-2.4.2/ /usr/share/stardict/dic
      
 打开星际词典就可以查字典了。
+
+安装字体：
+YaHei.Consolas.1.12.ttf是混排字体，适合写程序。
+
+	mkdir ~/.fonts
+	mv YaHei.Consolas.1.12.ttf ~/.fonts
+    cd ~/.fonts
+    chmod 744 *
+    sudo mkfontscale
+    sudo mkfontdir
+    sudo fc-cache -f -v
+    
+注销即可使用新字体

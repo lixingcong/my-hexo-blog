@@ -152,7 +152,12 @@ categories: 读书笔记
     join text1.sort text2.sort
 
 ## awk
-分为mawk gawk 等几个版本，用法大同小异。
+分为mawk gawk 等几个版本，用法大同小异。下面以ubuntu内置的mawk为例。
+注意目前的ubuntu内置mawk版本是1.3.3，是很老的版本，bug：不支持posix正则表达式字符集，比如\[:alnum:\]，因此想要用posix，就得更新mawk：[地址](http://invisible-island.net/mawk/)
+编译安装后要更新一下软链接。
+
+	sudo ln -sf /usr/local/bin/mawk /usr/bin/awk
+
 ++awk是在文字缓冲区逐行处理++
 打印非空行：
 
@@ -166,7 +171,7 @@ categories: 读书笔记
    
 将每行的回车符替换为逗号，并将所有行合并到一行
 
-	awk '{{printf"%s,",$0}}'  #没有跨行概念
+	awk '{printf"%s,",$0}'  #没有跨行概念
     
 ## sort
 排序。
