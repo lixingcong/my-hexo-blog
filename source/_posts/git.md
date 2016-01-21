@@ -96,11 +96,17 @@ HEAD指针可以理解为最近一次的提交。
 若提交后，发现文件A中某句话写错了，修改文件A后，可以追加提交：覆盖上一次提交。建议书写your-comment跟上一次提交一致。
 
 	git commit -am "YOUR-COMMENT" --amend
-    
+
+### 打标签
+
 提交确认无误可以进行打标签，方便后期管理
 
 	git tag -a v1.0 -m "YOUR-COMMENT-ON-THIS-TAG"
-    
+
+默认情况下，git push 并不会把标签传送到远端服务器上，只有通过显式命令才能分享标签到远端仓库。其命令格式如同推送分支：
+
+	git push origin [tagname]
+
 ### 创建忽略提交名单
 
 功能就是防止提交上去。忽略.o这种c语言中间文件例：
@@ -192,6 +198,10 @@ HEAD指针可以理解为最近一次的提交。
     
 合并时候，通常会遇到冲突，平和冲突完毕，commit一次即可。
     
+删除本地分支：
+
+	git branch -D [BRANCH_NAME]
+    
 保存进度：
 有时候需要切换紧急的分支，而又不想提交当前的分支。可以将其暂存下来。
 如果不暂存，会提示切换分支失败。
@@ -210,6 +220,12 @@ HEAD指针可以理解为最近一次的提交。
 
 	git checkout BRANCH-U-WANT-TO-REBASE
 	git rebase TRAGET-BRANCH-U-WANT-TO-REBASE-FOR
+    
+删除远程分支：
+
+	git push origin :[BRANCH_NAME]
+    
+    
 
 ## 远程仓库操作
 主要是在本机实现一下远程的模拟。

@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 我叫Lixingcong
-subtitle: 子标题
+title: Lixingcong
+subtitle: 我的博客
 description: 推特宅男一枚，失业中
 author: Lixingcong
 language: zh-Hans
@@ -79,7 +79,7 @@ tag_generator:
 # Extensions
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
-theme: next
+theme: pisces
 
 
 # Deployment
@@ -87,15 +87,16 @@ theme: next
 ## 卧槽 注意空格啊，少了空格就无法部署！！
 deploy:
   type: git
-  repo: https://github.com/lixingcong/lixingcong.github.io.git
+  #repo: https://github.com/lixingcong/lixingcong.github.io.git
+  repo: git@github.com:lixingcong/lixingcong.github.io.git
   branch: master
   
   
 # 社交链接
 social:
   Twitter: https://twitter.com/lixingcong
-  Facebook: https://www.facebook.com/xingcong.li
-  Instagram: https://instagram.com/lixingcong_
+  #Facebook: https://www.facebook.com/xingcong.li
+  #Instagram: https://instagram.com/lixingcong_
   
 
 
