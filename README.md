@@ -2,6 +2,7 @@
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
 
+Travis CI: [![Travis CI](https://travis-ci.org/lixingcong/my_hexo_blog?branch=master)](https://travis-ci.org/lixingcong/my_hexo_blog?branch=master)
 使用主题：[Next](https://github.com/iissnan/hexo-theme-next)
 
 # Hexo部署
