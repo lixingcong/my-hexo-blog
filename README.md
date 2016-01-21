@@ -196,4 +196,4 @@ Win直接安装，ubuntu则需要安装
 
 # 更新日志
 
-参见[Changelog.md](/ChangeLog.md)
+[Changelog.md](/ChangeLog.md)
