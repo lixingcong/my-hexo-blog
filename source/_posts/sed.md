@@ -153,10 +153,27 @@ categories: 读书笔记
 
 ## awk
 分为mawk gawk 等几个版本，用法大同小异。下面以ubuntu内置的mawk为例。
-注意目前的ubuntu内置mawk版本是1.3.3，是很老的版本，bug：不支持posix正则表达式字符集，比如\[:alnum:\]，因此想要用posix，就得更新mawk：[地址](http://invisible-island.net/mawk/)
+注意目前的ubuntu内置mawk版本是1.3.3，是很老的版本，bug：不支持posix正则表达式字符集，比如\[:alnum:\]，因此想要用posix，就得[更新mawk](http://invisible-island.net/mawk/)。
 编译安装后要更新一下软链接。
 
 	sudo ln -sf /usr/local/bin/mawk /usr/bin/awk
+
+awk的一般语法
+
+	awk pattern { action } #如果模式匹配，执行action
+    awk pattern            #如果模式匹配，打印它
+    awk         { action } #针对每条记录，执行action
+
+|awk变量|说明|
+|--|--|
+|FILENAME|当前输入文件名称|
+|FNR|输入文件的记录数|
+|FS|分隔符，支持正则表达式|
+|NF|当前记录的字段数|
+|NR|在工作job中的记录数|
+|OFS|输出字段分隔符|
+|ORS|输出记录分隔符|
+|RS|输入记录分隔符，默认'\n'|
 
 ++awk是在文字缓冲区逐行处理++
 打印非空行：
@@ -173,6 +190,57 @@ categories: 读书笔记
 
 	awk '{printf"%s,",$0}'  #没有跨行概念
     
+提取中国路由表，项目[chnroute](https://github.com/fivesheep/chnroutes)的源码
+
+	# ipv4.txt 文件内容
+    apnic|CN|ipv4|43.242.220.0|1024|20140904|allocated
+    apnic|IN|ipv4|43.242.228.0|1024|20140904|assigned
+    apnic|HK|ipv4|43.242.232.0|1024|20140904|assigned
+    apnic|MN|ipv4|43.242.240.0|1024|20140905|allocated
+    apnic|CN|ipv4|43.242.252.0|1024|20140905|allocated
+    # 执行
+	cat ipv4.txt |
+    awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }'
+
+注意：-F为重新定义默认分隔符，匹配Pattern为正则表达式CN\|ipv4，输出分隔符分隔的字段，并进行数学对数运算
+
+在一个列表中调换第二、第三列
+
+	# list.txt 文件
+    姓名	学号	成绩
+    张三	23	23
+    李四	22	49
+    老王	33	66
+    赵爷	44	22
+    # 执行：
+    awk -F'\t' -v OFS='\t' '{ print $1, $3, $2 }' list.txt
+    
+将单换行符的文本换成双换行：
+
+	awk '{ print $0 "\n" }' list.txt
+    # 等价于 sed -e 's/$/\n/g' list.txt
+    
+将双换行符的文本换成单换行：
+
+	awk 'BEGIN { RS="\n*\n" } { print }' list.txt
+    
+支持类似c语言的各种逻辑语句：
+
+	awk 'BEGIN {for(x=0;x<=1.0;x+=0.05)print x}'
+    
+结合Shell产生随机数：
+
+	#! /bin/bash
+    for k in $(seq 1 5); do
+        awk 'BEGIN{
+                   srand()
+                   for(k=1;k<5;k++)
+                       printf("%.5f\t",rand())
+                   print ""
+                  }'
+        sleep 1
+    done
+
 ## sort
 排序。
 修饰符如下：

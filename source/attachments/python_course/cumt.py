@@ -69,7 +69,6 @@ def parse_select_list(select_page):
         if LINE.startswith("<TD><A onclick=\"window.open"):
             url = RE_course_url.findall(LINE)
             if url:
-                
                 select_list.append(url[0][1])
                 select_list.append(url[0][0])
                 select_len += 1
@@ -170,6 +169,7 @@ while(True):
                 file1.write(list_course_page.text.encode('gb2312'))
             with open('list_page.txt', 'r') as file1:
                 parse_course_list(file1)
+            is_list_fresh=True
         
         # print the list of courses
         temp = 0
@@ -183,15 +183,13 @@ while(True):
         state = SHOW_TEACHER_LIST
         
     if state == SHOW_TEACHER_LIST:
-        if not is_list_fresh:
-            # Open a course
-            select_course_page = s.get(URL + '/' + course_list[int(choose_number)][1])
-            with open('select_page.txt', 'wb') as file1:
-                file1.write(select_course_page.text.encode('gb2312'))
-            with open('select_page.txt', 'r') as file1:
-                parse_select_list(file1)
-                payload_select['VIEWSTATE'] = VIEWSTATE
-            is_list_fresh = True
+        # Open a course
+        select_course_page = s.get(URL + '/' + course_list[int(choose_number)][1])
+        with open('select_page.txt', 'wb') as file1:
+            file1.write(select_course_page.text.encode('gb2312'))
+        with open('select_page.txt', 'r') as file1:
+            parse_select_list(file1)
+            payload_select['VIEWSTATE'] = VIEWSTATE
 
         # print a course
         temp = 0

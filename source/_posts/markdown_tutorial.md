@@ -117,6 +117,15 @@ _斜体_
 
 ![](/images/markdown_tutorial/27.png)
 
+## TODO-list列表
+
+    - [x] Motion design.
+    - [x] Expandable information area.
+
+效果：
+
+- [x] Motion design.
+- [x] Expandable information area.
 
 # 添加超链接、图片
 
