@@ -193,7 +193,7 @@ Win直接安装，ubuntu则需要安装
 
 由于Ubuntu下已经有一个名叫node的库，因此Node.js在ubuntu下默认叫nodejs，需要额外处理一下
 
-	sudo ln -s /usr/bin/nodejs /usr/bin/node
+	sudo ln -s /usr/bin/node /usr/bin/nodejs
 
 # 更新日志
 
