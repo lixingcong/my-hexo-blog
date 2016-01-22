@@ -2,19 +2,20 @@
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
 
-Travis CI: [![Travis CI](https://travis-ci.org/lixingcong/my_hexo_blog.svg?branch=master)](https://travis-ci.org/lixingcong/my_hexo_blog?branch=master)
+Travis CI build status: [![Travis CI](https://travis-ci.org/lixingcong/my_hexo_blog.svg?branch=master)](https://travis-ci.org/lixingcong/my_hexo_blog?branch=master)
+
 使用主题：[Next](https://github.com/iissnan/hexo-theme-next)
 
 # Hexo部署
 
 ## 安装git
 
-[github for windows](https://windows.github.com)
-或者使用绿色版git
-
 ubuntu运行
 
 	sudo apt-get install git
+
+windows可以使用[github for windows](https://windows.github.com)
+或者使用绿色版git
 
 安装后配置一下提交者的邮箱和名字
 
@@ -23,9 +24,9 @@ ubuntu运行
 
 ## 安装node.js
 
-[nodejs.org](http://nodejs.org)
+官网：[nodejs.org](http://nodejs.org)
 
-Win直接安装，ubuntu则需要安装
+ubuntu：
 
 	sudo apt-get install nodejs npm
 
@@ -74,9 +75,9 @@ Win直接安装，ubuntu则需要安装
 
 这里不详述，自己爬文搜索怎么修改配置，毕竟太难总结，我只给出文件位置
 
-+ hexo总配置文件：my_hexo_blog\_config.yml
++ hexo总配置文件：/_config.yml
 
-+ 主题文件：\theme\xxxx\_config.yml
++ 主题配置文件：/theme/xxxx/_config.yml
 
 ## 使用Haroopress(推荐)或者MarkdownPad书写你的博客
 
@@ -86,7 +87,7 @@ Win直接安装，ubuntu则需要安装
 
 [Markdown语法学习](https://www.zybuluo.com/AntLog/note/63228)
 
-日志位置在\source\_posts\，格式为md文件
+日志位置在\\source\\_posts\\，格式为md文件
 
 日志中添加下列代码可以剪短预览
 
@@ -113,8 +114,8 @@ Win直接安装，ubuntu则需要安装
 
 注意只需要提交\public目录下所有文件
 
-	mv public D:\lixingcong.github.io
-	cd d:\lixingcong.github.io
+	cp -R public/* ../lixingcong.github.io
+	cd ../lixingcong.github.io
 
 ### 若是新仓库，需要新建仓库
 
@@ -163,15 +164,32 @@ Win直接安装，ubuntu则需要安装
 
 	tar -zcvf /tmp/my_hexo_blog.tar.gz my_hexo_blog/
 
+### 使用内置deploy部署
+
+修改_config.yml
+
+    deploy:
+      type: git
+      repo: https://github.com/lixingcong/lixingcong.github.io.git # 默认是https
+      branch: master
+
+如果使用ssh部署的，可以改repo为
+
+      git@github.com:lixingcong/lixingcong.github.io.git
+      
+执行即可部署
+
+	hexo deploy
+    
+或者将generate和deploy合成一条命令：
+
+	hexo d -g
+    
 # Some Problems
 
 ### Git Push总是失败？
 
-很明显，被墙了，该补充一下科学上网的知识了
-
-用过shadowsocks，偶尔push成功，不过听说这ss被GFW盯上了，很不稳定
-
-所以尽早肉身翻墙吧骚年！
+很明显，被墙了，可使用ss，v2ray等科学软件
 
 ### Win下的文件名太长？
 
@@ -187,13 +205,19 @@ Win直接安装，ubuntu则需要安装
 
 ### Ubuntu下提示/usr/bin/env: node: 没有那个文件或目录?
 
-出现在hexo new “NEW POST”命令中
+出现在hexo的安装或者写日志情况
 
 解决方法：
 
-由于Ubuntu下已经有一个名叫node的库，因此Node.js在ubuntu下默认叫nodejs，需要额外处理一下
+由于Ubuntu下已经有一个名叫node的库，因此Node.js在ubuntu下默认叫nodejs，创建link即可
+
+若执行nodejs提示未找到命令：
 
 	sudo ln -s /usr/bin/node /usr/bin/nodejs
+    
+若执行node提示未找到命令：
+
+	sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 # 更新日志
 
