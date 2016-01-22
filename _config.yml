@@ -95,8 +95,10 @@ deploy:
 # 社交链接
 social:
   Twitter: https://twitter.com/lixingcong
+  Github: https://github.com/lixingcong
   #Facebook: https://www.facebook.com/xingcong.li
   #Instagram: https://instagram.com/lixingcong_
   
-
-
+# High一下，参考https://github.com/lzlun129/my-hexo-next
+# 全程高能
+high: true

@@ -4,7 +4,7 @@ tags: github
 categories: 读书笔记
 ---
 生成ssh-key可以免密码进入仓库，参考[github官方教程](https://help.github.com/articles/generating-ssh-keys/)
-
+<!-- more -->
 ### 确认重名key
 一、首先看看有没有之前生成的旧key
 
@@ -21,6 +21,11 @@ categories: 读书笔记
 假设生成的自定义ssh-key为私钥 ~/.ssh/id_rsa_github 和 公钥 id_rsa_github.pub。
     
 ### 本地添加私钥
+
+首先重新生成hostname
+
+	ssh-keygen -R github.com
+    
 使得ssh-agent后台运行：
 
 	eval "$(ssh-agent -s)"
