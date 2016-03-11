@@ -12,7 +12,7 @@ categories: 编程
 |-|---|-----|-----|
 |到数字|[进制转换](#进制转换)|[字符转整数](#字符to整数)|[字节串转整数](#字节串to整数)|
 |到字符串|[数字转字符串](#整数to字节串)|[字符串编码解码](#字节串to字符串)|no|
-|到字节码|no|[字符串转字节串](字符串to字节串)|no|
+|到字节码|no|[字符串转字节串](#字符串to字节串)|no|
 
 还有常见的单个字符转换
 
@@ -156,7 +156,33 @@ encode('ascii')，编码为Unicode格式，其实python默认处理字符串存�
 
 	[hex(x) for x in bytes(b'\x01\x0212')]  ==>  ['0x1', '0x2', '0x31', '0x32']
 
+问题：什么时候字符串前面加上'r'、'b'、'r'，其实官方文档有写。我认为在Python2中，r和b是等效的。
 
+The Python 2.x documentation:
+
+> A prefix of 'b' or 'B' is ignored in Python 2; it indicates that the literal should become a bytes literal in Python 3 (e.g. when code is automatically converted with 2to3). A 'u' or 'b' prefix may be followed by an 'r' prefix.
+> 'b'字符加在字符串前面，对于python2会被忽略。加上'b'目的仅仅为了兼容python3，让python3以bytes数据类型(0~255)存放这个字符、字符串。
+    
+The Python 3.3 documentation states:
+
+> Bytes literals are always prefixed with 'b' or 'B'; they produce an instance of the bytes type instead of the str type. They may only contain ASCII characters; bytes with a numeric value of 128 or greater must be expressed with escapes.
+> 数据类型byte总是以'b'为前缀，该数据类型仅为ascii。
+
+下面是stackflow上面一个回答。我觉得不错，拿出来跟大家分享
+
+In Python 2.x
+> Pre-3.0 versions of Python lacked this kind of distinction between text and binary data. Instead, there was:
+
+> - unicode = u'...' literals = sequence of Unicode characters = 3.x str
+> - str = '...' literals = sequences of confounded bytes/characters
+Usually text, encoded in some unspecified encoding.
+But also used to represent binary data like struct.pack output.
+
+
+Python 3.x makes a clear distinction between the types:
+
+> - str = '...' literals = a sequence of Unicode characters (UTF-16 or UTF-32, depending on how Python was compiled)
+> - bytes = b'...' literals = a sequence of octets (integers between 0 and 255)
 
 鸣谢
 本文转载自csdn博客的[《python常用的十进制、16进制、字符串、字节串之间的转换》](http://blog.csdn.net/crylearner/article/details/38521685)。
