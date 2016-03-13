@@ -194,6 +194,8 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 	vi /etc/default/shadowvpn
     CONFIG 改为 /etc/shadowvpn/client.conf 保存
     /etc/init.d/shadowvpn restart
+    # （可选步骤）禁止开机自启动
+    # sudo update-rc.d shadowvpn disable
 
 若是编译安装，直接运行进程
 
