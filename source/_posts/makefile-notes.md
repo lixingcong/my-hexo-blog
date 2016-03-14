@@ -18,6 +18,10 @@ Makefile是帮助我们进行编译的工具，可以简化流程，易于维护
 
     targets : prerequisites
         command
+        
+Makefile严格规定需要Tab缩进，否则提示
+
+	Makefile:88: *** 遗漏分隔符 。 停止。
 
 1.显式推导那几个文件，具有相同依赖
 	
@@ -181,7 +185,7 @@ clean目标的编写
  
  	No rules to make target for 'couter.c' needed by counter_words.o, Stop.
     
-即找不到文件，指定Vpath即可找到文件
+即找不到文件，指定VPATH（大写）即可找到文件
 
 	VPATH=src
     
@@ -197,9 +201,10 @@ clean目标的编写
 VPATH的特性：
 - 空格分隔多个目录
 - 若搜索过程中出现多个结果，自动摘取第一个结果，若想精确匹配：
-		vpath %.c src
-        vpath %.h inc
-        vpath %.l src
+
+		VPATH %.c src
+        VPATH %.h inc
+        VPATH %.l src
         
         
 ### 静态模式
@@ -262,7 +267,9 @@ include前面有个-号，用途是禁用include警告，可以去掉看看效�
 	-include $(subst .c,.d,$(SOURCES))
     
 
-### 一个简单的例子
+### 应用例子
+
+#### 简单的练习
 
 (所有文件都放在相同文件夹中)
 注意提示“遗漏分隔符”，即为缺少Tab缩进，GNU规定必须使用TAB分隔而不是四个空格。
@@ -304,6 +311,90 @@ Makefile中的内容：
         
     $(OBJS):$(SRC)
         $(CC) -c $^ $(CFLAG)
+
+    .PHONY:clean
+    clean:
+        rm *.o
+        rm main
+        
+#### 链接静态库的例子
+
+首先区分一下静态库和动态库区别
+
+Shared libraries are .so (or in Windows .dll, or in OS X .dylib) files. 
+
+> All the code relating to the library is in this *.so file, and it is referenced by programs using it at run-time. A program using a shared library only makes reference to the code that it uses in the shared library.
+
+Static libraries are .a (or in Windows .lib) files. 
+
+> All the code relating to the library is in this file, and it is directly linked into the program at compile time. A program using a static library takes copies of the code that it uses from the static library and makes it part of the program. [Windows also has .lib files which are used to reference .dll files, but they act the same way as the first one].
+
+在做到斯坦福公开课Week 5的课程编程作业时，用到了C的一个大数库GMP（就是相当于Java的BigNum类），使用Eclipse编译必须手写Makefile，所以有了下面这个例程。
+注意链接静态库时什么时候使用-L什么时候使用-l
+
+使用静态库方法
+
+1. 使用路径，如
+
+	g++ test.o ./libtest.a -o test.out
+  
+2. 使用 -L 设置文件路径，-l 代表库名，例文件为 libtest.a 则参数为 -ltest
+
+	g++ test.o -L./ -llog -L/usr/local/lib -lboost_thread -o test.out
+
+但是：使用 -L -l 会带来一个问题，该方式不指定链接库类型，即静态or动态（.a or .so），且优先链接动态库。
+因为我电脑已经下载了libgmp的源码并且编译安装到/usr/local/lib了，如果找不到这个库地址可以临时导出linker的变量：
+
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+目录结构：
+
+    ../
+    |--Makefile
+    |--src/
+       |--main.cpp
+    
+    /usr/local/lib
+        |--libgmp.a
+        |--libgmp.a
+        |--libgmp.la
+        |--libgmp.so
+        |--libgmp.so.10
+    
+    /usr/local/include/
+        |--gmp.h
+        
+main.cpp内容：
+
+    #include <iostream>
+    #include <gmp.h>
+    using namespace std;
+    int main() {
+        char result[200];
+        mpz_t a, b, res;
+        mpz_init(res);
+        mpz_init_set_str(a,"123456789123456789123456789",10);
+        mpz_init_set_str(b,"100000000000000000", 10);
+        mpz_sub(res, a, b);
+        mpz_get_str(result, 10, res);
+        cout << result << endl;
+        return 0;
+    }
+    
+Makefile内容：
+
+    CC=g++
+    VPATH = src
+    LIBS = -lgmp 
+
+    SRC=main.cpp
+    OBJS=main.o 
+
+    all:$(OBJS)
+        $(CC) $^ $(LIBS) -o main
+
+    $(OBJS):$(SRC)
+        $(CC) -c $(LIBS) $^ -o $@
 
     .PHONY:clean
     clean:

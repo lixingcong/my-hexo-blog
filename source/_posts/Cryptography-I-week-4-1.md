@@ -185,7 +185,7 @@ categories: [编程]
         if is_last_block and msg:
             print "After cutting padding off, the last block is:\n%r" % msg[:-(start_byte - 1)]
 
-##参考文章
+## 参考文章
 
 [CBC-Padding-Oracle-Attacks Standford Coursera](http://seffyvon.github.io/cryptography/2014/08/20/CBC-Padding-Oracle-Attacks)
 [MOOC总结密码学assignment](http://mooc.guokr.com/note/9413/)
