@@ -141,6 +141,11 @@ HEAD指针可以理解为最近一次的提交。
     git reset v1.4
     git bisect good
 
+查看某个文件在某次Commit的完整内容（比如前2个提交）
+
+	git show master~2:src/main.cpp
+
+
 ### 相对提交名
 有时候使用相对提交名，以确定【相对本次提交】的【前某次提交】。
 
