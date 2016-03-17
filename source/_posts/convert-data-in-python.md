@@ -106,7 +106,7 @@ struct中支持的格式如下表
 
 
 ### 字符串to字节串
-
+[我用c++实现的encode(hex)和decode(hex)](#CPP实现encode)
 *decode和encode区别*
 
 decode函数是重新解码，把CT字符串所显示的69dda8455c7dd425【每隔两个字符】解码成十六进制字符\x69\xdd\xa8\x45\x5c\x7d\xd4\x25
@@ -189,6 +189,38 @@ Python 3.x makes a clear distinction between the types:
 
 > - str = '...' literals = a sequence of Unicode characters (UTF-16 or UTF-32, depending on how Python was compiled)
 > - bytes = b'...' literals = a sequence of octets (integers between 0 and 255)
+
+### CPP实现encode
+就是做个笔记，毕竟在做题Cryptography时候用c++写字符串的处理很蛋疼！为了防止再次造轮子，记下来。
+
+	#include <cstring> //用到strlen函数
+    static unsigned char ByteMap[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8','9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    unsigned char hex_2_dec(unsigned char c){
+        if(c >= '0' && c <= '9') return c - '0';
+        if(c >= 'a' && c <= 'f') return c - 'a' + 10;
+    }
+
+    void str_encode(unsigned char *src, unsigned char *dest, int len_of_src) {
+        // 使用注意：dest_len >= 2*len_src +1，最后一位是存放'\0'。
+        int t1;
+        for (int i = 0; i < len_of_src; ++i) {
+            t1 = (int) src[i];
+            dest[2 * i] = ByteMap[t1 / 16];
+            dest[2 * i + 1] = ByteMap[t1 % 16];
+        }
+        dest[2 * len_of_src] = 0; //必须填充最后一个为'\0'
+    }
+
+    void str_decode(unsigned char *src,unsigned char *dest){
+        int len_of_src=strlen((char *)src);
+        unsigned char t1;
+        for(int i=1;i<=len_of_src;i+=2){
+            t1=hex_2_dec(src[i-1]);
+            t1= 16*t1 + hex_2_dec(src[i]);
+            dest[i/2]=t1;
+        }
+    }
 
 鸣谢
 本文转载自csdn博客的[《python常用的十进制、16进制、字符串、字节串之间的转换》](http://blog.csdn.net/crylearner/article/details/38521685)。
