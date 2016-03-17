@@ -67,6 +67,22 @@ chmod 可以使用数字形式或者符号形式：
 
 pwd对应系统变量PWD
 
+@ruanyf的奇淫技巧：有关显示目录的命令：
+
+- 只显示普通目录，不显示隐藏目录
+
+	ls -d */
+    ls -F | grep /
+    ls -l | grep ^d
+
+- 只显示隐藏目录，不显示普通目录
+
+	ls -d .*/
+    
+- 显示所有目录，不显示文件
+
+	find -maxdepth 1 -type d
+
 ## ln
 
 实现文件符号链接，硬链接。相当于windows的mklink
