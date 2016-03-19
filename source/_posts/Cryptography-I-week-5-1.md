@@ -37,7 +37,7 @@ categories: [编程]
 自己按照要求实现了一下，第一次是失败了，输出了错误的x1和x0，后来参考了一下[他的java代码](http://groglogs.blogspot.com/2013/12/java-compute-discrete-logarithm.html)，通过不停打印和对比中间结果，我发现自己思维上走了歪路。最后重构耗时一天半结果出来了。运行时间还能接受，我C++跑了24秒，而他的java代码跑了两分钟。。。可以看出两种语言的性能差异。
 
 ## 源码
-使用[libsodium](https://github.com/jedisct1/libsodium)和[libgmp](https://gmplib.org/)这两个库，前者是大多数梯子的crypto库首选，后者是最留行的大数运算库。
+使用[libsodium](https://github.com/jedisct1/libsodium)和[libgmp](https://gmplib.org/)这两个库，前者是大多数梯子的crypto库首选，后者是流行的GNU高精度运算库。
 C++源码：
 
     #include <iostream>
