@@ -1,98 +1,73 @@
 <!doctype html>
-<html class="theme-next {% if theme.use_motion %}use-motion{% endif %} {% if theme.scheme %}theme-next-{{ theme.scheme | lower }}{% endif %}">
-<head>
-    {% include '_partials/head.swig' %}
-    <title>{% block title %}{% endblock %}</title>
-</head>
-<body itemscope itemtype="http://schema.org/WebPage" lang="{{ config.language }}">
-{% include '_partials/old-browsers.swig' %}
-{% include '_scripts/analytics.swig' %}
 
-<div class="container one-column {% block page_class %}{% endblock %}">
+{% set html_class = 'theme-next ' + theme.scheme %}
+{% if theme.use_motion %}
+  {% set html_class = html_class + ' use-motion' %}
+{% endif %}
+
+<html class="{{ html_class | lower }}">
+<head>
+  {% include '_partials/head.swig' %}
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="{{ config.language }}">
+
+  {% include '_scripts/third-party/analytics.swig' %}
+
+  {% set container_class = "container one-collumn " %}
+  {% if theme.sidebar.position %}
+    {% set container_class = container_class + 'sidebar-position-' + theme.sidebar.position %}
+  {% endif %}
+
+  <div class="{{ container_class }} {% block page_class %}{% endblock %} ">
     <div class="headband"></div>
+
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-        <div class="header-inner">
-            {%- include '_partials/header.swig' %}
-        </div>
+      <div class="header-inner"> {%- include '_partials/header.swig' %} </div>
     </header>
 
     <main id="main" class="main">
-        <div class="main-inner">
-            <div id="content" class="content">
-                {% block content %}{% endblock %}
-            </div>
-
-            {% if (theme.duoshuo_hotartical and page.title) %}
-                <!-- 多说热评文章-->
-                <p>热评文章</p>
-                <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-            {% endif %}
-
-            {% if page.comments %}
-              <div class="comments" id="comments">
-                {% if (config.duoshuo and config.duoshuo.shortname) or config.duoshuo_shortname %}
-                  <div class="ds-thread" data-thread-key="{{ page.path }}"
-                       data-title="{{ page.title }}" data-url="{{ page.permalink }}">
-                  </div>
-                {% elseif config.disqus_shortname %}
-                  <div id="disqus_thread">
-                    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                  </div>
-                {% endif %}
-              </div>
-            {% endif %}
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            {% block content %}{% endblock %}
+          </div>
+          {% include '_partials/duoshuo-hot-articles.swig' %}
+          {% include '_partials/comments.swig' %}
         </div>
-
-        {% block sidebar %}{% endblock %}
+        {% if theme.sidebar !== 'remove' %}
+          {% block sidebar %}{% endblock %}
+        {% endif %}
+      </div>
     </main>
 
     <footer id="footer" class="footer">
-        <div class="footer-inner">
-            {% include '_partials/footer.swig' %}
-        </div>
+      <div class="footer-inner">
+        {% include '_partials/footer.swig' %}
+      </div>
     </footer>
 
-    <div class="back-to-top"></div>
-</div>
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
 
-<script type="text/javascript" src="{{ url_for(theme.vendors) }}/jquery/index.js?v=2.1.3"></script>
+  {% include '_scripts/vendors.swig' %}
+  {% include '_scripts/commons.swig' %}
 
-  {# This block is used to set options before any other scripts run #}
-  {% block script_extra_before %}{% endblock %}
-  {% block comment_system %}
-    {% include '_scripts/comments/duoshuo.swig' %}
-    {% include '_scripts/comments/disqus.swig' %}
-  {% endblock %}
-  {% include '_scripts/fancy-box.swig' %}
-  {% include '_scripts/helpers.swig' %}
-  {% include '_scripts/motion.swig' %}
-  <script type="text/javascript" src="{{ url_for(theme.js) }}/search-toggle.js"></script>
+  {% set scheme_script = '_scripts/schemes/' + theme.scheme | lower + '.swig' %}
+  {% include scheme_script %}
 
-{% block script_extra %}{% endblock %}
+  {% block script_extra %}{% endblock %}
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        if (CONFIG.sidebar === 'always') {
-            displaySidebar();
-        }
-    });
-</script>
+  {% include '_scripts/boostrap.swig' %}
 
-{% include '_scripts/mathjax.swig' %}
-{% block comment_system %}{% endblock %}
+  {% include '_scripts/third-party/comments.swig' %}
+  {% include '_scripts/third-party/tinysou.swig' %}
+  {% include '_scripts/third-party/localsearch.swig' %}
+  {% include '_scripts/third-party/mathjax.swig' %}
+  {% include '_scripts/third-party/lean-analytics.swig' %}
 
-
-{% include '_scripts/baidushare.swig' %}
-
-<!-- lazyload -->
-<script type="text/javascript" src="{{ url_for(theme.js) }}/lazyload.js"></script>
-<script type="text/javascript">
-    jQuery(function () {
-        jQuery("#posts img").lazyload({
-            placeholder: "{{ url_for(theme.images) }}/loading.gif",
-            effect: "fadeIn"
-        });
-    });
-</script>
 </body>
 </html>

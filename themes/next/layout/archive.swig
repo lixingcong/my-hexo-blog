@@ -2,7 +2,7 @@
 {% import '_macro/post-collapse.swig' as post_template %}
 {% import '_macro/sidebar.swig' as sidebar_template %}
 
-{% block title %} {{ __('title.archive') }} // {{ config.title }} {% endblock %}
+{% block title %} {{ __('title.archive') }} | {{ config.title }} {% endblock %}
 
 {% block page_class %} page-archive {% endblock %}
 
@@ -53,13 +53,6 @@
   {{ sidebar_template.render(false) }}
 {% endblock %}
 
-{% block script_extra_before %}
-  {% if theme.use_motion %}
-    <script type="text/javascript">
-      postMotionOptions = {stagger: 100, drag: true};
-    </script>
-  {% endif %}
-{% endblock %}
 
 {% block script_extra %}
   {% if theme.use_motion %}

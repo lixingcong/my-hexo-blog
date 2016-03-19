@@ -79,7 +79,7 @@ tag_generator:
 # Extensions
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
-theme: pisces
+theme: next
 
 
 # Deployment
