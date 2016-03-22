@@ -35,11 +35,11 @@ ubuntu：
 
 ### 若是全新的仓库：
 
-	mkdir my_hexo_blog.git
+	mkdir my_hexo_blog
 
 ### 若是克隆回来的仓库
 
-	git clone https://github.com/lixingcong/my_hexo_blog.git
+	git clone https://github.com/lixingcong/my_hexo_blog
 
 
 ## 安装hexo并初始化
@@ -49,7 +49,7 @@ ubuntu：
     
 把hexo的模块modules安装到blog文件夹下
 
-	cd my_hexo_blog.git
+	cd my_hexo_blog
 	sudo npm install hexo --save
 
 此时目录出现modules文件夹
@@ -78,6 +78,8 @@ ubuntu：
 + hexo总配置文件：/_config.yml
 
 + 主题配置文件：/theme/xxxx/_config.yml
+
+我使用的是Next主题
 
 ## 使用Haroopress(推荐)或者MarkdownPad书写你的博客
 
@@ -173,7 +175,8 @@ ubuntu：
       repo: https://github.com/lixingcong/lixingcong.github.io.git # 默认是https
       branch: master
 
-如果使用ssh部署的，可以改repo为
+如果是你已经建立ssh连接并将公钥上传到github，可以一键部署。
+使用ssh部署的，可以改repo为
 
       git@github.com:lixingcong/lixingcong.github.io.git
       
@@ -189,7 +192,7 @@ ubuntu：
 
 ### Git Push总是失败？
 
-很明显，被墙了，可使用ss，v2ray等科学软件
+很明显，被墙了，可使用ss，v2ray等科学软件，开启全局代理
 
 ### Win下的文件名太长？
 
