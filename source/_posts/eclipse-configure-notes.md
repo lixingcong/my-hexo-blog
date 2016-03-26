@@ -44,7 +44,6 @@ pydev->Save Action->勾选Auto-format editor contents before saving
 
 	http://www.eclipse.org/cdt/downloads.php
 
-发觉CDT的字体设置不能记住，每次重启就丢失字体配置。。。囧
 
 使用GMP库（C/C++），先从官网编译:
 
@@ -155,3 +154,10 @@ ALT+L自动打开、关闭注释：
 可以设置快捷键build project和run
 
 如果发现consule中很多无关工程的编译错误，可以点击右侧的向下三角形，Show->Errors/Warings on project
+
+#### 更换字体
+
+首先确保General->Appearance中的“Color And Font theme”为Default，否则每次重启程序都会重置字体。
+
+在General->Appearance->Colors and Fonts右侧指定General->Default Fonts。将覆盖每一个模式的字体。
+
