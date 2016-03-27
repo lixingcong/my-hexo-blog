@@ -66,6 +66,30 @@ CDT进行自动补全有点麻烦，没有pydev那么智能。
 
 其实可以bind一个Alt+C到content assist，所有环境下触发按键自动补全
 
+#### jdt
+
+首先记得要在系统变量加上classpath。将当前目录设置为默认classpath
+
+	vi .bashrc
+    export CLASSPATH=.:$CLASSPATH
+    
+java工程新建后记得勾选"工程自动编译"，否则点击执行java就会提找不到主类。
+
+	Project->Build Automatically
+    
+在百度和谷歌上面有大量类似的帖子求助如何解决找不到主类的，现象：
+
+> “Error: Could not find or load main class”
+
+#### adt
+
+官方已经将android的默认IDE更换为Android Studio了，下载AS，安装各种sdk，大约占用2GB空间。
+注意先安装兼容32位的c++库
+
+	sudo apt-get install lib32stdc++6
+
+Android Studio优点就是贴近安卓，专门为安卓开发打造，但是比起eclipse貌似少了一些功能。。。为了及时更新sdk，我还是得使用AS作为安卓开发的IDE。
+
 ### 其他插件
 
 #### emacs+按键布局
