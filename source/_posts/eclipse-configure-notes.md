@@ -93,6 +93,18 @@ ubuntu的GTK安装这个color conf，因为14.04默认的gtk3很蛋疼，某些�
     
 装完后可以在Genarel->Appereance->Jeeeyul's Theme进行预置调色和手动调色
 
+#### jd-gui
+
+这是一个apk的class反汇编工具，[项目地址](https://github.com/java-decompiler/jd-eclipse)，配合java开发环境，和apktool解包成Jar即可查看apk源码
+
+首先下载release（在github页面)，然后打开software install 点击添加(Add)->压缩包(Archive)，定位到下载回来的压缩包。然后正常安装即可。遇到网络不通就挂vpn
+
+配置：
+Click on "Window > Preferences > General > Editors > File Associations"
+- "*.class" :确保选择JD编辑器为默认 "Class File Viewer"
+- "*.class without source" :确保选择默认 "JD Class File Viewer"
+
+使用方法：打开一个java工程，选择任意一个class文件，双击即可看到源码
 
 ### 其余优化选项
 #### 启动项
