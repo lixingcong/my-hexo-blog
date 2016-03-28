@@ -16,22 +16,22 @@ categories:	读书笔记
 
 ### 记下视频文件名
 
-在微信随意拍摄一个小视频，选择临时保存小视频。记下如下目录中的视频文件名。文件名是128bit的MD5格式。（实际上不是视频的md5值）
+在微信随意拍摄一个小视频，选择临时保存小视频。记下如下目录中的视频文件名。文件名是128bit的MD5格式。（实际上不是视频的md5值），其中没有后缀的是视频文件。有thumb后缀的是缩略图，缩略图可以替换。
 
 	/sdcard/tencent/MicroMsg/xxxxxxxxxxxxxxxx/draft/
 
-PS：上面xxxxxxxxxxxxxxxx随是每个账号变化不一样，一般是128bit的长度。
+PS：上面xxxxxxxxxxxxxxxx每个账号变化不一样，一般是128bit的长度（32字节）。比如我的就是748a453710c416e0bd000e011706f2c4
 
 ### 拷贝数据库
 
-要求root，否则打不开data文件夹，听说未root的机器可以开发者模式把data文件夹弄出来，我没试过。
+拷贝操作要求root手机，否则打不开data文件夹，听说未root的机器可以开发者模式把data文件夹弄出来，我没试过。
 
 拷贝下面两个文件到电脑同一个文件夹中
 
 	/data/data/com.tencent.mm/MicroMsg/xxxxxxxxxxxxxxxx/EnMicroMsg.db
 	/data/data/com.tencent.mm/shared_prefs/system_config_prefs.xml
 
-### python脚本解密
+### python解密sql
 
 下载我写的这个python脚本，这是我参考[How To Decrypt WeChat EnMicroMsg.db Database][0]文章中的脚本的，我添加了加密数据库的功能，方便打包返回微信data文件夹。关键代码仅作部分删除工作
 
@@ -44,7 +44,7 @@ python脚本依赖第三方库：[sqlcipher](https://www.zetetic.net/sqlcipher/)
 
 然后使用数据库软件比如[SQLiteStudio](http://sqlitestudio.pl/)打开这个解密的数据库。修改表SightDraftInfo，将已经拍摄到的小视频正确的文件对应的md5数据替换为自己想要发送的视频md5。md5的获取可以使用流行的md5校验软件。
 
-### python脚本加密
+### python加密sql
 
 运行fmd_wetchatdecipher.py，输入你的IMEI号码，选择加密，则生成EnMicroMsg-encrypted-NEW.db，把它改名替换原先的EnMicroMsg.db，记得删掉手机上的EnMicroMsg.db.ini，该文件是对数据库的md5校验。
 
@@ -55,7 +55,7 @@ python脚本依赖第三方库：[sqlcipher](https://www.zetetic.net/sqlcipher/)
 
 ## 原理
 
-参考[How To Decrypt WeChat EnMicroMsg.db Database][0]，个人仅作翻译
+解密原理我是参考[How To Decrypt WeChat EnMicroMsg.db Database][0]，本人仅作翻译
 
 ### EnMicroMsg.db与SQLCipher
 
@@ -72,14 +72,15 @@ EnMicroMsg.db是微信的单个账号数据库，存放各种聊天记录，联�
 
 ### key的获取
 
-![](/images/wechat_decrypt_database/key-generate.png)
 key的生成公式：
 
 	KEY = MD5( IMEI + UIN ) [0:7]
 
+因此我们可以导入IMEI和UIN实现python解密数据库。
+    
 ![](/images/wechat_decrypt_database/key-generate.png)
 
-因此我们可以导入IMEI和UIN实现python解密数据库。
+![](/images/wechat_decrypt_database/key-generate2.png)
 
 ### 微信安全性启示
 
