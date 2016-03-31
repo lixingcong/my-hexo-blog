@@ -42,6 +42,10 @@ categories: 编程
     sudo hwclock --show //显示cmos中的时间
     sudo date	 //显示当前时间
 
+网上看到另一种方法：手动设置时区
+
+	dpkg-reconfigure tzdata
+    
 ## 开机自动挂载ntfs
 目的是开机自动挂载某个ntfs卷。首先安装gparted看看你的卷是/dev/sdxx多少。然后
 

@@ -66,6 +66,11 @@ CDT进行自动补全有点麻烦，没有pydev那么智能。
 
 其实可以bind一个Alt+C到content assist，所有环境下触发按键自动补全
 
+设置运行前，先编译，免除每次都要多按编译按钮
+
+	Preference-> Run/debug-Lauching-> build before run(if required)
+	
+
 #### jdt
 
 首先记得要在系统变量加上classpath。将当前目录设置为默认classpath
