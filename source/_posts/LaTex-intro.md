@@ -12,9 +12,10 @@ categories: 网络
 对于hexo博客框架：首先更改next主题中的mathjax库的URL，MathJax2.4版有些许bug：显示尾随的竖线。
 
 	vi themes/next/layout/_scripts/third-party/mathjax.swig
-	删掉
-    if config.language === 'zh-Hans'到配对的endif
-    替换为
+	从
+    if config.language === 'zh-Hans'
+    到配对的endif标签
+    替换为固定的js链接：
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 ## 符号定义
@@ -38,6 +39,14 @@ categories: 网络
 |异或|语法|或|语法|与|语法|
 |---|---|---|---|---|---|
 |$\oplus$|\oplus|$\vee$|\vee|$\wedge$|\wedge|
+
+#### 绝对值
+
+直接插入竖线|即可，使用\left和\right标签指定竖线的垂直长度。
+
+$\left| \sum_i \vec{v}_i \left|\Delta t_i\right|  \right|$
+
+	代码：\left| \sum_i \vec{v}_i \left|\Delta t_i\right|  \right|
 
 #### 分式
 
@@ -124,7 +133,21 @@ $\left(\frac{a}{x} \right)^2$ 语法：\left(\frac{a}{x} \right)^2
 |$\lfloor$|\lfloor|$\rfloor$|\rfloor|
 |$\lceil$|\lceil|$\rceil$|\rceil|
 
-### 其他
+### 空格
+LaTex默认是省略空格，要输入空格就得自己输入命令，mu是一个数学单位。
+
+|效果|说明|语法|
+|--|--|--|
+|$a \quad b$|空格宽度是当前字宽(18mu)|\quad|
+|$a \, b$|空格宽度是3mu|\,|
+|$a \: b$|空格宽度是4mu|\:|
+|$a \; b$|空格宽度是5mu|\;|
+|$a \! b$|空格宽度是-3mu(向左缩)|\\!|
+|$a \ b$|空格宽度是标准空格键效果|在\后面敲一个空格|
+|$a \qquad b$|空格宽度是36mu|\qquad|
+
+
+### 其他符号
 
 |符号|语法|符号|语法|符号|语法|
 |---|---|---|---|---|---|
