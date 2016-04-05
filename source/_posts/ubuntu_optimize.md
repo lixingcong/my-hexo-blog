@@ -54,7 +54,13 @@ categories: 编程
 
 在文件中加入挂载命令
 
-	/dev/sdxx /media/USER/NTFS ntfs defaults,locale=zh_CN.UTF-8 0 0 
+	/dev/sda6 /media/USER/NTFS ntfs defaults,locale=zh_CN.UTF-8 0 0 
+	
+这样得到的权限是600，即用拥有者只能读写。其他人都不能读写。如果想要更大的权限，可以添加umask
+
+	/dev/sda6 /media/USER/NTFS ntfs defaults,user,uid=1000,gid=1000,umask=022,locale=zh_CN.UTF-8 0 0
+	
+如果禁止自动挂载，可以添加noauto标志，每次手动挂载都会执行fstab里面的命令。
 
 ## 转移chrome缓存
 
