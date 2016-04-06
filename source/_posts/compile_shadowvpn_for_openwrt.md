@@ -4,7 +4,7 @@ tags: shadowsocks
 categories: 网络
 ---
 实验目的：尝试编译ShadowVPN，使其在路由器上面运行。配合Chinadns达到分流
-操作平台: VPS ubuntu 14.04 x64 (512M)
+操作平台: ubuntu 14.04 x64 (RAM 128M)
 ~~若用国内的主机编译的话，网速太蛋疼，下载东西老是超时~~
 <!-- more -->
 当然，大多数人不需要折腾了，有[预编译版本](https://github.com/aa65535/openwrt-shadowvpn)可以直接下载，我的目的是学习一下基本的SDK编译过程
@@ -24,7 +24,7 @@ categories: 网络
 
 ### 获取openwrt源码
 
-以15.05为例。其他发行版分支可以在[openwrt源码](http://git.openwrt.org/)查看。
+建议使用15.05或以上版本。其他发行版分支可以在[openwrt源码](http://git.openwrt.org/)查看。
 
 克隆源码
 
@@ -42,31 +42,6 @@ categories: 网络
 	make defconfig
 	make prereq
     
-### 获取工具链
-
-不同平台对应不同的工具链，我的路由器是WR703n，对应AR71xx平台，如果你的路由器是MT7620或者其他的，请到[openwrt官网下载](http://downloads.openwrt.org/)对应的toolchain-gcc。
-
-下面所有步骤以ar71xx为例。
-
-    cd ~
-    wget http://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/OpenWrt-SDK-15.05-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
-    tar xjf OpenWrt-SDK-15.05-ar71xx-generic*.bz2
-    cd OpenWrt-SDK-15.05-ar71xx-generic*
-    cp -R staging_dir ~/openwrt
-    
-设置系统变量
-
-    export STAGING_DIR=/home/test/openwrt/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2
-    export PATH=$PATH:$STAGING_DIR/bin
-    
-测试系统变量是否有效：
-
-    mips-openwrt-linux-gcc
-    
-如果command not found需要重新检查设置变量
-提示fatal error: no input files即为正确结果
-
-如果你的路由器是mt7620，那么对应的检查命令是mipsel-openwrt-linux-gcc，详细步骤跟上面类似。
 
 ## 处理shadowvpn源码
 
@@ -90,7 +65,7 @@ categories: 网络
     
 ### 二次打包
     
-打包为tar.gz文件。目的是集成libsodium。
+打包为tar.gz文件。目的是集成libsodium进tar文件。
 	
     tar -cvzf /tmp/ShadowVPN-modify-1.0.tar.gz /tmp/ShadowVPN-modify-1.0/
     
@@ -102,31 +77,56 @@ categories: 网络
     git init
     git config --global user.name "xx"
     git config --global user.email "xx@xx.com"
-    git add *
+    git add .
     git commit -m "Before patched"
     
-按照[openwrt-shadowvpn项目](https://github.com/aa65535/openwrt-shadowvpn/blob/master/patches/000-fix-autoconf.patch)中的patch文件，修改/tmp/ShadowVPN-modify-1.0/下面对应的四个文件，命令：
+按照[openwrt-shadowvpn项目](https://github.com/aa65535/openwrt-shadowvpn/blob/master/patches/000-fix-autoconf.patch)中的patch文件，修改/tmp/ShadowVPN-modify-1.0/下面对应的四个文件：
 
-    vi Makefile.am
-    vi configure.ac
-    vi libsodium/Makefile.am
-    vi libsodium/configure.ac
+vi Makefile.am
+
+	找到EXTRA_DIST = \
+	删掉README.md和COPYING
+	找到SUBDIRS
+	删掉samples
+
+vi configure.ac
+
+	找到AC_CONFIG_FILES([Makefile src/Makefile samples/Makefile])
+	把后面的samples/Makefile删掉
+	
+vi libsodium/Makefile.am
+
+	找到EXTRA_DIST = \
+	删掉其下的内容，只保留autogen.sh
+	找到SUBDIRS = \
+	删掉其下的内容，只保留src
+	
+vi libsodium/configure.ac
+
+	找到AC_CONFIG_FILES([Makefile
+	删掉这些行：
+	dist-build/Makefile
+	libsodium-uninstalled.pc
+	msvc-scripts/Makefile
+	test/default/Makefile
+	test/Makefile
 
 只需根据patch删掉对应行就可以了
 提交更改
 
-	git commit -m "patched!"
+	git add .
+	git commit -am "patched!"
     
-查看SHA散列值：记下patch前后的散列值前六位
+查看SHA散列值：记下patch前后的散列值前七位
 
     git log
     git diff BEFORE_ID AFTER_ID > /tmp/modify.patch
     
 生成的patch文件暂时放在/tmp下面
     
-### 获取openwrt-openwrt源码
+### 获取shadowvpn-openwrt源码
 
-其实并不是源码，只是借openwrt-shadowvpn来编译含有patch的软件包
+其实并不是源码，只是借openwrt-shadowvpn这个工程（包含了很多适配脚本和init脚本）来编译含有patch后的op软件包
 
 移动源码至dl目录。目的是制造假象：已经下载源码
 
@@ -146,15 +146,47 @@ categories: 网络
 
     PKG_NAME:=ShadowVPN-modify
     PKG_VERSION:=1.0
-    PKG_SOURCE_URL:=/home/test/openwrt/dl/$(PKG_VERSION)
+    PKG_SOURCE_URL:=/home/test/openwrt/dl/${PKG_VERSION}
     
 注释PKG_MD5SUM校验，防止出错。
 
-这样效果就是不需要每次从openwrt-shadowvpn上面下载源码了。可以编译自定义的源码
+这样效果就是不需要每次从openwrt-shadowvpn的release页面下载源码了。可以编译自定义的源码
 
 ## 编译
 
 编译过程大同小异，对所有软件（包括shadowsocks-libev,chinadns)都是类似的。
+
+### 获取工具链
+
+不同平台对应不同的工具链，我的路由器是WR703n，对应AR71xx平台，如果你的路由器是MT7620或者其他的，请到[openwrt官网下载](http://downloads.openwrt.org/)对应的toolchain-gcc。
+
+请带上你脑袋，根据实际路径和路由机型更改，不要抄袭我，跟我一样的配置！
+
+下面所有命令以ar71xx为例。
+
+    cd ~
+    wget http://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/OpenWrt-SDK-15.05-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
+    tar xjf OpenWrt-SDK-15.05-ar71xx-generic*.bz2
+    cd OpenWrt-SDK-15.05-ar71xx-generic*
+    cp -R staging_dir ~/openwrt
+    
+设置系统变量
+
+    export STAGING_DIR=/home/test/openwrt/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2
+    export PATH=$PATH:$STAGING_DIR/bin
+    
+测试AR71xx的gcc是否有效：
+
+    mips-openwrt-linux-gcc
+    
+如果command not found需要重新检查设置变量
+提示fatal error: no input files即为正确结果，可以进行下一步（配置目标）
+
+注意：如果你的路由器是MT7620，那么
+
+	toolchain目录是 toolchain-mipsel_24kec+dsp_gcc..
+	检查MTK gcc是否生效的命令是 mipsel-openwrt-linux-gcc
+
 
 ### 配置目标
 
@@ -168,7 +200,9 @@ categories: 网络
     ＃ Target Profile: (因我们只是编译包，这步可以不选)
     ＃ Network->ShadowVPN：按m设置为编译独立ipk安装包
 
-连按esc两次，然后退出保存config文件，默认即可
+连按esc两次，再按esc两次，然后退出保存config文件，默认回车即可
+
+注意：MT7620的Target System是"Ralink RT288x/RT3xxx"再选subtarget MT7620
 
 ### 最后一步
 
