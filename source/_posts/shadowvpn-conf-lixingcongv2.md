@@ -282,14 +282,34 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 
 对于 DNS 污染，可以直接使用 Google DNS 8.8.8.8，或者使用 ChinaDNS 综合使用国内外 DNS 得到更好的解析结果。
 
-可以采用Chinadns设置上游服务器114.114.114.114,8.8.8.8，然后让dns走加密隧道
-我记得默认配置就能走加密隧道了。
-
-    route add -host 8.8.8.8 dev tunX （tunX是你ShadowVPN的interface） 
-   
-路由追踪一下是否走Shadowvpn：
+最傻瓜的抗污染：使用Chinadns设置上游服务器114.114.114.114,8.8.8.8，然后让dns走加密隧道
+路由追踪一下是否走Shadowvpn,正常来说应该能走你的vps路由。
 
 	traceroute 8.8.8.8 
+
+在实际使用中，发觉ChinaDNS偶尔会阻塞，具体表现为无法获得国外ip，我也搞不清是什么原因
+
+另一种方式是使用dnsmasq，使用openwrt预装的dnsmasq可以指定某些域名走shadowvpn的DNS解析，而我使用的是dnsmasq-full，比openwrt预装版多了ipset功能，效率更高。比ChinaDNS工作要稳定！推荐大家使用。
+
+最近发现[@aa65535]()的dnsmasq项目也是很吊，直接修改dnsmasq-full为其增加两个很好用的功能，可以指定ip黑名单，而且能指定缓存时间。所以我把chinadns删掉了。换成这个full加强版！
+
+参考[dnsmasq-full@aa65535](https://github.com/aa65535/openwrt-dnsmasq)这个页面的安装过程，对于15.05.1版固件需要自行编译（编译耗时挺长的），否则使用他的预编译版无法工作。而且编译时候不是选择dnsmasq而是选择dnsmasq-full，作者的README.md页面写错了。
+
+将编译完的dnsmasq-full_2.73-ar71xx,ipk拷贝到路由器上，先卸载原来的dnsmasq再安装
+ 
+	# 先更新源，安装过程需要下载某些依赖(GMP等)否则卸载后就很难更新
+	opkg update
+    opkg remove dnsmasq
+    rm /etc/dnsmasq.conf
+    rm /etc/config/dhcp
+    # 需要禁止checksum检查否则提示sha256校验失败
+    opkg install dnsmasq-full_2.73-ar71xx,ipk --force-checksum
+    
+然后到作者的github页面下载一份带有黑名单的默认配置dnsmasq.conf替换/etc同名文件。
+
+	/etc/init.d/dnsmasq restart
+
+即可达到防dns污染的效果。如果你懂ipset的使用，可以有更多的玩法！
 
 ## 多用户
 
@@ -338,13 +358,13 @@ windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 
 fast_open是给tcp用的，对udp没什么卵用。
 
-### 配合ChinaDNS自建dns服务器
+### vps上自建dns服务器
 
 在vps上面安装pdnsd（带有缓存功能）或者dnsmasq（没有缓存功能），监听5353端口的dns请求。
 有个奇怪的问题：搬瓦工的装pdnsd会启动不起来，内核太老了吗？我用的另一家KVM就能启动pdnsd正常。
 
 假设vps的tun0网关是10.7.0.1/24，那么
-在路由器的ChinaDNS上游dns填入
+在路由器的ChinaDNS上游dns（或者是dnsmasq-full）填入
 
 	114.114.114.114,10.7.0.1:5353
 
