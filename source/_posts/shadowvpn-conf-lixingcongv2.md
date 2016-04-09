@@ -13,15 +13,6 @@ categories: 网络
 
 ### 方法一：源安装
 
-特点：
-- daemon守护进程
-- 因带有token，适合多客户端
-- 0.2.0版：同一子网可以互ping
-- 配置方便，傻瓜式
-- 缺点：暂时没有研究出多端口监听
-
-方法:
-
 vi /etc/apt/sources.list   添加
 
 	deb http://shadowvpn.org/debian wheezy main
@@ -35,40 +26,29 @@ vi /etc/apt/sources.list   添加
 
 	/etc/init.d/shadowvpn start
     
-P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就是从仓库下载deb而已。
-    
 ### 方法二：编译安装
 
 #### 获取源码
-
-特点：
-- 自由度高，可以自己修改功能模块（然而我读不懂代码...）
-- 可以编译出Windows版本的客户端
-- 监听多端口
-- 缺点：有时候会无响应，不知道原因在哪。
 
 安装必要的编译工具
 
 	apt-get install build-essential mingw-w64 autoconf libtool
 
-获取源码，以0.1.6为例（该版本发布于2015.1）
+获取ShadowVPN源码，以0.2.0为例（该版本发布于2015.8，从此再也没有更新了，作者被喝茶你懂的）
 
 	cd ~
-    wget http://entware.dyndns.info/sources/shadowvpn-0.1.6-20150721.tar.bz2
-    tar -xvf shadowvpn-0.1.6-20150721.tar.bz2
-    cd shadowvpn-0.1.6-20150721/
+    wget https://github.com/rains31/ShadowVPN/archive/0.2.0.tar.gz
+    tar -zvf 0.2.0.tar.gz
+    cd ShadowVPN-0.2.0
 	
-*这里有[clowwindy](https://github.com/clowwindy)被喝茶前最后一版的0.2.0的源码：*[下载地址](https://github.com/rains31/ShadowVPN/archive/0.2.0.tar.gz)，未测试，各位可以尝鲜试一下。
+0.2.0版本没有更新debian/changelog中的版本号码，编译出来的显示是0.1.7，解决方法打开debian/changelog自己手动替换版本号0.1.7为0.2.0即成为编译0.2.0（强迫症患者）。
 
-（更新libsodium为非必要的步骤）
-更新libsodium，[下载地址](https://github.com/jedisct1/libsodium/releases) 。这里以1.0.6版本为例。
+更新[libsodium](https://github.com/jedisct1/libsodium/releases) 这个crypto库。以libsodium 1.0.6版为例。
 
-	rm -rf ./libsodium
-	cd /tmp
+	rm -rf libsodium
 	wget https://github.com/jedisct1/libsodium/releases/download/1.0.6/libsodium-1.0.6.tar.gz
 	tar -zxf libsodium-1.0.6.tar.gz
-	mv libsodium-1.0.6 ~/shadowvpn-0.1.6-20150721/libsodium
-	cd ~/shadowvpn-0.1.6-20150721/
+	mv libsodium-1.0.6 libsodium
 	
 进行AutoGen生成makefile脚本
 
@@ -79,23 +59,21 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 	./configure --enable-static --sysconfdir=/etc
 	make && make install
     
-运行服务端
+编译成功，可以试试运行服务端程序
 
 	shadowvpn -c /etc/shadowvpn/server.conf -s start
 	
-提示：安装后建议不删shadowvpn-0.1.6-20150721文件夹，方便日后卸载：
+提示：安装后建议不删shadowvpn文件夹，方便日后卸载：
 
 	make uninstall
     
 #### 编译出deb package
 
     apt-get install libssl-dev gawk debhelper dh-systemd init-system-helpers pkg-config
-	make clean #可选步骤
     dpkg-buildpackage -us -uc -i
     cd ..
-    ls | grep shadowvpn
+    ll | grep shadowvpn
 	
-0.2.0版本(clowwindy最后一版)没有更新debian/changelog中的版本号码，编译出来的是0.1.7，所以打开debian/changelog自己手动加上版本号0.2.0即可编译出来
     
 安装deb
 
@@ -115,7 +93,7 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 
 获取源码方法跟上面linux客户端一致
 
-	cd ~/shadowvpn-0.1.6-20150721/
+	cd ~/ShadowVPN-0.2.0
 	./configure --host=i686-w64-mingw32 --enable-static
 	make clean
 	make
@@ -145,12 +123,17 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 ![](/images/shadowvpn_conf/s_vpn2.png)
 
 我修改的小结：
-- 打开server.conf
+- 打开server.conf文件
 - 若要监听ipv6，修改server=::0
 - 修改port=666
 - 修改密码
+- 添加token，方便多用户，不填就默认单用户
 - 修改mtu
-- 修改子网netmask(在server_up.sh或者server.conf)
+- 修改子网netmask(CIDR格式)
+
+（可选）生成token的命令
+
+	xxd -l 8 -p /dev/random
 
 *PS 1:修改mtu这一步很重要，会直接影响vpn速度。*
 详细的mtu设置讨论帖子：[帖子点击这里](https://github.com/clowwindy/ShadowVPN/issues/77)
@@ -181,39 +164,54 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 
 ##### 配置
 修改配置文件与服务器配置一致：
-(如：ip,port,MTU,password,netmask,CIDR地址)
+(如：ip,port,MTU,token值,password,netmask,CIDR地址)
 
 	vi /etc/shadowvpn/client.conf
-	vi /etc/shadowvpn/client_up.sh
+	# net=10.7.0.2/xx
+    # 计算规则是把服务端 net=10.7.0.1/xx 作为网关加上1，总之跟网关在同一个网段即可
 
-注意conf文件中，net=10.7.0.2/xx设置
 
-	10.7.0.2/xx计算规则是把服务端net=10.7.0.1/xx网关加一
 
 ##### 启动
 
-若是源安装，修改启动模式为客户端。然后重启一下进程
+修改启动模式为客户端。
 
 	vi /etc/default/shadowvpn
-    CONFIG 改为 /etc/shadowvpn/client.conf 保存
-    /etc/init.d/shadowvpn restart
-    # 禁止开机自启动，建议禁止。否则每次开机都是全局代理状态
-    # sudo update-rc.d shadowvpn disable
+    把 CONFIG 改为 /etc/shadowvpn/client.conf
+    
+禁止开机自启动。否则每次开机都是全局代理
 
-若是编译安装，直接运行进程
+    sudo update-rc.d shadowvpn disable
+    
+使用谷歌dns防止污染
+    
+    vi /etc/shadowvpn/client_up.sh
+    # 在倒数第三行加上
+    echo 'namesever 8.8.8.8' > /etc/reslov.conf
+    # 保存退出client_up.sh
+    
+    vi /etc/shadowvpn/client_down.sh
+    # 在倒数第三行加上
+    echo 'namesever 114.114.114.114' > /etc/reslov.conf
+    # 保存退出client_down.sh
+    
+然后重启一下进程
+
+    /etc/init.d/shadowvpn restart
+
+若是编译安装，直接运行重启进程
 
 	shadowvpn -c /etc/shadowvpn/client.conf -s restart
     
-###### 测试
+##### 测试
 测试一下tun通道是否成功：
 
-	ifconfg 观察tun0的数据RX TX变化
-    ping [YOUR_SHADOWVPN_GATEWAY] -w 5
+	# 观察tun0的数据RX TX变化
+    # 若TX有数值，而RX没有数值，说明被丢包或者配置错误
+	ifconfg
     
-确认无误，可以ping通，加入dns即可上网：
-
-	vi /etc/resolv.conf
-    nameserver 8.8.8.8  #追加到末尾
+    # 观察ping延迟
+    ping [YOUR_SHADOWVPN_GATEWAY] -w 5
     
 ##### 停止
 
@@ -309,41 +307,8 @@ P.S. : 源安装跟下面的编译出deb包安装的效果一致。源安装就�
 
 	/etc/init.d/dnsmasq restart
 
-即可达到防dns污染的效果。如果你懂ipset的使用，可以有更多的玩法！
+即可达到防dns污染的效果。如果你懂ipset+dnsmasq的使用，可以有更多的玩法（去广告、cdn加速、屏蔽虚假ip）！
 
-## 多用户
-
-需要注意的是 ShadowVPN 是一个点对点 VPN。意味着对于每个客户端，需要一个对应的服务端。 
-可以开启多个服务端进程，用 -c 参数指定不同的配置文件。
-请确保对于不同的服务端和客户端， 在 up 和 down 脚本中指定了不同的 IP。
-
-### 服务端
-
-若是源安装比较方便，修改server.conf中的token即可，先生成token
-
-	xxd -l 8 -p /dev/random
-    
-填入user_token即可，逗号分隔。即可完成。
-
-若是编译安装：*以编译成功的0.1.6版本为例*
-
-- 把server.conf sever_up.sh sever_down.sh 拷贝一份，我放到/root/vpn
-- 然后打开server.conf
-- 修改tun0为tun1
-- 修改port=777
-- 修改mtu
-- 修改up=/root/vpn/server_up.sh
-- 修改down=/root/vpn/server_down.sh
-- 修改指向不同的pid和log文件
-- 然后打开server_up.sh修改网关地址和netmask(有可能在server.conf内)
-- 执行第二个服务端进程实例
-		/usr/local/bin/shadowvpn -c /root/vpn/server.conf -s start
-
-### 客户端
-
-填入对应的token，或者对应的ip+端口。
-linux貌似不需要太大改变配置。
-windows版注意及时修改同样的conf文件和server_up.bat对应的netmask
 
 ## 其他
 
