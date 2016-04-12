@@ -51,16 +51,17 @@ categories: 编程
 
 	mkdir /media/USER/NTFS
 	sudo vi /etc/fstab
-
-在文件中加入挂载命令
-
+	#加入挂载命令
 	/dev/sda6 /media/USER/NTFS ntfs defaults,locale=zh_CN.UTF-8 0 0 
 	
-这样得到的权限是600，即用拥有者只能读写。其他人都不能读写。如果想要更大的权限，可以添加umask
+这样得到的默认权限是600，即用拥有者只能读写。其他人都不能读写。
+如果想要更大的权限，比如755，可以添加umask为022，如下句
 
 	/dev/sda6 /media/USER/NTFS ntfs defaults,user,uid=1000,gid=1000,umask=022,locale=zh_CN.UTF-8 0 0
 	
-如果禁止自动挂载，可以添加noauto标志，每次手动挂载都会执行fstab里面的命令。
+如果想禁止自动挂载，每次手动挂载。可以添加noauto标志，只要执行mount优先执行fstab里面的命令。(以600权限为例)
+
+	/dev/sda6 /media/USER/NTFS ntfs defaults,noauto,locale=zh_CN.UTF-8 0 0
 
 ## 转移chrome缓存
 
@@ -74,6 +75,31 @@ categories: 编程
 	sudo ln -s /dev/shm ~/.cache/google-chrome
 
 测试chrome是否成功：chrome:cache
+
+
+## 创建快捷方式
+
+以AS为例，这是自己创建的Android Studio.desktop文件内容
+
+	[Desktop Entry]
+    Version=1.0
+    Type=Application
+    Name=Android Studio
+    Exec="/home/ubuntu/programs/android-studio/bin/studio.sh" %f
+    Icon=/home/ubuntu/programs/android-studio/bin/studio.png
+    Categories=Development;IDE;
+    Terminal=false
+    StartupNotify=true
+    # 这个WMclass暂时不太清楚是什么东西
+    StartupWMClass=jetbrains-android-studio
+    Name[en_GB]=android-studio.desktop
+
+可以根据实际，修改图标和程序执行位置。
+更改为可执行权限
+
+	chmod a+x 'Android Studio.desktop'
+    
+对于GNOME3桌面环境，可将其放置在系统托盘的快捷方式中，将Android Studio.desktop复制到*/usr/share/applications*下面即可。
 
 ## 其他
 
