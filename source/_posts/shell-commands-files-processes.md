@@ -87,11 +87,15 @@ pwd对应系统变量PWD
 
 实现文件符号链接，硬链接。相当于windows的mklink
 
-	ln [-sf] 来源文件 目标文件
+	ln [-sf] 来源文件(夹)src 目标文件(夹)dest
     
 选项与参数：
 -s  ：通常采用符号链接，如果不加任何参数就进行连结，那就是hard link，-s 就是symbolic link，
 -f  ：如果 目标文件 存在时，就主动的将目标文件直接移除后再创建！
+
+注意【SRC】和【DEST】需要写全绝对路径，否则提示
+
+	Too many levels of symbolic links!
 
 建立软链接就是建立了一个新文件。当访问链接文件时，系统就会发现他是个链接文件，它读取链接文件找到真正要访问的文件。建立硬链接会获得与原文件等同的地位。
 
@@ -183,6 +187,10 @@ link字段表示该目录所含子目录的个数.
 
 	find . -size 0
     
+搜索符号链接
+
+	find -L /var/www/ -xtype l
+    
 其他选项：-ctime是inode变更时间，-atime访问时间，-mtime修改时间。
     
 寻找文件，类似的命令 locate，支持通配符搜索
@@ -203,6 +211,10 @@ link字段表示该目录所含子目录的个数.
     # /tmp/sogou-qimpanel-cell: socket
     file /dev/sda
     # /dev/sda: block special
+    
+在文件中查找字符串：(Finds string in files)
+
+	grep -rnw '/home/ubuntu' -e "pattern_to_find"
     
 ## xargs
 

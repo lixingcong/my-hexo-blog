@@ -20,7 +20,11 @@ categories: 读书笔记
 
 	ifconfig | grep '\([0-9]*\)\.'
     ifconfig | grep -e '[0-9]*\.'
-    
+
+在文件下查找含有某个字符串的文件：（find string in files）
+
+	grep -rnw '/home/ubuntu' -e "pattern_to_find"
+        
 相关文章：[正则表达式学习](/2015/10/29/RE_POSIX/)
 
 ## sed

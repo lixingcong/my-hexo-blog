@@ -101,7 +101,26 @@ tag对象中最重要的属性（attr）: name和attributes
     tag.name = "blockquote"
     tag
     # <blockquote class="boldest">Extremely bold</blockquote>
-    
+
+
+操作文档树最简单的方法就是告诉它你想获取的tag的name.如果想获取 <head> 标签,只要用 soup.head :
+
+    soup.head
+    soup.title
+
+tag的 .contents 属性可以将tag的子节点以列表的方式输出:
+
+    head_tag = soup.head
+    print head_tag
+    # <head><title>The Dormouse's story</title></head>
+    print head_tag.contents
+    [<title>The Dormouse's story</title>]
+    title_tag = head_tag.contents[0]
+    print title_tag
+    # <title>The Dormouse's story</title>
+    print title_tag.contents
+    # [u'The Dormouse's story']
+
 #### attributes
 
 一个tag可能有很多个属性. tag <b class="boldest"> 有一个 “class” 的属性,值为 “boldest” . tag的属性的操作方法与字典相同:
@@ -153,13 +172,16 @@ BeautifulSoup 对象表示的是一个文档的全部内容.大部分时候,可�
 
 Beautiful Soup为不同的解析器提供了相同的接口,但解析器本身时有区别的.同一篇文档被不同的解析器解析后可能会生成不同结构的树型文档.
 
+	BeautifulSoup(text,'html.parser')
+    BeautifulSoup(text,'lxml')
+
 ## 后记
 
 这篇文章很乱，最好的方法是参考中文手册，非常好的例子
 - css选择器
 - 猜测文本编码
 - 智能引号
-- 格式化输出，压缩输出
+- 格式化输出，压缩输出:prettify('utf8')
 - 寻找父节点，兄弟节点
 - 配合正则表达式
 
