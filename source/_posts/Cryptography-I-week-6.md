@@ -12,7 +12,7 @@ categories:
 
 > We show that the resulting RSA modulus N=pq can be easily factored.
 > Suppose you are given a composite N and are told that N is a product of two relatively close primes p and q, namely p and q satisfy
-> $$|p-q|<2N^{1/4}\quad (*)$$
+> $$|p-q|<2N^{1/4}\quad (\*)$$
 > Your goal is to factor N.
 > Let A be the arithmetic average of the two primes, that is 
 > $$A=\frac{p+q}{2}$$
