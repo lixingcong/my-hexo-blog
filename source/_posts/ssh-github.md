@@ -160,12 +160,13 @@ How to work? 向my_hexo_blog推送的同时，自动更新lixingcong.github.io�
 
 其中 < public GPG key \>为上面你记下的公钥
 
-备份GPG：
+备份GPG：(包括公钥，私钥，信赖库)
 
-	cp ~/.gnupg/pubring.gpg /path/to/backups/
-    cp ~/.gnupg/secring.gpg /path/to/backups/
-    cp ~/.gnupg/trustdb.gpg /path/to/backups/
+	gpg -a --export user@mail.com > ~/public-gpg.key
+	gpg -a --export-secret-keys user@mail.com > ~/secret-gpg.key
+    gpg --export-ownertrust > ~/ownertrust.txt
     
-还原GPG
+还原GPG(导入私钥时自动导入公钥)
 
-	cp /path/to/backups/*.gpg ~/.gnupg/
+	gpg --import ~/secret-gpg.key
+    gpg --import-ownertrust ~/ownertrust.txt
