@@ -139,3 +139,33 @@ TC原本是代码集成平台，居然用成了博客自动更新机，真是大
 How to work? 向my_hexo_blog推送的同时，自动更新lixingcong.github.io。
 
 如果遇到问题，可以谷歌关键词“Travis CI Hexo”得到很多结果，可供参考
+
+### GPG签名
+
+直接生成，填入正确信息，还有密码（可选），按[Github官方教程](https://help.github.com/articles/generating-a-new-gpg-key/)操作即可。
+
+	gpg --gen-key
+
+生成过程需要大量随机字节。可以动鼠标还有打字。时不时在GPG生成界面按一下Enter提醒它。
+
+查看GPG
+
+	gpg --list-keys
+    # 记下 第一行的公钥2048/A8F99211后面的这个A8F99211
+    # 后面用到
+
+将公钥导入到github中，将本地提交打上tag
+
+	git config --global user.signingkey <public GPG key>
+
+其中 < public GPG key \>为上面你记下的公钥
+
+备份GPG：
+
+	cp ~/.gnupg/pubring.gpg /path/to/backups/
+    cp ~/.gnupg/secring.gpg /path/to/backups/
+    cp ~/.gnupg/trustdb.gpg /path/to/backups/
+    
+还原GPG
+
+	cp /path/to/backups/*.gpg ~/.gnupg/
