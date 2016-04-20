@@ -22,6 +22,11 @@ git入门
     git config --global user.name "YOUR_NAME"
     git config --global user.email "YOUR_EMAIL"
     
+若需要提交GPG签名
+
+	git config --global user.signingkey <public GPG key>
+    # <public GPG key>是你的公钥id，可以从gpg --list-keys查看
+    
 若要检查你的git配置，打开～/.gitconfig文件即可。这是我的配置文件：
 
     [user]
@@ -102,6 +107,14 @@ HEAD指针可以理解为最近一次的提交。
 提交确认无误可以进行打标签，方便后期管理
 
 	git tag -a v1.0 -m "YOUR-COMMENT-ON-THIS-TAG"
+    
+如果已经有GPG key，可以对tag进行GPG签名。参数-s
+	
+    git tag -a -s v2.0 -m "SIGN-MY-TAG"
+    
+验证tag签名
+
+	git -v v2.0
 
 默认情况下，git push 并不会把标签传送到远端服务器上，只有通过显式命令才能分享标签到远端仓库。其命令格式如同推送分支：
 
