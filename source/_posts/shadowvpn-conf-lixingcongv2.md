@@ -41,14 +41,20 @@ vi /etc/apt/sources.list   添加
     tar -zvf 0.2.0.tar.gz
     cd ShadowVPN-0.2.0
 	
-0.2.0版本没有更新debian/changelog中的版本号码，编译出来的显示是0.1.7，解决方法打开debian/changelog自己手动替换版本号0.1.7为0.2.0即成为编译0.2.0（强迫症患者）。
+0.2.0版本没有更新debian/changelog中的版本号码，编译出来的显示是0.1.7，解决方法打开debian/changelog自己手动替换版本号0.1.7为0.2.0即成为编译0.2.0（强迫症患者可以试试）。
 
-更新[libsodium](https://github.com/jedisct1/libsodium/releases) 这个crypto库。以libsodium 1.0.6版为例。
+更新[libsodium](https://github.com/jedisct1/libsodium/releases) 这个crypto库。以libsodium 1.0.10版为例。
 
 	rm -rf libsodium
-	wget https://github.com/jedisct1/libsodium/releases/download/1.0.6/libsodium-1.0.6.tar.gz
-	tar -zxf libsodium-1.0.6.tar.gz
-	mv libsodium-1.0.6 libsodium
+	wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz
+	tar -zxf libsodium-1.0.10.tar.gz
+	cd libsodium-1.0.10
+	./autogen.sh
+	./configure
+	make && make install
+	ldconfig #刷新链接库
+	cd ..
+	cp libsodium-1.0.10 libsodium
 	
 进行AutoGen生成makefile脚本
 

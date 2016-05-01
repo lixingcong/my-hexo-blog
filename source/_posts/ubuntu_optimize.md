@@ -160,3 +160,26 @@ YaHei.Consolas.1.12.ttf是混排字体，适合写程序。
     sudo fc-cache -f -v
     
 注销即可使用新字体
+
+RIME输入法
+
+rime输入法，设置横排，用网上的教材是无效的，需要使用ibus覆盖rime设置
+
+	gsettings set org.freedesktop.ibus.panel lookup-table-orientation 0
+	
+某些设置可以在运行ibus-setup设置里面看到
+运行im-config配置多输入环境。
+
+连自定义字体都需要命令修改
+
+	gsettings set org.freedesktop.ibus.panel use-custom-font true
+
+任务栏指示当前的运行情况（cpu.ram.hdisk.net）使用[gnome-shell-system-monitor-applet](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet)
+
+添加shell extension的方法：[Youtube教程](https://www.youtube.com/watch?v=etAneQtlTLQ)
+
+屏幕录像
+
+	sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+	sudo apt-get update
+	sudo apt-get install simplescreenrecorder

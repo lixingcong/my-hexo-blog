@@ -22,7 +22,7 @@ categories: 网络
 
 注销，登陆至test用户
 
-### 获取openwrt源码
+### 获取openwrt目录树
 
 建议使用15.05或以上版本。其他发行版分支可以在[openwrt源码](http://git.openwrt.org/)查看。
 
@@ -36,8 +36,8 @@ categories: 网络
     cd openwrt
     ./scripts/feeds update -a
     ./scripts/feeds install -a
-
-检查包状况
+	
+检查包依赖
 
 	make defconfig
 	make prereq
@@ -49,38 +49,32 @@ categories: 网络
 
 参考这篇文章[《ShadowVPN配置记录》](/2015/12/17/shadowvpn-conf-lixingcongv2)，讲述如何处理ShadowVPN源码。
 
-现在我规定：
 
-	Package-Name: ShadowVPN-modify
-    Version: 1.0
-    
-所以命名为ShadowVPN-modify-1.0
-
-假设已经完成Shadowvpn下载，libsodium更新，并放在/tmp/ShadowVPN-modify-1.0下。并且能编译出linux服务端无误。
+假设已经完成Shadowvpn下载，libsodium更新，并放在/tmp/ShadowVPN。并且能编译出linux服务端无误。
 
 先清除一下
 
-	cd /tmp/ShadowVPN-modify-1.0
+	cd /tmp/ShadowVPN
     make clean
     
 ### 二次打包
     
 打包为tar.gz文件。目的是集成libsodium进tar文件。
 	
-    tar -cvzf /tmp/ShadowVPN-modify-1.0.tar.gz /tmp/ShadowVPN-modify-1.0/
+    tar -cvzf /tmp/ShadowVPN-0.2.0.tar.gz /tmp/ShadowVPN
     
 ### 创建自定义patch
     
 创建diff快照，用于产生patch补丁文件。
 
-    cd /tmp/ShadowVPN-modify-1.0/
+    cd /tmp/ShadowVPN
     git init
     git config --global user.name "xx"
     git config --global user.email "xx@xx.com"
     git add .
     git commit -m "Before patched"
     
-按照[openwrt-shadowvpn项目](https://github.com/aa65535/openwrt-shadowvpn/blob/master/patches/000-fix-autoconf.patch)中的patch文件，修改/tmp/ShadowVPN-modify-1.0/下面对应的四个文件：
+按照[openwrt-shadowvpn项目](https://github.com/aa65535/openwrt-shadowvpn/blob/master/patches/000-fix-autoconf.patch)中的patch文件，修改/tmp/ShadowVPN/下面对应的四个文件：
 
 vi Makefile.am
 
@@ -130,7 +124,7 @@ vi libsodium/configure.ac
 
 移动源码至dl目录。目的是制造假象：已经下载源码
 
-	cp /tmp/ShadowVPN-modify-1.0.tar.gz /home/test/openwrt/dl/
+	cp /tmp/ShadowVPN-0.2.0.gz /home/test/openwrt/dl/
 
 克隆[@aa65535](https://github.com/aa65535)的工程
 
@@ -144,8 +138,6 @@ vi libsodium/configure.ac
 
 修改Makefile使其指向当前主机的源代码
 
-    PKG_NAME:=ShadowVPN-modify
-    PKG_VERSION:=1.0
     PKG_SOURCE_URL:=/home/test/openwrt/dl/${PKG_VERSION}
     
 注释PKG_MD5SUM校验，防止出错。
