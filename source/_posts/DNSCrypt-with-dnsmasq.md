@@ -55,9 +55,9 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 
 	opkg install dnscrypt-proxy
 
-如果不喜欢从openwrt源安装，可以自己编译并安装，我试了试编译成功，挺麻烦的。需要改不少东西，参考[这个项目](https://github.com/damianorenfer/dnscrypt-proxy-openwrt)
+如果不喜欢从openwrt源安装，可以自己编译并安装，我试了试，编译成功，可以参考[我的项目openwrt-dnscypt](https://github.com/lixingcong/dnscrypt-proxy-openwrt)
 
-其实安装后就能使用了，默认情况下内置了大量dnscrypt服务器，如果你搭建了私人wrapper，也就搬来用呗。没有搭建的没关系，可以不用做任何修改，直接改listen端口为5355即可。
+其实安装ipk后就能使用了，默认情况下内置了大量dnscrypt服务器，如果你搭建了私人wrapper，可以替换官方opendns的服务器。没有搭建的没关系，可以不用做任何修改，直接改listen端口为5355即可。
 
 	vi /etc/config
 	# 修改端口为5355，总之不冲突就ok
@@ -117,7 +117,7 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 
 参考[@openwrt-dnsmasq](https://github.com/lixingcong/openwrt-dnsmasq)的README步骤进行编译dnsmasq，这个是2.75版的。
 
-为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果。openwrt内置的dnsmasq比较老，不支持ignore-address。
+为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果，这个功能是[@aa66535]提交给开发者的。openwrt 15.05内置的dnsmasq比较老，不支持ignore-address和min-cache-ttl。
 
 ### 安装
 

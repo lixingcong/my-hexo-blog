@@ -30,11 +30,11 @@ categories: 编程
 
 那就装GTK+吧，命令如下（注意是GTK用于开发的开发库）：
 
-	sudo apt-get install libgtk2.0-dev
+	sudo apt-get install libgtk-3-dev texinfo
 
-因为我是在vps上面编译：使用如下命令开启编译图形界面
+因为我是在vps上面编译：使用如下命令开启编译gtk3图形界面
 
-	./configure --with-x
+	./configure --with-x-toolkit=gtk3
 
 装好后，再运行./configure，没想到又报错了，如下：
 
@@ -48,12 +48,10 @@ categories: 编程
 好吧，几个图像开发库也要装。。
 注意一个一个命令敲，若一次性全装会产生依赖问题。
 
-    sudo apt-get install libxpm-dev
-    sudo apt-get install libjpeg62-dev
-    sudo apt-get install libgif-dev
+	sudo apt-get install libgif-dev libxpm-dev
     sudo apt-get install libtiff4-dev
 
-然后再运行./configure，这下终于可以正常地跑到结束了，看输出的信息，该生成的文件都生成了。于是，运行make，耗时15分钟编译完成。
+然后再运行./configure，这下终于可以正常地跑到结束了，看输出的信息，该生成的文件都生成了。于是，运行make，耗时15分钟编译完成。(这是搬瓦工的垃圾VPS，我的笔记本5min就编译了)
 
 我把服务器上面打包回本地：
 
@@ -63,7 +61,7 @@ categories: 编程
 
 	scp -P 82 username@xxx.xxx.xx.xx:/tmp/emacs_x64.tar.gz /tmp
     # 同样装上libgtk2
-    sudo apt-get install libgtk2.0-dev
+    sudo apt-get install libgtk-3-dev
 
 本地解压，再运行sudo make install，但中间报了两个error，Cannot open load file: case-table。在网上查阅资料，说是Emacs源文件不能放在中文目录下。而我的恰好放在中文目录下，改变目录后，因为前面编译过，所以运行make clean，make distclean来清理一下，再重新运行./configure，make，sudo make install，这次是彻底没错误了，貌似中间连一个warning都没看到。
 
