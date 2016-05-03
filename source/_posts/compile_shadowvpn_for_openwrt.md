@@ -161,7 +161,8 @@ vi libsodium/configure.ac
     tar xjf OpenWrt-SDK-15.05-ar71xx-generic*.bz2
     cd OpenWrt-SDK-15.05-ar71xx-generic*
     cp -R staging_dir ~/openwrt
-    
+	cp staging_dir/host/bin/flock ~/openwrt/staging_dir/host/bin    
+
 设置系统变量
 
     export STAGING_DIR=/home/test/openwrt/staging_dir/toolchain-mips_34kc_gcc-4.8-linaro_uClibc-0.9.33.2
