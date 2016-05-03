@@ -14,7 +14,7 @@ categories: 网络
 在root用户下
 
 	apt-get update
-	apt-get install git build-essential libssl-dev libncurses5-dev unzip subversion mercurial
+	apt-get install git build-essential libssl-dev libncurses5-dev unzip subversion mercurial gawk
     
 新建一个非root用户。openwrt官方文档也是这么说的。
 

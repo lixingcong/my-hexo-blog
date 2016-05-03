@@ -1,7 +1,7 @@
 title: Cryptography解题报告：Factor the RSA modulus
 date: 2016-04-04 00:33:14
-tags:
-categories:
+tags: 密码学
+categories: 编程
 ---
 这次的题目花了好多时间去读题啊，居然是所！有！作业中！最长的题目！！光是阅读题目理解题意都花了一半以上时间。题目要求对两个很接近的素数合成的N进行分解，借此告诫我们不能自己设计不可靠的crypto方案。
 <!-- more -->
