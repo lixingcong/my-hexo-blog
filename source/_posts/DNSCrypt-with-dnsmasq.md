@@ -96,7 +96,11 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 
 使用NTP校时即可，最好写入到crontab实现openwrt自动校时
 
-	/usr/sbin/ntpd -q -p 1.cn.pool.ntp.org
+PS:某些NTP服务器123端口被墙，可以多换几个NTP
+
+	# asia.pool.ntp.org's address is 211.138.200.208
+	/usr/sbin/ntpd -q -p 211.138.200.208
+	# 或者安装ntpdate(依赖libpcap)
 
 使用test验证证书是否有效
 
@@ -105,7 +109,7 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 
 其中NAME为csv文件中的自建服务器名字，即为每行第一列字段。比如刚提到的my_server。
 
-如果test提示没有错，那就可以投入使用了，这个是毫无污染、高强度加密、非常纯净的DNS！但是仅仅解境外网站，需要配合下面的dnsmasq区分境外境内分别使用不同dns解析。
+如果test提示没有错，那就可以投入使用了，这个是毫无污染、高强度加密、非常纯净的DNS！但是我的目标是仅仅用于解析境外网站，需要配合下面的dnsmasq区分境外境内分别使用不同dns解析。
 
 重新开启dnscrypt
 
@@ -115,9 +119,9 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 
 ### 编译
 
-参考[@openwrt-dnsmasq](https://github.com/lixingcong/openwrt-dnsmasq)的README步骤进行编译dnsmasq，这个是2.75版的。
+参考我修改的[openwrt-dnsmasq项目](https://github.com/lixingcong/openwrt-dnsmasq)的README步骤进行编译dnsmasq，这个是2.75版的。
 
-为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果，这个功能是[@aa66535]提交给开发者的。openwrt 15.05内置的dnsmasq比较老，不支持ignore-address和min-cache-ttl。
+为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果，这个功能是[@aa66535]()提交给开发者的。openwrt 15.05内置的dnsmasq比较老，不支持ignore-address和min-cache-ttl。
 
 ### 安装
 
@@ -178,4 +182,4 @@ shadowsocks-libev从2.4.6开始才正式修复了udp转发的bug，因此有可�
 
 那么，若想使用udp DNS查询，且让dnscrypt的流量走ss的1080端口，你必须更新至ss-libev-2.4,6，否则请把ss的UDP转发（udp relay）关闭。
 
-悲摧的是，电信的UDP海外丢包真是惨不忍睹，dnscrypt(udp)根本没法用。无奈只好tcp查询。
+悲摧的是，电信的UDP海外丢包真是惨不忍睹，dnscrypt(udp)根本没法用。无奈只好tcp查询。如果我的路由器有128M内存那就好了，直接用pdnsd（支持tcp上游查询）而不是dnsmasq，可怜我的32M内存！！
