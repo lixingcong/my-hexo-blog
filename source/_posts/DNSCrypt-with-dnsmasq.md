@@ -94,13 +94,20 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 	# 服务端开哆嗦模式只显示下面内容
 	client to proxy
 
-使用NTP校时即可，最好写入到crontab实现openwrt自动校时
+使用NTP校时
 
-PS:某些NTP服务器123端口被墙，可以多换几个NTP
-
-	# asia.pool.ntp.org's address is 211.138.200.208
-	/usr/sbin/ntpd -q -p 211.138.200.208
-	# 或者安装ntpdate(依赖libpcap)
+	# 安装ntpdate测试一下NTP服务器，如果提示no server suitable就换NTP
+	ntpdate asia.pool.ntp.org
+	# 服务器ok的话，写进去crontab，每半小时同步一次
+	crontab -e
+	*/30 * * * * /usr/sbin/ntpd -q -p asia.pool.ntp.org
+	
+除了上面的亚洲授时外，还有别的的NTP服务器
+	
+	ntp.ubuntu.com
+	0.fedora.pool.ntp.org
+	0.debian.pool.ntp.org
+	time.windows.com
 
 使用test验证证书是否有效
 
@@ -121,7 +128,7 @@ PS:某些NTP服务器123端口被墙，可以多换几个NTP
 
 参考我修改的[openwrt-dnsmasq项目](https://github.com/lixingcong/openwrt-dnsmasq)的README步骤进行编译dnsmasq，这个是2.75版的。
 
-为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果，这个功能是[@aa66535]()提交给开发者的。openwrt 15.05内置的dnsmasq比较老，不支持ignore-address和min-cache-ttl。
+为什么要手动编译？因为dnsmasq从2.73开始支持具有ip过滤黑名单(ignore-address)功能，达到ChinaDNS类似的效果，这个功能是[@aa66535](https://github.com/aa65535)提交给开发者的。openwrt 15.05内置的dnsmasq比较老，不支持ignore-address和min-cache-ttl。
 
 ### 安装
 
