@@ -457,6 +457,29 @@ Unpacked Type : <type 'tuple'>  Value: (1, 'abc', 2.700000047683716)
     
 ![](/images/python_struct/struct_api2.png)
 
+将列表打包为结构体
+
+	import struct
+	a=[1,2,3,4]
+	len_a=len(a)
+	s=struct.pack("{0}B".format(len_a),*a)
+	print repr(s)
+	# '\x1\x2\x3\x4'
+
+这里用到了一个小把戏，string类的format格式化，详见[python参考手册](https://docs.python.org/2/library/string.html)，相当于把pack的第一个形参的d前面替换成4d，非常方便。
+下列两个是等效的
+
+	'<{0}B'.format(4)
+	'<4B'
+	
+测试其它
+	
+	# string 带有*args的格式化
+	print '{0}, {1}, {2}'.format('a', 'b', 'c')
+	# 'a, b, c'
+	print 'GPS: {latitude},{longitude}'.format(latitude='37.24N',longitude='-115.81W')
+	# 'GPS: 37.24N, -115.81W'
+
 ## 多重循环
 
 	a = ['a1', 'a2', 'a3']
