@@ -211,7 +211,7 @@ LaTex默认是省略空格，要输入空格就得自己输入命令，mu是一�
 
 |符号|语法|
 |---|---|
-|$frac{d}{dx}\left(x^2\right) = 2x$|frac{d}{dx}\left(x^2\right) = 2x|
+|$\frac{d}{dx}\left(x^2\right) = 2x$|\frac{d}{dx}\left(x^2\right) = 2x|
 |$\int 2x\,dx = x^2+C$|\int 2x\,dx = x^2+C|
 |$\frac{\partial^2U}{\partial x^2} + \frac{\partial^2U}{\partial y^2}$|\frac{\partial^2U}{\partial x^2} + \frac{\partial^2U}{\partial y^2}|
 
