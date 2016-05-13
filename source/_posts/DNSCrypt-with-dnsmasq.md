@@ -153,7 +153,7 @@ PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscryp
 	min-cache-ttl=300
 	
 	# 根据你需要的域名走指定的DNS查询，配合ipset
-	# 以Facebook为例，自己手动添加几个常用域名即可，可以[@aa66535]()的list
+	# 以Facebook为例，自己手动添加几个常用域名即可，可以参考他人的列表
 	server=/.fb.me/127.0.0.1#5355
 	server=/.thefacebook.com/127.0.0.1#5355
 	server=/.fbsbx.com/127.0.0.1#5355
