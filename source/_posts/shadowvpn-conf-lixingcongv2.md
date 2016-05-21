@@ -54,7 +54,7 @@ vi /etc/apt/sources.list   添加
 	make && make install
 	ldconfig #刷新链接库
 	cd ..
-	cp libsodium-1.0.10 libsodium
+	mv libsodium-1.0.10 libsodium
 	
 进行AutoGen生成makefile脚本
 
@@ -76,7 +76,7 @@ vi /etc/apt/sources.list   添加
 #### 编译出deb package
 
     apt-get install libssl-dev gawk debhelper dh-systemd init-system-helpers pkg-config
-    dpkg-buildpackage -us -uc -i
+    dpkg-buildpackage -b -us -uc -i
     cd ..
     ll | grep shadowvpn
 	
@@ -194,12 +194,10 @@ vi /etc/apt/sources.list   添加
     vi /etc/shadowvpn/client_up.sh
     # 在倒数第三行加上
     echo 'namesever 8.8.8.8' > /etc/reslov.conf
-    # 保存退出client_up.sh
     
     vi /etc/shadowvpn/client_down.sh
     # 在倒数第三行加上
     echo 'namesever 114.114.114.114' > /etc/reslov.conf
-    # 保存退出client_down.sh
     
 然后重启一下进程
 
@@ -214,7 +212,7 @@ vi /etc/apt/sources.list   添加
 
 	# 观察tun0的数据RX TX变化
     # 若TX有数值，而RX没有数值，说明被丢包或者配置错误
-	ifconfg
+	ifconfig
     
     # 观察ping延迟
     ping [YOUR_SHADOWVPN_GATEWAY] -w 5
@@ -293,27 +291,13 @@ vi /etc/apt/sources.list   添加
 
 在实际使用中，发觉ChinaDNS偶尔会阻塞，具体表现为无法获得国外ip，我也搞不清是什么原因
 
-另一种方式是使用dnsmasq，使用openwrt预装的dnsmasq可以指定某些域名走shadowvpn的DNS解析，而我使用的是dnsmasq-full，比openwrt预装版多了ipset功能，效率更高。比ChinaDNS工作要稳定！推荐大家使用。
+另一种方式是使用dnsmasq（2.73以上），使用openwrt(15.05.1以上)预装的dnsmasq 2.73可以过滤DNS解析，效果等同于ChinaDNS，比ChinaDNS工作要稳定！推荐大家使用。
 
-最近发现[@aa65535]()的dnsmasq项目也是很吊，直接修改dnsmasq-full为其增加两个很好用的功能，可以指定ip黑名单，而且能指定缓存时间。所以我把chinadns删掉了。换成这个full加强版！
-
-参考[dnsmasq-full@aa65535](https://github.com/aa65535/openwrt-dnsmasq)这个页面的安装过程，对于15.05.1版固件需要自行编译（编译耗时挺长的），否则使用他的预编译版无法工作。而且编译时候不是选择dnsmasq而是选择dnsmasq-full，作者的README.md页面写错了。
-
-将编译完的dnsmasq-full_2.73-ar71xx,ipk拷贝到路由器上，先卸载原来的dnsmasq再安装
- 
-	# 先更新源，安装过程需要下载某些依赖(GMP等)否则卸载后就很难更新
-	opkg update
-    opkg remove dnsmasq
-    rm /etc/dnsmasq.conf
-    rm /etc/config/dhcp
-    # 需要禁止checksum检查否则提示sha256校验失败
-    opkg install dnsmasq-full_2.73-ar71xx,ipk --force-checksum
-    
-然后到作者的github页面下载一份带有黑名单的默认配置dnsmasq.conf替换/etc同名文件。
+到aa65535的github页面[下载一份带有黑名单的默认配置](https://github.com/aa65535/openwrt-dnsmasq/blob/master/etc/dnsmasq.d/ignore-address.conf)加入到/etc/dnsmasq.conf，重启服务
 
 	/etc/init.d/dnsmasq restart
 
-即可达到防dns污染的效果。如果你懂ipset+dnsmasq的使用，可以有更多的玩法（去广告、cdn加速、屏蔽虚假ip）！
+即可达到过滤虚假dns答复的效果。如果你懂ipset+dnsmasq的使用，可以有更多的玩法（去广告、cdn加速、屏蔽虚假ip）！
 
 
 ## 其他
@@ -347,6 +331,8 @@ fast_open是给tcp用的，对udp没什么卵用。
 - 搬瓦工使用ipv6地址时候，客户端填入xxxx:xxxx:xxxx:xxxx::1会失败，填入xxxx:xxxx:xxxx:xxxx::成功。好诡异。差一个1就这样
 - 加载并发多线程的网页（例如tumblr加载图片）的效率明显不如shadowsocks，而对于连续的udp数据流，则比ss流畅（例Youtube）
 - 某些地区对udp包丢包严重：例如广东电信，根本连不上shadowvpn。
+- 高峰期稳定性不如ss，因为对于ISP来说，udp包优先级低于tcp，受到岐视被丢包嘛！
+- 偶尔Connection reset，具体表现为ssh中断，或者网页打不开，刷新就ok
 
 ### 后记
 
