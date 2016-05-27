@@ -315,15 +315,21 @@ fast_open是给tcp用的，对udp没什么卵用。
 
 ### vps上自建dns服务器
 
-在vps上面安装pdnsd（带有缓存功能）或者dnsmasq（没有缓存功能），监听5353端口的dns请求。
-有个奇怪的问题：搬瓦工的装pdnsd会启动不起来，内核太老了吗？我用的另一家KVM就能启动pdnsd正常。
+在vps上面安装pdnsd或者dnsmasq，监听5353端口的dns请求。
+有个奇怪的问题：搬瓦工的装pdnsd会启动会被kill掉，内核太老了吗？我用的机子另一家KVM就能启动pdnsd正常。
 
-假设vps的tun0网关是10.7.0.1/24，那么
-在路由器的ChinaDNS上游dns（或者是dnsmasq-full）填入
+假设vps的tun0网关是10.7.0.1/24，且在vps监听DNS端口5353，那么
+在路由器的ChinaDNS上游dns填入
 
 	114.114.114.114,10.7.0.1:5353
+	
+或者dnsmasq的上游服务器
 
-效果：vps作为dns查询服务器，与路由器通信走的是Shadowvpn的加密流量。
+	server=10.7.0.1#5353
+	# 配合dns过滤（dnsmasq 2.73+）
+	ignore-address=1.2.3.4
+	
+效果：vps作为dns查询服务器，vps与路由器通信走的是Shadowvpn的加密流量。
 
 ### 使用问题
 

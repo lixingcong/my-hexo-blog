@@ -178,6 +178,16 @@ PS:有关链接：
 	/etc/init.d/dnsmasq restart
 	nslookup facebook.com
 	# 正确结果是 31.13.76.68
+	
+### ubuntu下的dnsmasq
+
+与openwrt平台设置类似
+1. 首先更新至dnsmasq 2.73+
+2. 指定好dnsmasq的端口（默认是127.0.0.1:53）和dnscrypt端口
+3. (可选)修改/etc/resolvconf/resolv.conf.d/base，指定nameserver=dnsmasq的端口
+4. sudo resolvconf -u
+5. 修改/etc/dnsmasq.conf中的server=dnscrypt-porxy端口
+6. sudo service dnsmasq restart
 
 ## 与shadowsocks关系
 
