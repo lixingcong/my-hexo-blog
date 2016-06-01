@@ -183,11 +183,24 @@ PS:有关链接：
 
 与openwrt平台设置类似
 1. 首先更新至dnsmasq 2.73+
-2. 指定好dnsmasq的端口（默认是127.0.0.1:53）和dnscrypt端口
-3. (可选)修改/etc/resolvconf/resolv.conf.d/base，指定nameserver=dnsmasq的端口
-4. sudo resolvconf -u
-5. 修改/etc/dnsmasq.conf中的server=dnscrypt-porxy端口
-6. sudo service dnsmasq restart
+2. 指定好dnsmasq的监听（默认是127.0.0.1）和dnscrypt监听（默认是127.0.2.1）
+3. 修改/etc/dnsmasq.conf中的server=dnscrypt-porxy端口
+4. sudo service dnscrypt-proxy restart && sudo service dnsmasq restart
+
+ubuntu默认安装了resolvconf这个自动管理dns的程序，但有时候很烦他会自动更改dns地址，我采用暴力方法去除这个影响，强制指定使用dnsmasq为系统上游dns
+
+这个/etc/resolv.conf是一个符号链接，链接到/run/resolvconf/resolv.conf，可以删掉这个链接。
+
+	sudo rm /etc/resolv.conf
+	sudo vi /etc/resolv.conf
+	# 添加dnsmasq的地址，以127.0.0.1为例
+	nameserver 127.0.0.1
+	
+如果不想用dnsmasq了，恢复为默认resolvconf（其实我压根就不想用resolvconf,因dns更强大），创建链接即可。或者直接修改nameserver为127.0.1.1
+
+	sudo rm /etc/resolv.conf
+	sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+	sudo resolvconf -u
 
 ## 与shadowsocks关系
 
