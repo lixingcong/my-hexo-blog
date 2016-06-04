@@ -161,9 +161,9 @@ YaHei.Consolas.1.12.ttf是混排字体，适合写程序。
     
 注销即可使用新字体
 
-RIME输入法
+RIME输入法(APT仓库支持)
 
-rime输入法，设置横排，用网上的教材是无效的，需要使用ibus覆盖rime设置
+ibus-rime输入法，设置横排，用网上的教材是无效的，需要使用ibus覆盖rime设置
 
 	gsettings set org.freedesktop.ibus.panel lookup-table-orientation 0
 	
@@ -183,3 +183,35 @@ rime输入法，设置横排，用网上的教材是无效的，需要使用ibus
 	sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
 	sudo apt-get update
 	sudo apt-get install simplescreenrecorder
+	
+Android Studio杂项
+
+初次运行提示appt返回一个非零的值，是缺库：
+
+	sudo apt install lib32stdc++6
+
+输入法：fcixt支持
+	
+	vi android studio/bin/studio.sh
+	# 文件上方加入
+	export XMODIFIERS=”@im=fcitx” 
+	export GTK_IM_MODULE=”fcitx” 
+	export QT_IM_MODULE=”fcitx”
+	
+可以支持fcixt输入法框架，但是AS仍然无法跟踪光标。
+
+KDE环境快捷键修改
+
+终端：修改复制按键为ctrl+insert：配置->设置快捷键
+
+全局按win窗口快捷键：
+进行左右侧snap：系统设置->快捷键->全局快捷键->组件KWin->将窗口快速铺到左（右）侧，最大化，最小化
+显示桌面：系统设置->快捷键->全局快捷键->组件KWin->显示桌面
+
+多媒体（音量增减）:
+快捷键->全局快捷键->自定义快捷键->新建如下三个动作代表静音、加、减音量
+
+	amixer set 'Master' 0
+	amixer set 'Master' 10%+
+	amixer set 'Master' 10%-
+
