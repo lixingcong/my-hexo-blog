@@ -215,3 +215,6 @@ KDE环境快捷键修改
 	amixer set 'Master' 10%+
 	amixer set 'Master' 10%-
 
+安装差异比较器（类似windows的beyond compare）
+
+	sudo apt install meld

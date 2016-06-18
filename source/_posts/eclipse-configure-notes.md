@@ -70,7 +70,10 @@ CDT进行自动补全有点麻烦，没有pydev那么智能。
 
 	Preference-> Run/debug-Lauching-> build before run(if required)
 	
+在全文高亮当前选择的变量名
 
+	Preferences --> C++ --> Editor --> Mark Occurrences --> check it
+	
 #### jdt
 
 首先记得要在系统变量加上classpath。将当前目录设置为默认classpath
