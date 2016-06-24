@@ -63,6 +63,14 @@ categories: 编程
 
 	/dev/sda6 /media/USER/NTFS ntfs defaults,noauto,locale=zh_CN.UTF-8 0 0
 
+若挂载ext4分区，（建议使用ext4！），可以将fstab中的/home那一行拷贝过来，改成合适的uuid，改变挂载点的拥有者为当前用户。
+
+	sudo mkdir /mydir
+	sudo chmod username:username /mydir
+	# sudo vi /etc/fstab
+	# 增加一行类似/home的挂载
+	UUID=54d8be7f-6bae-4512-aaef-6385c5fb6d13 /mydir ext4 defaults 0 2
+
 ## 转移chrome缓存
 
 最好的就是关机自动清除缓存，懒人必备，利用ramdisk实现，vi /etc/fstab添加
