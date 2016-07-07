@@ -2,7 +2,7 @@
 [my_pic]: /source/images/default_avatar.jpg
 [my_url]: http://lixingcong.github.io
 
-Travis CI build status: [![Travis CI](https://travis-ci.org/lixingcong/my_hexo_blog.svg?branch=master)](https://travis-ci.org/lixingcong/my_hexo_blog?branch=master)
+Travis CI build status: [![Travis CI](https://travis-ci.org/lixingcong/my-hexo-blog.svg?branch=master)](https://travis-ci.org/lixingcong/my-hexo-blog?branch=master)
 
 使用主题：[Next](https://github.com/iissnan/hexo-theme-next)
 
@@ -58,12 +58,7 @@ ubuntu：
 
 	hexo init
 
-## 安装插件
-可以用一句命令安装：
-
-	npm install hexo-generator-index hexo-generator-archive hexo-generator-category hexo-generator-tag hexo-server hexo-deployer-git hexo-deployer-heroku hexo-deployer-rsync hexo-deployer-openshift hexo-renderer-marked@0.2 hexo-renderer-stylus@0.2 hexo-generator-feed@1 hexo-generator-sitemap@1 --save
-
-安装完插件后，blog目录下多了package.json，还有modules目录下多了很多插件
+blog目录下多了package.json,db.json，还有node_modules目录下多了很多插件
 
 ## 测试本地预览是否正常使用
 
