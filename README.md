@@ -51,6 +51,7 @@ ubuntu：
 
 	cd my_hexo_blog
 	sudo npm install hexo --save
+	sudo npm install hexo-deployer-git --save
 
 此时目录出现modules文件夹
 

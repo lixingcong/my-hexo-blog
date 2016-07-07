@@ -32,15 +32,15 @@ categories: 编程
 
 解决方法
 
-    vi /etc/default/rcS //将UTC改为no，保存退出
-    sudo rm /etc/localtime
-    sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-    sudo hwclock --systohc --localtime    //将sys-clock与cmos同步
+	vi /etc/default/rcS //将UTC改为no，保存退出
+	sudo rm /etc/localtime
+	sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	sudo hwclock --systohc --localtime    //将sys-clock与cmos同步
 
 检查是否设置正常：硬件和系统时间一致，且时区为CST。
 
-    sudo hwclock --show //显示cmos中的时间
-    sudo date	 //显示当前时间
+	sudo hwclock --show //显示cmos中的时间
+	sudo date	 //显示当前时间
 
 网上看到另一种方法：手动设置时区
 
@@ -90,17 +90,17 @@ categories: 编程
 以AS为例，这是自己创建的Android Studio.desktop文件内容
 
 	[Desktop Entry]
-    Version=1.0
-    Type=Application
-    Name=Android Studio
-    Exec="/home/ubuntu/programs/android-studio/bin/studio.sh" %f
-    Icon=/home/ubuntu/programs/android-studio/bin/studio.png
-    Categories=Development;IDE;
-    Terminal=false
-    StartupNotify=true
-    # 这个WMclass暂时不太清楚是什么东西
-    StartupWMClass=jetbrains-android-studio
-    Name[en_GB]=android-studio.desktop
+	Version=1.0
+	Type=Application
+	Name=Android Studio
+	Exec="/home/ubuntu/programs/android-studio/bin/studio.sh" %f
+	Icon=/home/ubuntu/programs/android-studio/bin/studio.png
+	Categories=Development;IDE;
+	Terminal=false
+	StartupNotify=true
+	# 这个WMclass暂时不太清楚是什么东西
+	StartupWMClass=jetbrains-android-studio
+	Name[en_GB]=android-studio.desktop
 
 可以根据实际，修改图标和程序执行位置。
 更改为可执行权限
@@ -133,14 +133,14 @@ gedit disable auto-backup：
 修改默认的session for 14.04
 
 	cat /usr/share/xsessions //记下需要设置的session名字
-    sudo gedit /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
-    把user-session改为适合。
+	sudo gedit /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf
+	把user-session改为适合。
     
 网速指示 for gnome:
 
-    sudo add-apt-repository ppa:nilarimogard/webupd8
-    sudo apt-get update
-    sudo apt-get install indicator-netspeed
+	sudo add-apt-repository ppa:nilarimogard/webupd8
+	sudo apt-get update
+	sudo apt-get install indicator-netspeed
     
 cpu表格指示 for gnome:
 
@@ -150,22 +150,32 @@ cpu表格指示 for gnome:
 
 	sudo apt-get install stardict
    
-然后到[这里](http://blog.sciencenet.cn/blog-203570-722938.html)下载一个字典包，解压到一个文件夹，比如/home/ubuntu/dicts/stardict-oxford-gb-formated-2.4.2，创建硬链接：
+然后到[地址1](http://download.huzheng.org/)或者[地址2](http://blog.sciencenet.cn/blog-203570-722938.html)下载一个字典包，解压到一个文件夹，比如/home/ubuntu/dicts/stardict-oxford-gb-formated-2.4.2，解压到一个文件夹内，允许有词典子目录。创建链接到词典文件夹
 
-	 sudo ln -s ~/programs/Stardict_dicts/stardict-oxford-gb-formated-2.4.2/ /usr/share/stardict/dic
+	 sudo ln -s ~/programs/Stardict_dicts /usr/share/stardict/dic
      
-打开星际词典就可以查字典了。
+打开星际词典，设置词典后就可以查字典了。我用的词典主要有三个
+
+	# 朗道英汉词典5.0 词汇量435468
+	langdao-ec-gb-2.4.2
+	
+	# 牛津高阶词典 英英 词汇量 78075	
+	Oxford_Advanced_Learner_s_Dictionary-8th
+
+	# cedict汉英词典 词汇量31992
+	stardict-cedict-gb-2.4.2
+
 
 安装字体：
 YaHei.Consolas.1.12.ttf是混排字体，适合写程序。
 
 	mkdir ~/.fonts
 	mv YaHei.Consolas.1.12.ttf ~/.fonts
-    cd ~/.fonts
-    chmod 744 *
-    sudo mkfontscale
-    sudo mkfontdir
-    sudo fc-cache -f -v
+	cd ~/.fonts
+	chmod 744 *
+	sudo mkfontscale
+	sudo mkfontdir
+	sudo fc-cache -f -v
     
 注销即可使用新字体
 
