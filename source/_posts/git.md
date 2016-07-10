@@ -29,24 +29,24 @@ git入门
     
 若要检查你的git配置，打开～/.gitconfig文件即可。这是我的配置文件：
 
-    [user]
-        name = lixingcong
-        email = lixingcong@xxx.xxx
-    [push]
-        default = simple  #使用新版的推送模式
-    [alias]
-        ls = log -1 HEAD  # 别名，快捷命令
-        ad = add *
-        cm = commit -am
-        lg1 = log --pretty=format:"%s--%h--%ci" --graph
-        lg2 = log --pretty=format:"%s--%H" --graph
-        lg3 = log --pretty=oneline
-        st = status -s
-        ps = stash
-    [credential]
-        helper = cache  #凭证缓存
-    [help]
-        autocorrect = 15  #自动更正错误
+	[user]
+		name = lixingcong
+		email = lixingcong@xxx.xxx
+		signingkey = xxx  # GPG公钥id(可选)
+	[push]
+		default = simple  #使用新版的推送模式
+	[alias]
+		ls = log -1 HEAD  # 别名，快捷命令
+		ad = add *
+		cm = commit -am
+		lg = log --pretty=format:"%Cred%h%Creset-%cD-%Cgreen%s" --graph
+		lg1 = log --pretty=oneline
+		st = status -s
+		ps = stash
+	[credential]
+		helper = cache  #凭证缓存
+	[help]
+		autocorrect = 15  #自动更正错误
 
 也可以运行查看当前的configuration
 	

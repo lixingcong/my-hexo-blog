@@ -204,12 +204,12 @@ ubuntu默认安装了resolvconf这个自动管理dns的程序，但有时候很�
 
 ## 与shadowsocks关系
 
-shadowsocks-libev从2.4.6开始才正式修复了udp转发的bug，因此有可能与ss-udp转发冲突。
+shadowsocks-libev从2.4.6开始才正式修复了udp转发的bug，可以使用ss-tunnel作为dnsmasq的上游DNS。而不必使用dnscrypt-proxy。
 
-经过我无数次测试，发现这个结论：想要同时开启ss和dnscrypt-proxy(udp)（默认就是UDP查询），须服务器端和路由器端同时为2.4.6版本以上。否则只能开启dnscrypt-proxy(tcp)。
+经过无数次测试，发现ss-tunnel比dnscrypt-proxy稳定！所以到这里才告诉大家可以放心使用ss-tunnel，把dnscrypt作为备用的上游dns吧！
 
-令大家失望的是，dnsmasq不支持tcp方式查询。故ss打开UDP转发后，dnscrypt-proxy只能工作在tcp模式。否则UDP数据包无法转发出去，无法获得dnscrypt-proxy的DNS结果。
+在openwrt下，注意ss-tunnel依赖kmod-ipt-tproxy。默认的opkg不安装该内核模块。
 
-那么，若想使用udp DNS查询，且让dnscrypt的流量走ss的1080端口，你必须更新至ss-libev-2.4,6，否则请把ss的UDP转发（udp relay）关闭。
-
-悲摧的是，电信的UDP海外丢包真是惨不忍睹，dnscrypt(udp)根本没法用。无奈只好tcp查询。如果我的路由器有128M内存那就好了，直接用pdnsd（支持tcp上游查询）而不是dnsmasq，可怜我的32M内存！！
+	# opewrt 编辑 /etc/rc.local
+	# 如果使用一次性验证OTA，需要加上-A参数
+	/usr/bin/ss-tunnel -s [VPS_ADDR] -p [Shadowsocks-port] -l 5355 -m aes-128-cfb -k password -L 8.8.8.8:53 -u -f /tmp/ss-tunnel.pid
