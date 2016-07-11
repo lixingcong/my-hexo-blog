@@ -74,6 +74,24 @@ CDT进行自动补全有点麻烦，没有pydev那么智能。
 
 	Preferences --> C++ --> Editor --> Mark Occurrences --> check it
 	
+颜色渲染：主要设置宏定义渲染层次
+
+Indexer建议设置为Use Active build configuration
+
+设置方法
+
+	perference -> C/C++ -> Indexer
+	# 右侧的Build configuration for the Indexer
+	Use Active Build configuration
+	
+在C工程属性中设定新的Configuration，设定symbol:
+
+	Project properties->C/C++ general->Preprocessor Include Paths
+	# 右侧设定不同的预处理宏定义，分别保存为不同confiugre
+
+这样将工程的不同宏定义分别保存为不同build configuration，直接从Eclipse菜单栏的Project->build configure->set active->xxx可以实现不同的宏定义预处理编辑器颜色渲染，方便查看代码。最适合看不同Module编译的源码
+
+
 #### jdt
 
 首先记得要在系统变量加上classpath。将当前目录设置为默认classpath
