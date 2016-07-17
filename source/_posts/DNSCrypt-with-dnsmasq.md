@@ -208,7 +208,7 @@ shadowsocks-libev从2.4.6开始才正式修复了udp转发的bug，可以使用s
 
 经过无数次测试，发现ss-tunnel比dnscrypt-proxy稳定！所以到这里才告诉大家可以放心使用ss-tunnel，把dnscrypt作为备用的上游dns吧！
 
-在openwrt下，注意ss-tunnel依赖kmod-ipt-tproxy。默认的opkg不安装该内核模块。
+在openwrt下，注意ss-tunnel依赖kmod-ipt-tproxy和iptables-mod-tproxy。默认的opkg不安装该内核模块。
 
 	# opewrt 编辑 /etc/rc.local
 	# 如果使用一次性验证OTA，需要加上-A参数

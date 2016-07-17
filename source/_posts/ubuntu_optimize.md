@@ -236,3 +236,10 @@ KDE环境快捷键修改
 安装差异比较器（类似windows的beyond compare）
 
 	sudo apt install meld
+
+串口设备读写权限
+
+	sudo vi /etc/udev/rules.d/99-ttyUSB.rules
+	KERNEL=="ttyUSB[0-9]*",MODE="0666"
+
+效果是：不需要使用sudo 来进行open串口
