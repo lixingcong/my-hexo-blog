@@ -223,3 +223,28 @@ ALT+L自动打开、关闭注释：
 
 在General->Appearance->Colors and Fonts右侧指定General->Default Fonts。将覆盖每一个模式的字体。
 
+#### 快捷方式创建
+
+注意启动模式为禁用GTK3，可以避免一些莫明其妙的UI问题
+
+	export SWT_GTK3=0 
+	
+上面这句话仅在shell中使用，现在使用快捷方式可以设定env
+
+创建eclipse.desktop文件，内容：
+
+	[Desktop Entry]
+	Categories=Utility;Development;TextEditor;
+	Comment=View and edit files
+	Exec=env SWT_GTK3=0 "/root/programs/eclipse/eclipse" %f
+	GenericName=Java IDE
+	Icon=/root/programs/eclipse/icon.xpm
+	MimeType=text/x-tex;text/x-tcl;text/x-pascal;text/x-moc;text/x-makefile;text/x-java;text/x-csrc;text/x-csrc;text/x-chdr;text/x-c++src;text/x-c++hdr;text/plain;application/x-shellscript;
+	Name=Eclipse Neon
+	StartupNotify=true
+	StartupWMClass=Eclipse
+	Terminal=false
+	Type=Application
+	Version=1.0
+	
+权限为可执行。
