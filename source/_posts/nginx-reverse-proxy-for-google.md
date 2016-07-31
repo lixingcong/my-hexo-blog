@@ -3,7 +3,7 @@ date: 2016-07-31 14:25:13
 tags: [html, ubuntu]
 categories: 网络
 ---
-一键部署xx之类的脚本使用有风险，试想一下脚本弄出异常的'sudo rm -rf /'就让VPS挂掉，已经有前车之鉴，不敢再偷懒，自己实践下反代过程也不错哦！
+一键部署xx之类的脚本使用有风险，试想一下脚本弄出异常的'sudo rm -rf /'就让VPS挂掉的情形。。因为已经有前车之鉴，不敢再偷懒，自己实践下反代过程也不错哦！
 <!-- more -->
 ## nginx
 
@@ -78,26 +78,6 @@ configure参数填入，再加上两个Module，生成Makefile
 	vi /etc/nginx/nginx.conf
 	# 修改server_name为自己的域名
 	nginx -s reload
-
-### TCP优化设置
-
-	vi /etc/nginx/nginx.conf
-	# http标签内修改
-	sendfile           on;
-	tcp_nopush         on;
-	tcp_nodelay        on;
-	keepalive_timeout  60;
-	
-	# gzip压缩（可选）
-	gzip               on;
-	gzip_vary          on;
-	gzip_comp_level    6;
-	gzip_buffers       16 8k;
-	gzip_min_length    1000;
-	gzip_proxied       any;
-	gzip_disable       "msie6";
-	gzip_http_version  1.0;
-	gzip_types         text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript;
 	
 最后，记得添加开机启动，写入.bashrc脚本或者rc.local脚本
 
@@ -165,52 +145,6 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
 	cat signed.crt intermediate.pem > chained.pem
 	
-### 其它设置
-
-这部份不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/ssltest/)对我的网站https评分仅有B等级，安全性不足，需要设定更好的密钥交换机制。
-
-当然，尽量使用最新的Nginx，保证安全性，编译nginx也尽量使用指定模块最新源码的方式进行编译，堵住0day。
-
-以下设置均在http-server(HTTPS)标签内进行修改
-
-#### 开启http_v2
-
-在其listen 443改为
-
-	listen 443 ssl http2 fastopen=2 reuseport
-	
-#### 开启OCSP
-
-先把根证书和中间证书合在一起
-
-	cd /root/ng/acme-tiny
-	wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
-	cat intermediate.pem root.pem > full_chained.pem
-	
-在nginx配置中指定ssl_stapling
-
-	ssl_stapling               on;
-	ssl_stapling_verify        on;
-	ssl_trusted_certificate    /root/ng/acme-tiny/full_chained.pem;
-
-#### 指定加密算法
-
-	ssl_ciphers                EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
-	ssl_prefer_server_ciphers  on;
-	ssl_protocols              TLSv1 TLSv1.1 TLSv1.2;
-
-#### 超时等
-
-	ssl_session_cache          shared:SSL:50m;
-	ssl_session_timeout        1d;
-	ssl_session_tickets        on;
-	
-	# openssl rand 48 > session_ticket.key
-	# 单机（standalone）部署可以不指定 ssl_session_ticket_key
-	# ssl_session_ticket_key     /root/ng/acme-tiny/session_ticket.key;
-    
-经过设置，我的网站安全等级上升到A级，有些许提升。
-
 ### 续证书脚本
 
 创建 renew_cert.sh 并通过 chmod a+x renew_cert.sh 赋予执行权限
@@ -267,9 +201,55 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 	nginx -s reload
 
-其它设置
+### 其它设置
 
-设置上游ip，防止谷歌认为你是机器人，要求输入验证码
+#### ssl设置
+
+ssl设置不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/ssltest/)对我的网站https评分仅有B等级，安全性不足，需要设定更好的密钥交换机制。
+
+当然，尽量使用最新的Nginx，保证安全性，编译nginx也尽量使用指定模块最新源码的方式进行编译，堵住0day。
+
+以下ssl设置均在http-server(HTTPS)标签内进行修改
+
+在其listen 443改为
+
+	listen 443 ssl http2 fastopen=2 reuseport;
+	
+开启OCSP
+
+先把根证书和中间证书合在一起
+
+	cd /root/ng/acme-tiny
+	wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
+	cat intermediate.pem root.pem > full_chained.pem
+	
+在nginx配置中指定ssl_stapling
+
+	ssl_stapling               on;
+	ssl_stapling_verify        on;
+	ssl_trusted_certificate    /root/ng/acme-tiny/full_chained.pem;
+
+指定加密算法
+
+	ssl_ciphers                EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+	ssl_prefer_server_ciphers  on;
+	ssl_protocols              TLSv1 TLSv1.1 TLSv1.2;
+
+超时等
+
+	ssl_session_cache          shared:SSL:50m;
+	ssl_session_timeout        1d;
+	ssl_session_tickets        on;
+	
+	# openssl rand 48 > session_ticket.key
+	# 单机（standalone）部署可以不指定 ssl_session_ticket_key
+	# ssl_session_ticket_key     /root/ng/acme-tiny/session_ticket.key;
+    
+经过以上ssl设置，我的网站安全等级上升到A级，有些许提升。
+
+#### 设置上游ip
+
+防止谷歌认为你是机器人，要求输入验证码
 
 在vps上面多次使用dig google.com +short获得不同的ip（至少能获取3个吧，多一些比较好），按权重放入upstream标签内
 
@@ -281,6 +261,8 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 		server 216.58.193.206:443 weight=33;
 	}
 	
+#### 限制连接数
+
 设置同一个ip访问本站频率，防止滥用，具体数值根据服务负荷设置
 
 这里设置某个ip频率每秒10次请求，并发burst最多允许50：效果可以从打开“谷歌图片”搜索一个关键词，看加载图片速度中体会得到。被限制的请求将返回503错误
@@ -289,22 +271,44 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	limit_req_zone $binary_remote_addr zone=setfreq:10m rate=10r/s;
 	limit_req zone=setfreq burst=50 nodelay;
 
+#### http重定向
+
 设置http访问后重定向为baidu.com（纯属恶搞，专门对付那些不开https的人）
 
 	# http-server(HTTP)标签内加入rewrite
 	location / {
 		# change to your target website
-		rewrite ^/(.*)$ http://baidu.com permanent;
+		rewrite ^/(.*)$ http://www.baidu.com permanent;
 	}
 	
 如果不恶搞，同理可以rewrite为https，达到http跳转https目的
 
 	rewrite ^/(.*)$ https://MY_DOMAIN.COM/$1 permanent;
+	
+#### TCP优化设置
+
+	vi /etc/nginx/nginx.conf
+	# http标签内修改
+	sendfile           on;
+	tcp_nopush         on;
+	tcp_nodelay        on;
+	keepalive_timeout  60;
+	
+	# gzip压缩（可选）
+	gzip               on;
+	gzip_vary          on;
+	gzip_comp_level    6;
+	gzip_buffers       16 8k;
+	gzip_min_length    1000;
+	gzip_proxied       any;
+	gzip_disable       "msie6";
+	gzip_http_version  1.0;
+	gzip_types         text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript;
 
 ## 后记
 
 设置到这里就可以使用反代了，建议搭建后域名不要公开使用，亲友几个人使用还是没问题的，人多了你的ip容易被GFW认证，最后只能更换ip
 
-谷歌反代教程来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，证书的获取方法参考了[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，至于nginx的HTTPS安全部份则参考了[Nginx 配置之完整篇](https://imququ.com/post/my-nginx-conf.html)。经过本人实践记录下来而成。
+谷歌反代教程来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，证书的获取方法参考了[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，至于nginx的HTTPS安全部份则参考了[Nginx 配置之完整篇](https://imququ.com/post/my-nginx-conf.html)。经过本人实践记录下来而成。附上自己的配置文件[nginx.conf](https://gist.github.com/lixingcong/276ae24f8a0bedd147ac7489f3c58fc2)，可以参考一下。
 
 文中的MY_DOMAIN.COM即自己的域名，注意替换
