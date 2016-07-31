@@ -38,19 +38,29 @@ configure参数填入，再加上两个Module，生成Makefile
 	--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
 	--prefix=/usr/share/nginx \
 	--conf-path=/etc/nginx/nginx.conf \
-	--with-http_ssl_module \
-	--with-http_stub_status_module \
-	--with-http_realip_module \
-	--with-http_addition_module \
-	--with-http_dav_module \
-	--with-http_geoip_module \
-	--with-http_gzip_static_module \
-	--with-http_image_filter_module \
-	--with-http_spdy_module \
-	--with-http_sub_module \
-	--with-http_xslt_module \
+	--with-debug  \
+	--with-pcre-jit  \
+	--with-ipv6  \
+	--with-http_ssl_module  \
+	--with-http_stub_status_module  \
+	--with-http_realip_module  \
+	--with-http_auth_request_module  \
+	--with-http_addition_module  \
+	--with-http_dav_module  \
+	--with-http_geoip_module  \
+	--with-http_gunzip_module  \
+	--with-http_gzip_static_module  \
+	--with-http_image_filter_module  \
+	--with-http_v2_module  \
+	--with-http_sub_module  \
+	--with-http_xslt_module  \
+	--with-stream  \
+	--with-stream_ssl_module  \
+	--with-threads \
 	--add-module=../ngx_http_google_filter_module \
 	--add-module=../ngx_http_substitutions_filter_module
+	
+*PS:*这个configure参数是从apt install nginx后执行nginx -V得到的，根据个人需要编译模块
 	
 没有问题就编译安装吧
 
