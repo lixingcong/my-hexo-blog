@@ -69,6 +69,30 @@ configure参数填入，再加上两个Module，生成Makefile
 	# 修改server_name为自己的域名
 	nginx -s reload
 
+### TCP优化设置
+
+	vi /etc/nginx/nginx.conf
+	# http标签内修改
+	sendfile           on;
+	tcp_nopush         on;
+	tcp_nodelay        on;
+	keepalive_timeout  60;
+	
+	# gzip压缩（可选）
+	gzip               on;
+	gzip_vary          on;
+	gzip_comp_level    6;
+	gzip_buffers       16 8k;
+	gzip_min_length    1000;
+	gzip_proxied       any;
+	gzip_disable       "msie6";
+	gzip_http_version  1.0;
+	gzip_types         text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript;
+	
+最后，记得添加开机启动，写入.bashrc脚本或者rc.local脚本
+
+	/usr/sbin/nginx
+
 ## Let's Encrypt证书
 
 ### 生成私鈅
@@ -131,6 +155,52 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
 	cat signed.crt intermediate.pem > chained.pem
 	
+### 其它设置
+
+这部份不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/ssltest/)对我的网站https评分仅有B等级，安全性不足，需要设定更好的密钥交换机制。
+
+当然，尽量使用最新的Nginx，保证安全性，编译nginx也尽量使用指定模块最新源码的方式进行编译，堵住0day。
+
+以下设置均在http-server(HTTPS)标签内进行修改
+
+#### 开启http_v2
+
+在其listen 443改为
+
+	listen 443 ssl http2 fastopen=2 reuseport
+	
+#### 开启OCSP
+
+先把根证书和中间证书合在一起
+
+	cd /root/ng/acme-tiny
+	wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
+	cat intermediate.pem root.pem > full_chained.pem
+	
+在nginx配置中指定ssl_stapling
+
+	ssl_stapling               on;
+	ssl_stapling_verify        on;
+	ssl_trusted_certificate    /root/ng/acme-tiny/full_chained.pem;
+
+#### 指定加密算法
+
+	ssl_ciphers                EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+	ssl_prefer_server_ciphers  on;
+	ssl_protocols              TLSv1 TLSv1.1 TLSv1.2;
+
+#### 超时等
+
+	ssl_session_cache          shared:SSL:50m;
+	ssl_session_timeout        1d;
+	ssl_session_tickets        on;
+	
+	# openssl rand 48 > session_ticket.key
+	# 单机（standalone）部署可以不指定 ssl_session_ticket_key
+	# ssl_session_ticket_key     /root/ng/acme-tiny/session_ticket.key;
+    
+经过设置，我的网站安全等级上升到A级，有些许提升。
+
 ### 续证书脚本
 
 创建 renew_cert.sh 并通过 chmod a+x renew_cert.sh 赋予执行权限
@@ -142,6 +212,8 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	cd $ACME_TINY_DIR && python acme_tiny.py --account-key account.key --csr domain.csr --acme-dir /var/www/challenges/ > signed.crt || exit
 	cd $ACME_TINY_DIR && wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
 	cd $ACME_TINY_DIR && cat signed.crt intermediate.pem > chained.pem
+	cd $ACME_TINY_DIR && wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
+	cd $ACME_TINY_DIR && cat intermediate.pem root.pem > full_chained.pem
 	
 	nginx -s reload
 	if [ $? = '0' ];then
@@ -223,6 +295,6 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 设置到这里就可以使用反代了，建议搭建后域名不要公开使用，亲友几个人使用还是没问题的，人多了你的ip容易被GFW认证，最后只能更换ip
 
-本文来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，还有Let's Encrypt的一篇文章[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，经过实践记录下来而成。
+谷歌反代教程来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，证书的获取方法参考了[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，至于nginx的HTTPS安全部份则参考了[Nginx 配置之完整篇](https://imququ.com/post/my-nginx-conf.html)。经过本人实践记录下来而成。
 
-文中的MY_DOMAIN.COM即你域名，注意替换
+文中的MY_DOMAIN.COM即自己的域名，注意替换
