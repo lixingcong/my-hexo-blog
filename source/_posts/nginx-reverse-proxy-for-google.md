@@ -104,8 +104,11 @@ configure参数填入，再加上两个Module，生成Makefile
 
 2.接下来生成CSR文件
 
-	# 注意：交互式 Common Name 必须输入自己的域名
-	openssl req -new -sha256 -key domain.key -out domain.csr
+	# 单域名
+	openssl req -new -sha256 -key domain.key -subj "/CN=MY_DOMAIN.COM" > domain.csr
+
+	# 多域名(use this one if you want both MY_DOMAIN.COM and WWW.MY_DOMAIN.COM)
+	openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:MY_DOMAIN.COM,DNS:WWW.MY_DOMAIN.COM")) > domain.csr
 
 ### 签发证书
 
