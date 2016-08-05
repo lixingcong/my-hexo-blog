@@ -205,13 +205,13 @@
   var n = 350;
   var r = 350;
   
-  var i = "//7xiewb.com1.z0.glb.clouddn.com/imageharlem-shake.mp3";
+  var i = "/attachments/sounds/imageharlem-shake.mp3";
   var s = "mw-harlem_shake_me";
   var o = "im_first";
   var u = ["im_drunk", "im_baked", "im_trippin", "im_blown"];
   var a = "mw-strobe_light";
   
-  var f = "//7xiewb.com1.z0.glb.clouddn.com/imageharlem-shake-style.css";
+  var f = "/css/imageharlem-shake-style.css";
   var l = "mw_added_css";
   var b = g();
   var w = y();
