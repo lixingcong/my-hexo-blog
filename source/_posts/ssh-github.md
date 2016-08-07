@@ -60,7 +60,7 @@ categories: 读书笔记
     # 更换为ssh,注意有个冒号
     url = git@github.com:USERNAME/REPO_NAME.git
     
-++安全提示：++
++安全提示：+
 
 *强烈建议每一个仓库对应一个key，而不是用一个权限无穷大的key，风险太大。
 每个仓库的key可以在下面地址设置：*
