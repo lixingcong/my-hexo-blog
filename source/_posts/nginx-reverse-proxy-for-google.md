@@ -15,7 +15,7 @@ categories: 网络
 
 ### 获取module
 
-	mkdir ng cd && cd ng
+	cd /root && mkdir ng && cd ng
 	git clone https://github.com/cuber/ngx_http_google_filter_module
 	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 	
@@ -38,24 +38,24 @@ configure参数填入，再加上两个Module，生成Makefile
 	--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
 	--prefix=/usr/share/nginx \
 	--conf-path=/etc/nginx/nginx.conf \
-	--with-debug  \
-	--with-pcre-jit  \
-	--with-ipv6  \
-	--with-http_ssl_module  \
-	--with-http_stub_status_module  \
-	--with-http_realip_module  \
-	--with-http_auth_request_module  \
-	--with-http_addition_module  \
-	--with-http_dav_module  \
-	--with-http_geoip_module  \
-	--with-http_gunzip_module  \
-	--with-http_gzip_static_module  \
-	--with-http_image_filter_module  \
-	--with-http_v2_module  \
-	--with-http_sub_module  \
-	--with-http_xslt_module  \
-	--with-stream  \
-	--with-stream_ssl_module  \
+	--with-debug \
+	--with-pcre-jit \
+	--with-ipv6 \
+	--with-http_ssl_module \
+	--with-http_stub_status_module \
+	--with-http_realip_module \
+	--with-http_auth_request_module \
+	--with-http_addition_module \
+	--with-http_dav_module \
+	--with-http_geoip_module \
+	--with-http_gunzip_module \
+	--with-http_gzip_static_module \
+	--with-http_image_filter_module \
+	--with-http_v2_module \
+	--with-http_sub_module \
+	--with-http_xslt_module \
+	--with-stream \
+	--with-stream_ssl_module \
 	--with-threads \
 	--add-module=../ngx_http_google_filter_module \
 	--add-module=../ngx_http_substitutions_filter_module
@@ -89,6 +89,7 @@ configure参数填入，再加上两个Module，生成Makefile
 
 挑选一个合适的letsencrypt客户端（网上大约有十多种），我以这个acme-tiny为例
 
+	cd /root/ng
 	git clone https://github.com/diafygi/acme-tiny
 	cd acme-tiny	
 
@@ -98,7 +99,7 @@ configure参数填入，再加上两个Module，生成Makefile
 	
 生成 CSR（Certificate Signing Request，证书签名请求）
 
-1.先生成RSA私钥（实际中可以选用ECC私钥）
+1.先生成RSA私钥，用于生成CSR（实际中可以选用ECC私钥）
 
 	openssl genrsa 4096 > domain.key
 
@@ -121,12 +122,15 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 往nginx配置一个HTTP服务器，用于验证let's Encrypt域名所有权, 添加前请注释掉之前已经存在的监听80端口的服务器
 
 	vi /etc/nginx/nginx.conf
-	# http-server(HTTP)标签内
-	server_name MY_DOMAIN.COM;
-	
-	location ^~ /.well-known/acme-challenge/ {
-		alias /var/www/challenges/;
-		try_files $uri =404;
+	# http标签内
+	server {
+		listen 80;
+		server_name MY_DOMAIN.COM;
+
+		location ^~ /.well-known/acme-challenge/ {
+			alias /var/www/challenges/;
+			try_files $uri =404;
+		}
 	}
 	
 重载服务
@@ -137,7 +141,7 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 有了验证服务器，就可以验证域名并签发证书了。
 
-	cd ~/ng/acme-tiny
+	cd /root/ng/acme-tiny
 	# 注意验证目录是/var/www/challenges，与上面mkdir一致
 	python acme_tiny.py --account-key ./account.key --csr ./domain.csr --acme-dir /var/www/challenges/ > ./signed.crt
 	
@@ -206,9 +210,9 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 ### 其它设置
 
-#### ssl设置
+#### ssl安全设置
 
-ssl设置不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/ssltest/)对我的网站https评分仅有B等级，安全性不足，需要设定更好的密钥交换机制。
+这个设置不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/ssltest/)对我的网站https评分仅有B等级，安全性不足，需要设定更好的密钥交换机制。
 
 当然，尽量使用最新的Nginx，保证安全性，编译nginx也尽量使用指定模块最新源码的方式进行编译，堵住0day。
 
@@ -286,7 +290,7 @@ ssl设置不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/sslt
 	
 如果不恶搞，同理可以rewrite为https，达到http跳转https目的
 
-	rewrite ^/(.*)$ https://MY_DOMAIN.COM/$1 permanent;
+	rewrite ^/(.*)$ https://$host/$1 permanent;
 	
 #### TCP优化设置
 
@@ -313,5 +317,7 @@ ssl设置不是必要的，但是我看到[SSL Lab](https://www.ssllabs.com/sslt
 设置到这里就可以使用反代了，建议搭建后域名不要公开使用，亲友几个人使用还是没问题的，人多了你的ip容易被GFW认证，最后只能更换ip
 
 谷歌反代教程来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，证书的获取方法参考了[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，至于nginx的HTTPS安全部份则参考了[Nginx 配置之完整篇](https://imququ.com/post/my-nginx-conf.html)。经过本人实践记录下来而成。附上自己的配置文件[nginx.conf](https://gist.github.com/lixingcong/276ae24f8a0bedd147ac7489f3c58fc2)，可以参考一下。
+
+另外有个不依赖http_google_filter_module的纯nginx配置文件[nginx.conf](https://github.com/arnofeng/ngx_google_deployment/blob/master/nginx.conf)，实际上这个conf更具有一般性，读懂它配置，理论上可以代理任意网站，例如草榴。
 
 文中的MY_DOMAIN.COM即自己的域名，注意替换
