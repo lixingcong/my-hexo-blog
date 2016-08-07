@@ -1,10 +1,14 @@
-title: github的ssh-key用法
+title: ssh-key用法
 date: 2016-1-21 21:13:37
-tags: github
+tags: shell
 categories: 读书笔记
 ---
-生成ssh-key可以免密码进入仓库，参考[github官方教程](https://help.github.com/articles/generating-ssh-keys/)
+ssh-key对于Linux重度用户可是一个牛逼东西，简化登陆流程，可谓神器！
 <!-- more -->
+## github
+
+生成ssh-key可以免密码进入仓库，参考[github官方教程](https://help.github.com/articles/generating-ssh-keys/)
+
 ### 确认重名key
 一、首先看看有没有之前生成的旧key
 
@@ -69,11 +73,51 @@ categories: 读书笔记
     
 试一下git push，是不是可以自动推送了。
 
-### 使用Travis CI
+## 自动登陆VPS
+
+首先确保vps上面的iptables规则允许22端口入站出站
+
+PC机子执行
+
+	ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+	
+如私钥保存为~/.ssh/id_rsa_myhost，则修改config
+
+	vi ~/.ssh/config
+	# 添加
+	Host myhost
+	 User root
+	 Hostname 111.222.111.222
+	 Port 22
+	 ServerAliveInterval 30
+	 IdentityFile ~/.ssh/id_rsa_myhost
+	 
+上传公钥到你的vps
+
+	scp ~/.ssh/id_rsa_myhost.pub root@111.222.111.222:/root/.ssh/
+	
+登陆到vps添加公钥记录
+
+	cd ~/.ssh
+	cat id_rsa_myhost.pub >> authorized_keys
+	service ssh restart
+	
+修改权限，防止被他人看见密钥内容
+
+	# PC机子和VPS都要设置
+	chmod 700 ~/.ssh/* 
+
+这样在PC就能使用一句话登陆ssh或者scp传文件了
+
+	ssh myhost
+	scp /tmp/test.txt myhost:/tmp/
+	
+## TC自动部署hexo
+
 可以自动更新博客，这个TC原本的目的不是这样的。
 TC原本是代码集成平台，居然用成了博客自动更新机，真是大材小用。
 
-首先关联github账户到travis-IC，然后勾选博客的源代码项目，不是github.io项目。
+首先关联github账户到travis-CI，然后勾选博客的源代码项目，不是github.io项目。
 接下来完成ssh的绑定和.travis.yml修改
 
 在Cloud9上面的虚拟主机操作。因为集成了npm环境。
@@ -102,37 +146,39 @@ TC原本是代码集成平台，居然用成了博客自动更新机，真是大
       IdentityFile ~/.ssh/id_rsa
       IdentitiesOnly yes
 
-编辑：.travis.yml
+修改travis脚本
     
-    language: node_js
-    node_js:
-    - 0.12
-    branches:
-      only:
-      - master
-    before_install:
-    - openssl aes-256-cbc -K $encrypted_f88d79a9e3f2_key -iv $encrypted_f88d79a9e3f2_iv
-      -in id_rsa_github.enc -out ~/.ssh/id_rsa -d
-    - chmod 600 ~/.ssh/id_rsa
-    - eval $(ssh-agent)
-    - ssh-add ~/.ssh/id_rsa
-    - cp ssh_config ~/.ssh/config
-    - mkdir temp
-    - cd temp
-    install:
-    - npm install -g hexo-cli
-    - npm install hexo --save
-    - hexo init
-    - npm install hexo-generator-index hexo-generator-archive hexo-generator-category hexo-generator-tag hexo-server hexo-deployer-git hexo-renderer-marked@0.2 hexo-renderer-stylus@0.2 hexo-generator-feed@1 hexo-generator-sitemap@1 --save
-    before_script:
-    - cp -R ../source ./
-    - cp -R ../themes ./
-    - cp ../_config.yml ./
-    - git config --global user.name 'lixingcong'
-    - git config --global user.email 'lixingcong@live.com'
-    script:
-    - hexo clean
-    - hexo d -g
+	vi .travis.yml
+	# 输入内容
+	language: node_js
+	node_js:
+	- 4.2 
+	branches:
+	only:
+	- master
+	- test
+	before_install:
+	- openssl aes-256-cbc -K $encrypted_f88d79a9e3f2_key -iv $encrypted_f88d79a9e3f2_iv -in .travis/id_rsa.enc -out ~/.ssh/id_rsa -d
+	- chmod 600 ~/.ssh/id_rsa
+	- eval $(ssh-agent)
+	- ssh-add ~/.ssh/id_rsa
+	- cp .travis/ssh_config ~/.ssh/config
+	- mkdir temp_lxc
+	- cd temp_lxc
+	install:
+	- npm install -g hexo-cli
+	- npm install hexo --save
+	- hexo init
+	- npm install hexo-deployer-git --save
+	before_script:
+	- cp -R ../source ./
+	- cp -R ../themes ./
+	- cp ../_config.yml ./
+	- git config --global user.name 'lixingcong'
+	- git config --global user.email 'lixingcong@live.com'
+	script:
+	- hexo clean
+	- hexo d -g
 
 实际上，这个文件非常灵活，我是折腾很久才摸索出来的。每个人肯定不一样。我的是以自己的仓库改的，我的仓库地址：[my_hexo_blog](https://github.com/lixingcong/my_hexo_blog)
 
@@ -140,7 +186,7 @@ How to work? 向my_hexo_blog推送的同时，自动更新lixingcong.github.io�
 
 如果遇到问题，可以谷歌关键词“Travis CI Hexo”得到很多结果，可供参考
 
-### GPG签名
+## GPG签名
 
 直接生成，填入正确信息，还有密码（可选），按[Github官方教程](https://help.github.com/articles/generating-a-new-gpg-key/)操作即可。
 
@@ -152,7 +198,7 @@ How to work? 向my_hexo_blog推送的同时，自动更新lixingcong.github.io�
 
 	gpg --list-keys
     # 记下 第一行的公钥2048/A8F99211后面的这个A8F99211
-    # 后面用到
+    # 后面用到它：<public GPG key>
 
 将公钥导入到github中，将本地提交打上tag
 
@@ -170,3 +216,12 @@ How to work? 向my_hexo_blog推送的同时，自动更新lixingcong.github.io�
 
 	gpg --import ~/secret-gpg.key
     gpg --import-ownertrust ~/ownertrust.txt
+    
+git提交commit时候进行签名
+
+	# 配置git
+	git config --global user.signingkey <public GPG key>
+	
+	# 对tag进行GPG签名。参数-s
+	git tag -a -s v2.0 -m "SIGN-MY-TAG"
+	
