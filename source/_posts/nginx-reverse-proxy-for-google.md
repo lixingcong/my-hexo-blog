@@ -258,7 +258,12 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 防止谷歌认为你是机器人，要求输入验证码
 
-在vps上面多次使用dig google.com +short获得不同的ip（至少能获取3个吧，多一些比较好），按权重放入upstream标签内
+在vps上面多次执行以下命令获得不同的ip（至少能获取3个吧，多一些比较好）
+
+	dig google.com +short @8.8.8.8
+	dig google.com +short @208.67.222.222
+
+对每一个dns结果进行ping测试，选择延迟低的dns结果，按权重放入upstream标签内
 
 	vi /etc/nginx/nginx.conf
 	# http标签内加入upstream上游
