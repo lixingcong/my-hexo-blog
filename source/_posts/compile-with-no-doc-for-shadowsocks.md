@@ -20,7 +20,7 @@ shadowsocks-libev从2.4.8版本开始增加了asciidoc样式的帮助文档生�
 
 ## build-deb
 
-主要是debain/ubuntu用户
+主要是debian/ubuntu用户
 
 删掉检查依赖asciidoc xmlto
 
@@ -34,7 +34,7 @@ shadowsocks-libev从2.4.8版本开始增加了asciidoc样式的帮助文档生�
 
 向configure传递参数：禁用编译文档
 
-	vi debain/rules
+	vi debian/rules
 	# 找到
 	override_dh_auto_configure:
 	# 添加这句
