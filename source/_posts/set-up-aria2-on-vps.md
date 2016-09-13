@@ -1,4 +1,4 @@
-title: Aria2+Yaaw离线下载
+title: aria2+yaaw离线下载
 date: 2016-09-13 00:49:21
 tags: ubuntu
 categories: 网络
@@ -19,21 +19,18 @@ categories: 网络
 	
 	mkdir /home/www-data || mkdir /home/www-data/aria2
 	mkdir /var/www/downloads
-	cd /home/www-data/aria2 
+	cd /home/www-data/aria2
 	touch aria2.session
-	touch run.log
 	
 为了安全起见，不用root权限运行aria2。使用以下配置文件启动，将文件内容保为```aria2.conf```
 
-	# HTTPS证书。如果不需要（明文http传输），可以删掉
+	# HTTPS证书。如果不需要https，可以删掉下面三行
 	rpc-certificate=/home/www-data/aria2/signed.crt
 	rpc-private-key=/home/www-data/aria2/domain.key
 	rpc-secure
 
-	log=/home/www-data/aria2/run.log
-
-	## '#'开头为注释内容, 选项都有相应的注释说明, 根据需要修改 ##
-	## 被注释的选项填写的是默认值, 建议在需要修改时再取消注释  ##
+	## log默认值输出到stdout
+	log=/dev/null
 
 	## 文件保存相关 ##
 
@@ -45,8 +42,8 @@ categories: 网络
 	# 文件预分配方式, 能有效降低磁盘碎片, 默认:prealloc
 	# 预分配所需时间: none < falloc ? trunc < prealloc
 	# falloc和trunc则需要文件系统和内核支持
-	# NTFS建议使用falloc, EXT3/4建议trunc, MAC 下需要注释此项
-	file-allocation=trunc
+	# NTFS建议使用falloc, EXT3/4建议trunc, SSD需要指定none
+	file-allocation=none
 	# 断点续传
 	continue=true
 
@@ -92,7 +89,7 @@ categories: 网络
 	# 事件轮询方式, 取值:[epoll, kqueue, port, poll, select], 不同系统默认值不同
 	event-poll=select
 	# RPC监听端口, 端口被占用时可以修改, 默认:6800
-	#rpc-listen-port=6800
+	# rpc-listen-port=6800
 	# 设置的RPC授权令牌, v1.18.4新增功能, 取代 --rpc-user 和 --rpc-passwd 选项
 	# rpc-secret=<token>
 	# 设置的RPC访问用户名, 此选项新版已废弃, 建议改用 --rpc-secret 选项
@@ -124,7 +121,7 @@ categories: 网络
 	peer-id-prefix=-TR2770-
 	user-agent=Transmission/2.77
 	# 当种子的分享率达到这个数时, 自动停止做种, 0为一直做种, 默认:1.0
-	seed-ratio=0.3
+	seed-ratio=0.2
 	# 强制保存会话, 即使任务已经完成, 默认:false
 	# 较新的版本开启后会在任务完成后依然保留.aria2文件
 	force-save=true
@@ -150,52 +147,46 @@ categories: 网络
 写入init.d脚本，位置为/etc/init.d/aria2
 
 	#!/bin/sh
+	# https://gist.github.com/jereksel/8217470
+	
 	USER="www-data"
 	DAEMON=/usr/bin/aria2c
 	CONF="/home/www-data/aria2/aria2.conf"
 
 	start() {
 		if [ -f $CONF ]; then
-			echo "Starting aria2 daemon"
-			start-stop-daemon -S -c $USER -x $DAEMON -- --conf-path=$CONF 
+			echo "Starting aria2 daemon..."
+			start-stop-daemon -S -c $USER:$USER -x $DAEMON -- -D --conf-path=$CONF || echo "start fail"
+			pid=`pgrep -fu $USER $DAEMON`
+			echo "pid=$pid"
 		else
-			echo "Couldn't start aria2 daemon for $USER (no $CONF found)"
+			echo "$CONF was not found"
 		fi
 	}
 
 	stop() {
-		start-st	op-daemon -o -c $USER -K -u $USER -x $DAEMON
-	}
-
-	status() {
-		dbpid=`pgrep -fu $USER $DAEMON`
-		if [ -z "$dbpid" ]; then
-			echo "aria2c daemon for USER $btsuser: not running."
+		echo  "Stopping..."
+		start-stop-daemon -K -c $USER:$USER -x $DAEMON
+		if [ $? = "0" ];then
+			sleep 1
+			echo "stop ok"
 		else
-			echo "aria2c daemon for USER $btsuser: running (pid $dbpid)"
+			echo "stop fail"
 		fi
 	}
 
 	case "$1" in
 		start)
-			start
-			;;
+			start;;
 		stop)
+			stop;;
+		restart)
 			stop
-			;;
-		restart|reload|force-reload)
-			stop
-			start
-			;;
-		status)
-			status
-			;;
+			start;;
 		*)
-		echo "Usage: /etc/init.d/aria2 {start|stop|reload|force-reload|restart|status}"
-		exit 1
+			echo "Usage: /etc/init.d/aria2 {start|stop|restart}"
+			exit 1
 	esac
-
-	exit 0
 
 添加可执行权限
 
@@ -213,7 +204,7 @@ categories: 网络
 	
 ## Yaaw
 
-这个是配合aria2实现web前端控制，纯静态html页面，JS实现小型功能。
+这个是配合aria2实现web前端控制，纯静态html页面，在客户端javscript实现所有功能。
 
 	cd /var/www/
 	git clone https://github.com/binux/yaaw
@@ -240,7 +231,7 @@ categories: 网络
 
 光有下载还不行，还需要文件管理。实现web界面的删除文件/下载等基本功能。
 
-	apt install php php-json php-xml php-mbstring	
+	apt install php php-cgi php-json php-xml php-mbstring
 
 下载[eXtplorer](http://extplorer.net/projects/extplorer/files)，解压到/var/www/eXtplorer目录
 
@@ -281,7 +272,7 @@ categories: 网络
 
 重启nginx服务，打开浏览器看看能不能进入界面。这样就可以实网页端管理文件。
 
-貌似第一次进入的密码、帐号都是admin
+貌似第一次进入的密码、帐号都是admin，及时更改密码，如无法更改密码请核实eXtplorer拥有者权限。
 
 ![](/images/aria2/eXtplorer.png)
 
