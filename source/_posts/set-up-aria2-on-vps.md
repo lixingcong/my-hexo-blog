@@ -231,7 +231,7 @@ categories: 网络
 	
 ## eXtplorer
 
-光有下载还不行，还需要文件管理。实现web界面的删除文件/下载等基本功能。
+光有下载还不行，还需要文件管理。实现web界面的删除文件/下载/上传等基本功能。
 
 	apt install php php-cgi php-json php-xml php-mbstring
 
@@ -279,4 +279,36 @@ categories: 网络
 ![](/images/aria2/eXtplorer.png)
 
 把aria2下载的东西全部在这里eXtplorer下载到自己电脑，还是很不错的
-	
+
+至于上传文件功能，eXtplorer已经集成了。最好设置一下默认最大允许上传文件大小，否则上传超大文件提示413错误:```Request Entity Too Large```
+
+nginx部份
+
+	vi /etc/nginx/nginx.conf
+	# Content-Length的最大值限制，默认1MB，这里改为1GB
+	client_max_body_size 1024m;
+
+php部份
+
+	vi /etc/php/7.0/fpm/php.ini
+	# 是否允许通过HTTP上传文件的开关。默认为ON即是开
+	file_uploads = on
+	# 允许上传文件大小的最大值。默认为2M
+	upload_max_filesize = 100m 望文生意，即
+	# 表单POST给PHP的所能接收的最大值，包括表单里的所有值。默认为8M
+	post_max_size = 8m
+	# 传至服务器上存储临时文件的地方，如果没指定就会用系统默认的临时文件夹
+	upload_tmp_dir = /home/tmp_upload
+
+一般来说，设置好上述四个参数后，在网络正常的情况下，上传<=8M的文件是不成问题的
+
+但如果要上传>8M的大文件的话，只设置上述四项还不一定能行的通。除非你的网络真有100Mbps的上传高速，否则你还得继续设置下面的参数。
+
+	# 每个PHP页面运行的最大时间值(秒)，默认30秒
+	max_execution_time 600
+	# 每个PHP页面接收数据所需的最大时间，默认60秒
+	max_input_time 600
+	# 每个PHP页面所吃掉的最大内存，默认8M
+	memory_limit 8m
+
+这样就可以使用自己的私有云了！远离国产云存储服务！
