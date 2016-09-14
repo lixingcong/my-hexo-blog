@@ -285,6 +285,7 @@ categories: 网络
 nginx部份
 
 	vi /etc/nginx/nginx.conf
+	# http标签内修改
 	# Content-Length的最大值限制，默认1MB，这里改为1GB
 	client_max_body_size 1024m;
 

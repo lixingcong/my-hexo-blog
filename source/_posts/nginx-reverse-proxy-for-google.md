@@ -335,6 +335,35 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	gzip_disable       "msie6";
 	gzip_http_version  1.0;
 	gzip_types         text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript;
+	
+#### nginx缓存
+
+参考[ngx_http_proxy_module官方手册](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache)有关缓存的设置。
+
+首先mkdir几个文件夹/etc/nginx/cache/one、two、three。
+
+	vi /etc/nginx/nginx.conf
+	# http标签内，这里定义了三个zone，后面google实际上只用到一个zone（two）
+	proxy_cache_path  /etc/nginx/cache/one    levels=1      keys_zone=one:10m;
+	proxy_cache_path  /etc/nginx/cache/two    levels=2:2    keys_zone=two:10m;
+	proxy_cache_path  /etc/nginx/cache/three  levels=1:1:2  keys_zone=three:10m;
+	
+	# 缓存有效时间
+	proxy_cache_valid  200 302 10m;
+	proxy_cache_valid  301 30m;
+	proxy_cache_valid  any 1m;
+
+	# http->server标签内，加入允许缓存，zone名字为two
+	location / {
+		proxy_cache two;
+		google on;
+	}
+	
+这样每次请求谷歌的结果都缓存在nginx服务器内，减少VPS与谷歌的通信次数。
+
+需要定期清理缓存，nginx没有自动清理缓存的功能，可以向crontab写入定时任务清理缓存。
+
+	find /etc/nginx/cache/ -type f -delete
 
 ## 后记
 
