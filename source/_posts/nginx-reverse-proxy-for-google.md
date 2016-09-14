@@ -9,9 +9,10 @@ categories: 网络
 
 目的是编译带有以下模块的nginx，实现正则表达式匹配谷歌的地址
 
-[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)
-
-[ngx\_http\_substitutions\_filter\_module](https://github.com/yaoweibin/ngx_http_substitutions_filter_module)
+|模块|功能|
+|--|--|
+|[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)|google反代|
+|[ngx\_http\_substitutions\_filter\_module](https://github.com/yaoweibin/ngx_http_substitutions_filter_module)|正则表达式|
 
 ### 获取module
 
@@ -124,8 +125,10 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	vi /etc/nginx/nginx.conf
 	# http标签内
 	server {
-		listen 80;
 		server_name MY_DOMAIN.COM;
+		listen 80;
+		# ipv6
+		# listen [::]:80;
 
 		location ^~ /.well-known/acme-challenge/ {
 			alias /var/www/challenges/;
@@ -166,10 +169,7 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	cd $ACME_TINY_DIR && wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
 	cd $ACME_TINY_DIR && cat intermediate.pem root.pem > full_chained.pem
 	
-	nginx -s reload
-	if [ $? = '0' ];then
-		echo renew cert ok!
-	fi
+	nginx -s reload || echo "renew fail"
 	
 写入crontab，定期执行续证书脚本（比如每个月20号续一次）
 
@@ -180,6 +180,8 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	server {
 		server_name MY_DOMAIN.COM;
 		listen 443;
+		# ipv6
+		# listen [::]:443;
 
 		ssl on;
 		# specify your cert location
@@ -197,9 +199,15 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 		if ($http_user_agent ~* "qihoobot|Baiduspider|Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|Adsbot-Google|Feedfetcher-Google|Yahoo! Slurp|Yahoo! Slurp China|YoudaoBot|Sosospider|Sogou spider|Sogou web spider|MSNBot|ia_archiver|Tomato Bot"){
 			return 403;
 		}
-	
+		
+		# not allow robots
+		location /robots.txt {
+			add_header Content-Type text/plain;
+			return 200 "User-agent: *\nDisallow: /\n";
+		}
+		
 		# forbid illegal domain request
-		if ( $host != "MY_DOMAIN.COM" ) {
+		if ( $host != $server_name ) {
 			return 403;
 		}
 	}
@@ -209,6 +217,17 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 	nginx -s reload
 
 ### 其它设置
+
+#### nginx权限
+
+默认是nobody权限执行nginx，建议指定nginx的执行者为www-data
+
+	vi /etc/nginx/nginx.conf
+	user=www-data
+
+因为用到的proxy模块，需要更改proxy module的拥有者为www-data
+
+	chown -R www-data:www-data /var/lib/nginx/proxy
 
 #### ssl安全设置
 
@@ -319,7 +338,7 @@ Let's Encrypt 在你的服务器上生成一个随机验证文件，再通过创
 
 ## 后记
 
-设置到这里就可以使用反代了，建议搭建后域名不要公开使用，亲友几个人使用还是没问题的，人多了你的ip容易被GFW认证，最后只能更换ip
+设置到这里就可以使用反代了，建议搭建后域名不要公开使用，亲友几个人使用还是没问题的，人多了你的ip或者域名容易被GFW认证，最后只能更换VPS或者域名。
 
 谷歌反代教程来源于项目[ngx\_http\_google\_filter\_module](https://github.com/cuber/ngx_http_google_filter_module)的wiki，证书的获取方法参考了[Let's Encrypt，免费好用的 HTTPS 证书](https://imququ.com/post/letsencrypt-certificate.html)，至于nginx的HTTPS安全部份则参考了[Nginx 配置之完整篇](https://imququ.com/post/my-nginx-conf.html)。经过本人实践记录下来而成。附上自己的配置文件[nginx.conf](https://gist.github.com/lixingcong/276ae24f8a0bedd147ac7489f3c58fc2)，可以参考一下。
 

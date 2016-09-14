@@ -3,7 +3,7 @@ date: 2016-09-13 00:49:21
 tags: ubuntu
 categories: 网络
 ---
-充分利用VPS大硬盘容量进行BT/磁力/HTTP下载，并实现文件管理：文件上传下载，一举两得。
+充分利用VPS大硬盘、大流量进行BT/磁力/HTTP下载，并实现web资源管理器：文件上传下载，一举两得。
 <!-- more -->
 > System: ubuntu 16.04 x64
 > RAM: 256M
@@ -17,8 +17,10 @@ categories: 网络
 	
 新建一个拥有者为www-data的目录，用于存放aria2的设置，初始化某些文件，这里选用/var/www/downloads作为下载默认目录
 	
-	mkdir /home/www-data || mkdir /home/www-data/aria2
+	mkdir /home/www-data
+	mkdir /home/www-data/aria2
 	mkdir /var/www/downloads
+	
 	cd /home/www-data/aria2
 	touch aria2.session
 	
@@ -50,7 +52,7 @@ categories: 网络
 	## 下载连接相关 ##
 
 	# 最大同时下载任务数, 运行时可修改, 默认:5
-	max-concurrent-downloads=2
+	max-concurrent-downloads=5
 	# 同一服务器连接数, 添加时可指定, 默认:1
 	max-connection-per-server=2
 	# 最小文件分片大小, 添加时可指定, 取值范围1M -1024M, 默认:20M
