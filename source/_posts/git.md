@@ -1,6 +1,6 @@
 title: Git读书笔记
 date: 2015-10-31 20:20:28
-tags: github
+tags: git
 categories: 读书笔记
 ---
 git入门
@@ -11,7 +11,7 @@ git入门
 |书名|Pro Git|Version Control with Git|
 |---|---|---|
 |作者|Scott Chacon & Ben Straub|Jon Loeliger & Matthew McCullogh|
-|下载地址|empty|empty|
+|下载地址|[在线查看](https://git-scm.com/book/)|[PDF](http://www.foo.be/cours/dess-20122013/b/OReilly%20Version%20Control%20with%20GIT.pdf)|
 
 ## 本地仓库操作
 
@@ -236,8 +236,22 @@ HEAD指针可以理解为最近一次的提交。
     
 变基:参考pro-git.pdf，说白了就是改祖宗。
 
-	git checkout BRANCH-U-WANT-TO-REBASE
-	git rebase TRAGET-BRANCH-U-WANT-TO-REBASE-FOR
+Youtube上一段几分钟的视频，讲得非常清楚。请自备梯子观看！
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cSf8cO0WB4o" frameborder="0" allowfullscreen></iframe>
+
+干货来了：
+
+花了一小时，我详细地学习了台湾同胞写的一篇非常精彩的博客[《Git-rebase 小筆記》](https://blog.yorkxin.org/2011/07/29/git-rebase)，终于知道怎么用rebase了，功能非常强大！！可以实现分支之间的变基、单分支的历史commit的改写（改commit message，commit代码内容，变换commit顺序等），诸多功能。。说不清楚啊！！
+
+基本命令：分支test_rebse的base-commit变为master
+
+	git checkout test_rebse
+	git rebase master
+	
+交互式变基：可以单分支的改写历史commit
+
+	git rebase -i COMMIT_SHA_ID_TO_CHANGE_START_FROM
     
 删除远程分支：
 

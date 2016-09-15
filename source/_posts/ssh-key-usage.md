@@ -1,6 +1,6 @@
 title: ssh-key用法
 date: 2016-1-21 21:13:37
-tags: shell
+tags: [shell, git]
 categories: 读书笔记
 ---
 ssh-key对于Linux重度用户可是一个牛逼东西，简化登陆流程，可谓神器！
