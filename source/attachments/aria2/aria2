@@ -20,7 +20,7 @@ stop() {
 	echo  "Stopping..."
 	start-stop-daemon -K -c $USER:$USER -x $DAEMON
 	if [ $? = "0" ];then
-		sleep 1
+		sleep 5
 		echo "stop ok"
 	else
 		echo "stop fail"
