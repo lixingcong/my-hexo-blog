@@ -79,7 +79,7 @@ categories: 网络
 	http://xxx.com:6800/jsonrpc
 
 修改正确就可以登陆服务器实现下载文件到vps了，更多设置参考[yaaw设置帮助](http://aria2c.com/usage.html)
-	
+
 ## eXtplorer
 
 ### web文件管理
@@ -168,3 +168,80 @@ php部份
 	memory_limit 8m
 
 这样就可以使用自己的私有云了，存点小电影，老司机偶尔开开车还是不错的！远离国产云存储服务，向8秒教育宣传片say bye bye，从这里开始！！
+
+## openwrt
+
+VPS端下载完毕，接下来就使用openwrt上面的aria2将文件以HTTP下载方式拖回来。
+
+### aria2
+
+从openwrt的官方feed中可以编译出aria2，我选用较新的aria2 1.27.1版本，老版本不稳定。容易bus error。
+
+	make menuconfig
+	# 选择 Network->File Trans->Aria2，勾选编译BT和Metalink模块。
+	make package/aria2/compile -j4 V=99
+	
+安装aria2后测试一下能否命令行下载文件
+
+	cd /tmp
+	ariac http://ipv4.download.thinkbroadband.com/5MB.zip
+	
+没问题就使用上文的aria2.conf略作修改（比如修改pre-located参数，下载目录等，session文件位置），直接在路由使用相同的命令启动
+
+	aria2c --conf-path=/root/aria2.conf -D
+
+### USB
+
+opkg安装以下packages
+
+	kmod-usb-storage
+	kmod-fs-ext4
+	kmod-fs-vfat
+	block-mount
+	kmod-nls-utf8
+	kmod-nls-iso8859-1
+	kmod-nls-cp437
+	
+插入U盘挂载：
+
+	mkdir /mnt/sda1
+	mount /dev/sda1 /mnt/sda1
+	
+### yaaw
+
+可以将上文的yaaw文件夹放入/root/。然后直接创建一个虚拟server:
+
+	vi /etc/config/uhttpd
+	# 添加
+	config uhttpd 'yaaw'
+	list listen_http '0.0.0.0:333'
+	list listen_http '[::]:333'
+	option home '/root/yaaw'
+	option max_requests '3'
+	option http_keepalive '20'
+	option tcp_keepalive '1'
+	
+重启uhttp即可访问yaaw前端，地址```http://192.168.1.1:333```。无需复杂的页面设置。
+
+	/etc/init.d/uhttpd restart
+
+若要访问路由器上面的aria2，可以在yaaw右侧的配置，修改jsonrpc为合适的地址。
+
+	http://192.168.1.1:6800/jsonrpc
+
+下一步是，直接将VPS上面已经离线下载好的文件通过路由器```aria2+yaaw```下载到本地。
+
+服务端使用Nginx新建一个dl虚拟server作为HTTP服务器:
+
+	server {
+		server_name dl.xxxx.com;
+		listen 80;
+		location / {
+			root /var/www/downloads;
+			autoindex on;
+			autoindex_localtime on;
+			autoindex_exact_size off;
+		}
+	}
+
+浏览器直接打开http://dl.xxxx.com可以直接获得离线下载地址。
