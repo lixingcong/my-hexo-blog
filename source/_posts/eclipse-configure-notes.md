@@ -107,6 +107,11 @@ java工程新建后记得勾选"工程自动编译"，否则点击执行java就�
 
 > “Error: Could not find or load main class”
 
+在终端执行javac不显示中文信息，改为显示英文信息，方便google查找错误解决方法
+
+	vi .bashrc
+	export JAVA_TOOL_OPTIONS="-Duser.language=en"
+
 #### adt
 
 官方已经将android的默认IDE更换为Android Studio了，下载AS，安装各种sdk，大约占用2GB空间。
