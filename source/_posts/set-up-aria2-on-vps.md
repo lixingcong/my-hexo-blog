@@ -5,6 +5,9 @@ categories: 网络
 ---
 充分利用VPS大硬盘、大流量的特点，让服务器进行BT/磁力/HTTP下载，并实现web资源管理器：文件上传下载，一举两得。
 <!-- more -->
+
+特别提醒：使用美国/加拿大的VPS进行电影下载是违法的，主机商可以随时查出你的下载记录，等着被商家封号吧。请买其它版权法管得松的国家VPS进行离线下载。
+
 > System: ubuntu 16.04 x64
 > RAM: 256M
 > Reverse proxy: nginx 1.10.1
@@ -234,7 +237,7 @@ opkg安装以下packages
 服务端使用Nginx新建一个dl虚拟server作为HTTP服务器:
 
 	server {
-		server_name dl.xxxx.com;
+		server_name files.xxxx.com;
 		listen 80;
 		location / {
 			root /var/www/downloads;
@@ -244,4 +247,4 @@ opkg安装以下packages
 		}
 	}
 
-浏览器直接打开http://dl.xxxx.com可以直接获得离线下载地址。
+浏览器直接打开 http://files.xxxx.com 可以直接获得离线下载地址。

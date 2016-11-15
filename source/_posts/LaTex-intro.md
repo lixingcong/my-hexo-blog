@@ -1,9 +1,9 @@
-title: LaTex常用语法
+title: LaTex数学公式语法
 date: 2016-04-04 15:05:54
-tags: html
+tags: [html, LaTex]
 categories: 网络
 ---
-如果用写代码的方式创造公式的话，那就可以装逼了！本文是我翻译自[LaTex英文手册](https://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
+如果用写代码的方式创造公式的话，那就可以装逼了！本文是我翻译自[LaTex数学符号手册](https://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
 <!-- more -->
 在浏览器中使用Latex，使用Mathjax库
 

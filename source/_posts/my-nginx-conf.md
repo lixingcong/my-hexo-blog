@@ -1,7 +1,7 @@
 title: 我的nginx配置
 date: 2016-10-05 20:38:55
-tags:
-categories:
+tags: [nginx, html]
+categories: 网络
 ---
 自己网站的nginx配置，减少重复编译nginx查找资料耗费的时间。
 <!-- more -->
