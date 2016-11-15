@@ -57,6 +57,7 @@
           </a>
         </li>
       {% endif %}
+      {% include '../../../../source/patches/let_us_high.swig' %}
     </ul>
   {% endif %}
 
