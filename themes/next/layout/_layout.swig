@@ -5,13 +5,13 @@
   {% set html_class = html_class + ' use-motion' %}
 {% endif %}
 
-<html class="{{ html_class | lower }}">
+<html class="{{ html_class | lower }}" lang="{{ config.language }}">
 <head>
   {% include '_partials/head.swig' %}
   <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="{{ config.language }}">
+<body itemscope itemtype="http://schema.org/WebPage" lang="{{ page.lang || page.language || config.language }}">
 
   {% include '_scripts/third-party/analytics.swig' %}
 
@@ -36,7 +36,7 @@
           {% include '_partials/duoshuo-hot-articles.swig' %}
           {% include '_partials/comments.swig' %}
         </div>
-        {% if theme.sidebar !== 'remove' %}
+        {% if theme.sidebar.display !== 'remove' %}
           {% block sidebar %}{% endblock %}
         {% endif %}
       </div>
@@ -45,6 +45,8 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         {% include '_partials/footer.swig' %}
+        {% include '_scripts/third-party/analytics/busuanzi-counter.swig' %}
+        {% block footer %}{% endblock %}
       </div>
     </footer>
 
@@ -68,6 +70,8 @@
   {% include '_scripts/third-party/localsearch.swig' %}
   {% include '_scripts/third-party/mathjax.swig' %}
   {% include '_scripts/third-party/lean-analytics.swig' %}
+  {% include '_scripts/baidu-push.swig' %}
+  {% include '_components/algolia-search/assets.swig' %}
 
 </body>
 </html>
