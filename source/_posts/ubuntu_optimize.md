@@ -202,6 +202,12 @@ ibus-rime输入法，设置横排，用网上的教材是无效的，需要使�
 	sudo apt-get update
 	sudo apt-get install simplescreenrecorder
 	
+SMPLAYER播放器
+
+	sudo add-apt-repository ppa:rvm/smplayer 
+	sudo apt-get update 
+	sudo apt-get install smplayer smplayer-themes smplayer-skins
+
 Android Studio杂项
 
 初次运行提示appt返回一个非零的值，是缺库：
