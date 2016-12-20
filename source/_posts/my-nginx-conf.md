@@ -41,9 +41,9 @@ categories: 网络
 	
 编译后添加默认的lib路径到系统变量中，避免启动Nginx找不到libbrotlienc.so.1
 
-如果需要自启动nginx，还要将系统变量添加到/etc/rc.local中
+如果需要自启动nginx，还要将系统变量添加到/etc/rc.local中，建议也
 
-	vi ~/.bashrc
+	vi /etc/rc.local 
 	# 增加
 	export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 
@@ -79,7 +79,6 @@ openssl取最新版
 	./configure \
 	--conf-path=/etc/nginx/nginx.conf  \
 	--with-pcre-jit \
-	--with-ipv6  \
 	--with-http_ssl_module  \
 	--with-http_stub_status_module  \
 	--with-http_realip_module  \

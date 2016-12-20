@@ -1,6 +1,6 @@
 title: nginx反代google
 date: 2016-07-31 14:25:13
-tags: [html, ubuntu]
+tags: [html, nginx]
 categories: 网络
 ---
 一键部署xx之类的脚本使用有风险，试想一下脚本弄出异常的'sudo rm -rf /'就让VPS挂掉的情形。。因为已经有前车之鉴，不敢再偷懒，自己实践下反代过程也不错哦！
@@ -60,6 +60,10 @@ configure参数填入，再加上两个Module，生成Makefile
 	--with-threads \
 	--add-module=../ngx_http_google_filter_module \
 	--add-module=../ngx_http_substitutions_filter_module
+
+若外置openssl，使用这个参数
+
+	--with-openssl=../openssl-1.1.0c
 	
 *PS:*这个configure参数是从apt install nginx后执行nginx -V得到的，根据个人需要编译模块
 	

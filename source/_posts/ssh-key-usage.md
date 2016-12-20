@@ -112,6 +112,16 @@ PC机子执行
 	ssh myhost
 	scp /tmp/test.txt myhost:/tmp/
 	
+安全设置：对于已经开启了公私鈅登陆的主机，可以禁用密码登陆，效果是：使用密码无权进入
+
+	vi /etc/ssh/sshd_config
+	
+	# 仅允许root用户使用公私鈅登陆（不允许密码登陆）
+	PermitRootLogin prohibit-password
+	
+	# 禁止一切用户使用密码登陆（这个选项根据个人实际设置，默认值是yes）
+	PasswordAuthentication no
+	
 ## TC自动部署hexo
 
 可以自动更新博客，这个TC原本的目的不是这样的。
