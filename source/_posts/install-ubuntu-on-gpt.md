@@ -18,17 +18,6 @@ WinRAR打开iso镜像文件，提取文件：
 目录结构是这样的：
 ![](/images/install_ubuntu_on_gpt/files.png)
 
-## 查分区序号
-
-打开diskgenius
-- 观察左侧硬盘序号，很简单，自上而下数一下硬盘序号，注意忽略那些移动硬盘，还有虚拟ramdisk，还有u盘。grub是从0开始编号硬盘号：HD0代表第一个硬盘，HD1代表第二个硬盘。
-- 观看某一个硬盘里面每一个分区序号，由于diskgenius从ESP分区开始0编号，而grub从1开始编号，所以该fat32分区序号加1就得到grub的序号。
-- 以下图为例，我的是三星硬盘作为GPT硬盘，其中左侧RomexRamdisk是虚拟磁盘，忽略它。故SAMSUNG硬盘作为第二个硬盘，序号是HD1，看右侧，EMPTY_5GB分区作为引导分区，计算hd3+1=hd4。故记下这个(hd1,gpt4)
-
-![](/images/install_ubuntu_on_gpt/partions.png)
-
-得到的硬盘号和分区号记下来。
- 
 ## 修改grub配置
 
 使用Notepad++或者类似的第三方记事本应用程序修改FAT32分区的/boot/grub/grub.cfg
@@ -37,16 +26,16 @@ WinRAR打开iso镜像文件，提取文件：
 文件中部找到以 menuentry 开头的四段，把它们都删除了，换成下面的menuentry内容，
  
     menuentry "Install Ubuntu on GPT" {
-    set root=(hd1,gpt4)
-    loopback loop /ubuntu-14.04-desktop-amd64.iso
-    linux (loop)/casper/vmlinuz.efi persistent boot=casper iso-scan/filename="/ubuntu-14.04-desktop-amd64.iso" quiet splash ro locale=zh_CN.UTF-8 noprompt --
-    initrd (loop)/casper/initrd.lz
+		set root=(hd1,gpt4)
+		loopback loop /ubuntu-14.04-desktop-amd64.iso
+		linux (loop)/casper/vmlinuz.efi persistent boot=casper iso-scan/filename="/ubuntu-14.04-desktop-amd64.iso" quiet splash ro locale=zh_CN.UTF-8 noprompt --
+		initrd (loop)/casper/initrd.lz
     }
     
 以上内容，根据每个人电脑实际情况，要修改的地方有：
-- set root=(hd1,gpt4) 根据上面获得的硬盘序号改动
-- ubuntu-14.04-desktop-amd64.iso 镜像文件名根据实际改动
-- initrd.lz 和 vmlinuz.efi 根据实际的解压出来的名称改动
+- set root=(hd6,gpt6) 这个值随意写，反正都是错误的，后面步骤会改成正确的
+- ubuntu-14.04-desktop-amd64.iso 镜像文件名
+- initrd.lz 和 vmlinuz.efi 根据解压出来的名称改动
 
 ## 添加LiveCD引导项
 
@@ -58,9 +47,25 @@ WinRAR打开iso镜像文件，提取文件：
 	\EFI\BOOT\grubx64.efi
 
 该引导项起个名字，例如ubuntu_install
-顺便勾选“下次从该引导项启动”，重启。进入LiveCD系统
+顺便勾选“下次从该引导项启动”，重启。
 
 注意：Win10如果直接重启无法进入LiveCD。正确做法：开始菜单-> “设置”-> “恢复”-> “使用高级启动”-> 选择“ubuntu_install”。
+
+## 设置LiveCD分区
+
+点击"Install Ubuntu on GPT"是进不了的，因为上面的某个参数是随意写的。
+
+敲击c，进入GRUB command line，这时候可以查看当前的所有分区
+
+	ls 或者 ls -l
+
+![](/images/install_ubuntu_on_gpt/grub_4.png)
+
+选择正确的分区号，比如我的是(hd1,gpt7)，那么Esc退出gurb command line后，按e编辑"Install Ubuntu on GPT"启动项参数，修改
+
+	set root=(hd1,gpt7)
+
+修改后直接按b启动系统，进入LiveCD。
  
 ## 安装前任务
 
@@ -74,29 +79,101 @@ WinRAR打开iso镜像文件，提取文件：
 
 ## 引导失败处理
 
-假设安装成功了，现有win8 + ubuntu共存，GPT分区。
-某一天出**大事**了：
-> 觉得win8该重装了，遂开刀。重装过程中，不慎格式化ESP分区
-> 现象：能引导win8，因缺少grubx64.efi而无法引导ubuntu
-> 此时ubuntu的ext4分区是完整的，仅缺少ESP中的grub2引导文件
+现有win8 + ubuntu共存，GPT分区。
 
-使用LiveCD引导（也就是上面这些步骤，进入grub界面停止。敲击C进入命令行）
-我试了grub2命令行执行下列命令，其中gpt5是我的/boot挂载点
+正常启动界面应该是这样的
+
+![](/images/install_ubuntu_on_gpt/grub_1.jpg)
+
+出**大事**了：无法引导ubuntu。一般分两种情况
+
+### 找不到grub.cfg
+
+这种情形最容易解决，错误图如下
+
+![](/images/install_ubuntu_on_gpt/grub_2.jpg)
+
+输入看看所有盘
+
+	ls -l
+
+查找/boot分区（不是EFI引导分区），记下来，比如我是(hd1,gpt5)。提示：如果/boot没有单独分区，一般是/分区
+
+按c进入命令行，在grub2命令行执行下列命令，根据实际情况修改root的值为/boot分区
 
 	set root=(hd1,gpt5)
     configfile /boot/grub/grub.cfg
 
 可以顺利引导原来硬盘的ubuntu，说明grub.cfg是正常的。
-进入ubuntu后，安装boot-repair来进行修复EFI引导。
 
-    sudo apt-add-repository ppa:yannubuntu/boot-repair
-    sudo apt-get update
-    sudo apt-get install -y boot-repair
-    boot-repair
-    
+进入ubuntu后，使用root权限修改
+
+	vi /boot/efi/EFI/ubuntu/grub.cfg
+	
+将search.fs_uuid修改为正确的/boot所在的分区的UUID。可以运行以下命令获取UUID
+
+	sudo blkid
+	
+找到/boot分区，比如我是
+
+	/dev/sda3: UUID="78dfa873-8779-48eb-9323-1a0400749a48" TYPE="ext4" PARTUUID="de862c9f-8f69-4a36-8b85-8e2df635c802"
+	
+留意/dev/sda3，对应第一块硬盘的第三个分区。即
+
+	hd0,gpt3
+
+将root改为该值，最终的grub.cfg内容如下
+
+	search.fs_uuid 78dfa873-8779-48eb-9323-1a0400749a48 root hd0,gpt3
+	set prefix=($root)'/boot/grub'
+	configfile $prefix/grub.cfg
+
+重启应该可以进入ubuntu了。
+
+### 无法加载grub模块
+
+这种情况略麻烦一点，没有完整地加载grub的模块驱动，此时的grub称为rescue模式（阉割版？）
+
+现象如下图，不过这个图我是从网上随便找到的，实际上看到grub rescue差不多就是这个情况了。
+
+![](/images/install_ubuntu_on_gpt/grub_3.jpg)
+
+重启，进入LiveCD，挂载*已经安装好系统的根分区*，比如为/dev/sda3，那么命令如下
+
+	sudo mkdir /media/my-ubuntu
+	sudo mount /dev/sda3 /media/my-ubuntu
+	
+用压缩管理器打开ubuntu-14.04-desktop-amd64.iso文件，拷贝iso文件中/boot/grub/x86_64-efi文件夹到以下目录，注意使用sudo权限复制。
+
+	/media/my-ubuntu/boot/grub/
+	
+这样就完成了缺失grub模块的修复，重启，继续。
+
+依然是出现错误，需要手工加载grub模块
+
+使用ls命令查看所有分区序号
+
+	ls 或者 ls -l
+
+查找/boot分区（不是EFI引导分区），记下来，比如我是(hd0,gpt3)。下一步将绑定root分区，在grub rescue命令行中输入
+
+	set root=(hd0,gpt3)
+	set prefix=/boot/grub
+	insmod normal
+	normal
+	
+即可进入加载好驱动的GRUB2完整版。如果点击"Ubuntu"启动项错误，可以参考第一种情况修改正确的/boot分区，或者指定内核文件。
+
+启动进入Ubuntu，使用boot-repair修复（需要联网）
+
+	sudo apt-add-repository ppa:yannubuntu/boot-repair
+	sudo apt-get update
+	sudo apt-get install -y boot-repair
+	boot-repair
+
 点击高级选项
-- "GRUB位置" -> 单独的/boot/efi"选择当前引导的ESP分区(/sdb1)
-- "GRUB选项" -> 取消勾选"Secure Boot"
-- "GRUB选项" -> 勾选"重装GRUB前先移除它
+- GRUB位置" -> 单独的/boot/efi"选择当前引导的ESP分区(/sda1)，一般是第一个分区。
+- GRUB选项" -> 取消勾选"Secure Boot"
+- GRUB选项" -> 勾选"重装GRUB前先移除它
 
-执行操作，按提示下载内核并添加引导。
+直接修复，修复时间可能较长，而且屏幕上会出现一定的指示去下载一定的软件包。我花了十分钟boot-repair才弄好。
