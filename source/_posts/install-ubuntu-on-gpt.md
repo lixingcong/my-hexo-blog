@@ -106,23 +106,35 @@ WinRAR打开iso镜像文件，提取文件：
 
 可以顺利引导原来硬盘的ubuntu，说明grub.cfg是正常的。
 
-进入ubuntu后，使用root权限修改
-
-	vi /boot/efi/EFI/ubuntu/grub.cfg
+进入ubuntu后。先挂载EFI分区 我的EFI分区设备文件是/dev/sda1
 	
-将search.fs_uuid修改为正确的/boot所在的分区的UUID。可以运行以下命令获取UUID
+	sudo umount /boot/efi
+	sudo mkdir /tmp/efi
+	sudo mount /dev/sda1 /tmp/efi
+
+运行以下命令获取UUID
 
 	sudo blkid
 	
-找到/boot分区，比如我是
+从输出结果找到/boot分区，比如我是这一行
 
 	/dev/sda3: UUID="78dfa873-8779-48eb-9323-1a0400749a48" TYPE="ext4" PARTUUID="de862c9f-8f69-4a36-8b85-8e2df635c802"
 	
-留意/dev/sda3，对应第一块硬盘的第三个分区。即
+那么我的UUID是
+
+	78dfa873-8779-48eb-9323-1a0400749a48
+
+留意/dev/sda3（root的值），对应第一块硬盘的第三个分区。gpt表示法是硬盘从0开始下标，分区号从1开始。转成gpt表示法即
 
 	hd0,gpt3
 
-将root改为该值，最终的grub.cfg内容如下
+修改EFI分区的grub.cfg
+
+	sudo vi /tmp/efi/EFI/ubuntu/grub.cfg
+
+将search.fs_uuid修改为正确的/boot所在的分区的UUID，将root改为gpt分区。
+
+最终的grub.cfg内容如下
 
 	search.fs_uuid 78dfa873-8779-48eb-9323-1a0400749a48 root hd0,gpt3
 	set prefix=($root)'/boot/grub'
@@ -138,18 +150,35 @@ WinRAR打开iso镜像文件，提取文件：
 
 ![](/images/install_ubuntu_on_gpt/grub_3.jpg)
 
-重启，进入LiveCD，挂载*已经安装好系统的根分区*，比如为/dev/sda3，那么命令如下
+原因我猜是GRUB版安装错误？引导器安装到不兼容的CPU架构？
+
+重启，进入LiveCD
+
+安装正确系统版本GRUB-EFI二进制文件
+
+	sudo apt update
+	sudo apt install grub-efi -y
+
+此时确保新安装grub二进制文件夹下有normal.mod模块，比如我的的64位系统，架构是x86_x64-efi。
+
+	ls /usr/lib/grub/x86_x64-efi | grep normal.mod
+
+挂载*已经安装好系统的根分区*，比如为/dev/sda3，那么命令如下
 
 	sudo mkdir /media/my-ubuntu
 	sudo mount /dev/sda3 /media/my-ubuntu
 	
-用压缩管理器打开ubuntu-14.04-desktop-amd64.iso文件，拷贝iso文件中/boot/grub/x86_64-efi文件夹到以下目录，注意使用sudo权限复制。
+将新的x86_64-efi文件夹复制到/boot/grub目录
 
-	/media/my-ubuntu/boot/grub/
+	sudo cp -R /usr/lib/grub/x86_x64-efi /media/my-ubuntu/boot/grub/
 	
-这样就完成了缺失grub模块的修复，重启，继续。
+这样就完成了缺失grub模块的修复。重启，继续。一般可以直接进入系统。
 
-依然是出现错误，需要手工加载grub模块
+如果能进入ubuntu，就继续更新grub，保证能引导Windows Boot Manager。
+
+	sudo update-grub
+
+如果无法进入ubutnu，依然是出现错误，需要手工加载grub的normal模块
 
 使用ls命令查看所有分区序号
 
@@ -161,7 +190,7 @@ WinRAR打开iso镜像文件，提取文件：
 	set prefix=/boot/grub
 	insmod normal
 	normal
-	
+
 即可进入加载好驱动的GRUB2完整版。如果点击"Ubuntu"启动项错误，可以参考第一种情况修改正确的/boot分区，或者指定内核文件。
 
 启动进入Ubuntu，使用boot-repair修复（需要联网）
