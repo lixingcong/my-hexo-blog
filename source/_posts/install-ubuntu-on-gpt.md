@@ -4,19 +4,16 @@ tags: ubuntu
 categories: 编程
 ---
 ubuntu我一直都是使用硬盘安装，没有试过烧录到u盘引导安装，因为不想浪费一个优盘。
-在gpt分区表电脑上用传统的MBR引导+grub4dos安装方式，将导致安装efi失败，尚不清楚是什么原因。
+在gpt分区表电脑上用传统的MBR引导+grub4dos安装方式，或者使用U盘安装，能安装完毕，但是重启后的grub-efi引导失败，尚不清楚是什么原因，但是本文末尾给出了通用的解决方案。
 <!-- more -->
 
 ## 新建小分区
 
 新建一个fat32分区（uefi引导不支持ntfs），大约2GB，能装得下ubuntu的镜像，复制iso到该分区下
 
-WinRAR打开iso镜像文件，提取文件：
-- boot文件夹、EFI文件夹解压到FAT32分区中
-- casper文件夹中的 initrd.lz 和 vmlinuz.efi 解压出来
- 
-目录结构是这样的：
-![](/images/install_ubuntu_on_gpt/files.png)
+WinRAR打开iso镜像文件，提取两个文件夹解压到FAT32分区中
+- boot
+- EFI
 
 ## 修改grub配置
 
@@ -24,18 +21,18 @@ WinRAR打开iso镜像文件，提取文件：
 *不使用系统自带记事本，因记事本这个坑爹货无法保存为Unix格式+UTF8*
 
 文件中部找到以 menuentry 开头的四段，把它们都删除了，换成下面的menuentry内容，
- 
+
     menuentry "Install Ubuntu on GPT" {
 		set root=(hd1,gpt4)
 		loopback loop /ubuntu-14.04-desktop-amd64.iso
 		linux (loop)/casper/vmlinuz.efi persistent boot=casper iso-scan/filename="/ubuntu-14.04-desktop-amd64.iso" quiet splash ro locale=zh_CN.UTF-8 noprompt --
 		initrd (loop)/casper/initrd.lz
     }
-    
+
 以上内容，根据每个人电脑实际情况，要修改的地方有：
 - set root=(hd6,gpt6) 这个值随意写，反正都是错误的，后面步骤会改成正确的
-- ubuntu-14.04-desktop-amd64.iso 镜像文件名
-- initrd.lz 和 vmlinuz.efi 根据解压出来的名称改动
+- ubuntu-14.04-desktop-amd64.iso 镜像文件名，需要修改两次
+- initrd.lz 和 vmlinuz.efi 根据iso中的casper文件夹下对应名称改动
 
 ## 添加LiveCD引导项
 
@@ -65,17 +62,21 @@ WinRAR打开iso镜像文件，提取文件：
 
 	set root=(hd1,gpt7)
 
-修改后直接按b启动系统，进入LiveCD。
- 
-## 安装前任务
+修改后直接按F10启动系统，进入LiveCD。
 
-卸载isodevice卷：少了这一步会分区失败
+## 安装
+
+点击安装系统前，先卸载isodevice卷：少了这一步会分区失败
 
 	sudo umount -l /isodevice
 
-正常安装，选择安装引导器到整个硬盘，而不是windows boot loader
+最后到分区那一个步骤时候，选择安装grub2引导器到整个硬盘（例如/dev/sda，即安装程序的预置值）
 
-安装后可以进入win将liveCD那个分区隐藏，不建议删掉该分区（才占2GB），某天又要重装可以直接重来。
+原因有下两个
+- 如果你要用ubuntu的引导器代替windows的引导器，就选/dev/sda。可以在开机时候按ESC或者F12选择EFI启动项是Windows Boot Loader还是GRUB
+- 如果你要保留windows的引导器，就选/boot分区，但这样一来，装完ubuntu重启后，只能启动windows，还必须在windows上面安装easybcd或者grub4dos等等之类软件来添加ubuntu启动项。显得更麻烦。
+
+正常安装，安装后可以进入win。使用DiskGenius等磁盘分区软件将liveCD那个分区隐藏，不建议删掉该分区（才占2GB），某天又要重装可以直接重新进入LiveCD。
 
 ## 引导失败处理
 
@@ -174,7 +175,7 @@ WinRAR打开iso镜像文件，提取文件：
 	
 这样就完成了缺失grub模块的修复。重启，继续。一般可以直接进入系统。
 
-如果能进入ubuntu，就继续更新grub，保证能引导Windows Boot Manager。
+如果能进入ubuntu，就继续更新grub，确保将来能引导Windows Boot Manager。
 
 	sudo update-grub
 
