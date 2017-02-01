@@ -197,13 +197,14 @@ VPS端下载完毕，接下来就使用openwrt上面的aria2将文件以HTTP下�
 
 opkg安装以下packages
 
-	kmod-usb-storage
-	kmod-fs-ext4
-	kmod-fs-vfat
-	block-mount
-	kmod-nls-utf8
-	kmod-nls-iso8859-1
-	kmod-nls-cp437
+	opkg install \
+	  kmod-usb-storage \
+	  kmod-fs-ext4 \
+	  kmod-fs-vfat \
+	  block-mount \
+	  kmod-nls-utf8 \
+	  kmod-nls-iso8859-1 \
+	  kmod-nls-cp437
 	
 插入U盘挂载：
 
