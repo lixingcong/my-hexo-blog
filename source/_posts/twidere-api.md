@@ -71,6 +71,7 @@ categories: 网络
 安装依赖
 
 	apt-get install \
+             python-pip
 	         ffmpeg python-opencv \
 	         libjpeg-dev libpng-dev libwebp-dev libtiff-dev libjasper-dev \
 			 libgtk2.0-dev python-numpy python-pycurl python-tornado webp
@@ -152,9 +153,13 @@ categories: 网络
 
 使用screen 或者 supervisor等方式在后台运行thumbor，监听7777端口。重启nginx
 
-	screen -dmS "thumbor_screen" thumbor -c ~/thumbor.conf -p 7777
+	screen -dmS "thumbor_screen" thumbor -c ~/thumbor.conf -p 7777 -i 127.0.0.1
 	nginx -s reload
 	
+注意在vps上面打开7777端口的入站ACCEPT
+
+	iptables -A INPUT -p tcp --dport 7777 -j ACCEPT
+
 本地测试一下
 
 	wget -O - "https://thumbor.yyy.com/Ohtvvloypfk_auC-7malm5Tw6Gw=/http%3A//www.waterfalls.hamilton.ca/images/Waterfall_Collage_home_sm1.jpg" > /dev/null
@@ -168,13 +173,30 @@ categories: 网络
 
 ![](/images/twidere-api/thumbor.png)
 
+实际测试结果
+
+|网络|是否使用Thumbor代理|加载图片速度|
+|---|---|----|
+|关闭ss|否|非常慢|
+|关闭ss|是|一般|
+|开启ss|否|快|
+|开启ss|是|一般|
+
+由此可以看出，最佳表现为：在开启ss情况下关闭thumbor，或者在没有ss情况下开启thumbor。
+
+注意thumbor无法代理视频文件。遇到视频打不开也是正常。。。
+
 ### 压缩图片
 
-压缩图片可以加快加载速度。节省流量。但是对VPS资源消耗较大。请根据需求开启
+压缩图片可以加快加载速度。节省流量。但是对VPS资源消耗较大，在我的垃圾搬瓦工上面运行有可能被suspend。请根据需求开启。推荐内存256M以上机子使用
 
 去[image-optim-buildpack项目](https://github.com/bobbus/image-optim-buildpack/tree/master/vendor/image-optim)下载jpegtran等二进制文件，假设放置在
 
 	/usr/local/bin/jpegtran
+	
+记得设置可执行权限
+
+	chmod a+x /usr/local/bin/jpegtran
 
 那么修改thumbor.conf文件
 
@@ -188,6 +210,14 @@ categories: 网络
 可以进一步开启WEBP格式压缩。也可以指定WEBP压缩比率。
 
 	AUTO_WEBP = True
+	
+	QUALITY = 40
+	WEBP_QUALITY = 40
+	
+设置最大尺寸，分辨率过大将裁剪图片
+
+	MAX_WIDTH = 800
+	MAX_HEIGHT = 600
 	
 ## 后记
 
