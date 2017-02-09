@@ -44,11 +44,12 @@ categories: 网络
 用nginx 新建一个HTTPS网站（强烈建议不适用HTTP传输，会被墙）。关于如何获得SSL证书可以参考[这篇文章](/2016/07/31/nginx-reverse-proxy-for-google/#Let’s-Encrypt证书)
 
 	server {
-		server_name xxx.yyy.com;
+		server_name proxy.yyy.com;
 		listen 443 ssl;
 		ssl_certificate /tmp/fullchain.pem;
 		ssl_certificate_key /tmp/domain.key;
-		location ~ ^/domain.([\w\d]+)/(.*) {
+		resolver 8.8.8.8;
+		location ~ ^/domain\.([\w\d]+)/(.*) {
 			proxy_pass  https://$1.twitter.com/$2$is_args$args;
 			proxy_cookie_domain twitter.com $server_name;
 		}
@@ -56,7 +57,7 @@ categories: 网络
 	
 那么将下面填入即可完成反代api转发器。
 
-	https://xxx.yyy.com/domain.[DOMAIN]
+	https://proxy.yyy.com/domain.[DOMAIN]
 
 ![](/images/twidere-api/api-proxy.png)
 
@@ -71,10 +72,10 @@ categories: 网络
 安装依赖
 
 	apt-get install \
-             python-pip
+	         python-pip
 	         ffmpeg python-opencv \
 	         libjpeg-dev libpng-dev libwebp-dev libtiff-dev libjasper-dev \
-			 libgtk2.0-dev python-numpy python-pycurl python-tornado webp
+	         libgtk2.0-dev python-numpy python-pycurl python-tornado webp
 
 从源码编译，如果编译过程中有依赖未满足请自行解决。
 
@@ -104,6 +105,10 @@ categories: 网络
 
 	# 监听7777端口
 	thumbor -c ~/thumbor.conf -p 7777
+
+注意在vps上面打开7777端口的入站ACCEPT
+
+	iptables -A INPUT -p tcp --dport 7777 -j ACCEPT
 	
 本地测试一下。假设vps地址为55.55.55.55
 
@@ -136,38 +141,28 @@ categories: 网络
 
 ### nginx反代thumbor
 
-新建一个https服务器
+在https服务器的server标签内，添加一个location根目录(/)，作为thumbor代理。
 
-	server {
-		server_name thumbor.yyy.com;
-		listen 443 ssl;
-		ssl_certificate /tmp/fullchain.pem;
-		ssl_certificate_key /tmp/domain.key;
-		location / {
-			proxy_set_header Host localhost;
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_pass http://127.0.0.1:7777$request_uri;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		}
+	location / {
+		proxy_set_header Host localhost;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_pass http://127.0.0.1:7777$request_uri;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
 
 使用screen 或者 supervisor等方式在后台运行thumbor，监听7777端口。重启nginx
 
 	screen -dmS "thumbor_screen" thumbor -c ~/thumbor.conf -p 7777 -i 127.0.0.1
 	nginx -s reload
-	
-注意在vps上面打开7777端口的入站ACCEPT
-
-	iptables -A INPUT -p tcp --dport 7777 -j ACCEPT
 
 本地测试一下
 
-	wget -O - "https://thumbor.yyy.com/Ohtvvloypfk_auC-7malm5Tw6Gw=/http%3A//www.waterfalls.hamilton.ca/images/Waterfall_Collage_home_sm1.jpg" > /dev/null
+	wget -O - "https://proxy.yyy.com/Ohtvvloypfk_auC-7malm5Tw6Gw=/http%3A//www.waterfalls.hamilton.ca/images/Waterfall_Collage_home_sm1.jpg" > /dev/null
 	
-这样就可以把服务器地址和密钥填入Twidere实现免翻x墙刷出图片了。
+这样就可以把Thumbor服务器地址和密钥填入Twidere实现免翻x墙刷出图片了。
 
 	# 地址
-	https://thumbor.yyy.com/
+	https://proxy.yyy.com/
 	# 密钥
 	password
 
