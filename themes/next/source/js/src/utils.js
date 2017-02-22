@@ -15,7 +15,7 @@ NexT.utils = NexT.$u = {
         $imageWrapLink = $image.wrap('<a href="' + this.getAttribute('src') + '"></a>').parent('a');
       }
 
-      $imageWrapLink.addClass('fancybox');
+      $imageWrapLink.addClass('fancybox fancybox.image');
       $imageWrapLink.attr('rel', 'group');
 
       if (imageTitle) {
@@ -46,6 +46,13 @@ NexT.utils = NexT.$u = {
 
     $(window).on('scroll', function () {
       $top.toggleClass('back-to-top-on', window.pageYOffset > THRESHOLD);
+      
+      var scrollTop = $(window).scrollTop();
+      var docHeight = $(document).height();
+      var winHeight = $(window).height();
+      var scrollPercent = (scrollTop) / (docHeight - winHeight);
+      var scrollPercentRounded = Math.round(scrollPercent*100);
+      $('#scrollpercent>span').html(scrollPercentRounded);
     });
 
     $top.on('click', function () {
