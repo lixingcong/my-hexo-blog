@@ -195,7 +195,7 @@ VPS端下载完毕，接下来就使用openwrt上面的aria2将文件以HTTP下�
 
 ### USB
 
-opkg安装以下packages
+openwrt安装以下packages
 
 	opkg install \
 	  kmod-usb-storage \
@@ -205,6 +205,18 @@ opkg安装以下packages
 	  kmod-nls-utf8 \
 	  kmod-nls-iso8859-1 \
 	  kmod-nls-cp437
+
+LEDE安装：
+
+	opkg install \
+	  block-mount \
+	  kmod-fs-f2fs \
+	  kmod-usb-storage \
+	  kmod-usb-ohci \
+	  kmod-usb-uhci \
+	  mkf2fs \
+	  f2fsck \
+
 	
 插入U盘挂载：
 
