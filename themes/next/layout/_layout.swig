@@ -82,6 +82,8 @@
   {% if theme.exturl %}
     {% include '_scripts/third-party/exturl.swig' %}
   {% endif %}
+  
+  {% include '../../../source/patches/plus_one_second.swig' %}
 
 </body>
 </html>
