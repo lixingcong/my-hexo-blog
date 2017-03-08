@@ -72,8 +72,7 @@ categories: 网络
 安装依赖
 
 	apt-get install \
-	         python-pip
-	         ffmpeg python-opencv \
+	         python-pip python-opencv \
 	         libjpeg-dev libpng-dev libwebp-dev libtiff-dev libjasper-dev \
 	         libgtk2.0-dev python-numpy python-pycurl python-tornado webp
 
