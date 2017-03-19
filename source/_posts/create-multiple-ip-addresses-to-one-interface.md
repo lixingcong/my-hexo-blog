@@ -37,19 +37,13 @@ IP别名类似于Openwrt单线多拨叠加带宽的原理，都是一个网络�
 
 我的ss开启了UDP转发，不可能就这么阉割udp部份吧。。。如果遇到UDP被丢弃的情况，可以做NAT
 
-## UDP的NAT
+## 对副IP做NAT
 
-分为Dest-NAT和Source-NAT。
+因为副IP相对于主IP可以看作是内网IP，因此做DNAT操作。
 
-举例，我要做一个对从111.111.111.111传入的UDP数据包进行DNAT，设目标端口1024（ss监听端口）
+举例，我要做一个对从111.111.111.111传入的数据包进行DNAT
 
-	iptables -t nat -A PREROUTING --dst 111.111.111.111 -p udp --dport 1024 -j DNAT --to-destination 66.66.66.66
-	
-做完DNAT还要做SNAT
-
-	iptables -t nat -A POSTROUTING -p udp --dst 66.66.66.66 -j SNAT --to-source 111.111.111.111
-	
-iptables貌似不支持CIDR的NAT，只能逐个端口设置NAT。每个端口执行上面两行。
+	iptables -t nat -A PREROUTING --dst 111.111.111.111 -j DNAT --to-destination 66.66.66.66
 
 测试无误，可以将IP Alias和iptables命令，写入到系统自启的脚本文件里面。ubuntu是这里
 
@@ -59,3 +53,4 @@ iptables貌似不支持CIDR的NAT，只能逐个端口设置NAT。每个端口�
 
 [使用 MAC VLANs 创建 MAC 地址不同的虚拟网卡](http://answ.me/post/use-macvlan-to-create-multiple-virtual-interfaces-with-different-mac-addresses/)：另一种不同于IP alias的方法
 [分配多个公网IP到2台KVM机子上面](http://serverfault.com/questions/372408/how-to-assign-multiple-public-ip-adresses-for-2-kvm-guests)：教你如何做iptables NAT
+[清华大学_金枪鱼之夜：坏人的 iptables小讲堂](https://www.youtube.com/watch?v=w_vGD-96O54)：非常清晰明了的iptables入门教程，社团形质的录像
