@@ -37,13 +37,13 @@ IP别名类似于Openwrt单线多拨叠加带宽的原理，都是一个网络�
 
 我的ss开启了UDP转发，不可能就这么阉割udp部份吧。。。如果遇到UDP被丢弃的情况，可以做NAT
 
-## 对副IP做NAT
+## 对副IP做UDP-NAT
 
 因为副IP相对于主IP可以看作是内网IP，因此做DNAT操作。
 
-举例，我要做一个对从111.111.111.111传入的数据包进行DNAT
+举例，我要做一个对从111.111.111.111传入的UDP数据包进行DNAT
 
-	iptables -t nat -A PREROUTING --dst 111.111.111.111 -j DNAT --to-destination 66.66.66.66
+	iptables -t nat -A PREROUTING -p udp --dst 111.111.111.111 -j DNAT --to-destination 66.66.66.66
 
 测试无误，可以将IP Alias和iptables命令，写入到系统自启的脚本文件里面。ubuntu是这里
 
