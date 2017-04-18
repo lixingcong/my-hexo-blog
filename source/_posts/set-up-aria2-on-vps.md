@@ -1,6 +1,6 @@
 title: aria2+yaaw离线下载
 date: 2016-09-13 00:49:21
-tags: ubuntu
+tags: [ubuntu, openwrt]
 categories: 网络
 ---
 充分利用VPS大硬盘、大流量的特点，让服务器进行BT/磁力/HTTP下载，并实现web资源管理器：文件上传下载，一举两得。
@@ -209,13 +209,14 @@ openwrt安装以下packages
 LEDE安装：
 
 	opkg install \
-	  block-mount \
-	  kmod-fs-f2fs \
 	  kmod-usb-storage \
+	  kmod-fs-ext4 \
+	  kmod-fs-vfat \
+	  block-mount \
 	  kmod-usb-ohci \
 	  kmod-usb-uhci \
 	  mkf2fs \
-	  f2fsck \
+	  f2fsck
 
 	
 插入U盘挂载：
