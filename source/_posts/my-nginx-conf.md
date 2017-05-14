@@ -41,9 +41,8 @@ categories: 网络
 	
 编译后添加默认的lib路径到系统变量中，避免启动Nginx找不到libbrotlienc.so.1
 
-如果需要自启动nginx，还要将系统变量添加到/etc/rc.local中，建议也
+如果需要自启动nginx，还要将系统变量添加到/etc/rc.local中和~/.bashrc文件中
 
-	vi /etc/rc.local 
 	# 增加
 	export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
 
@@ -71,35 +70,61 @@ categories: 网络
 	
 openssl取最新版
 
-	wget https://www.openssl.org/source/openssl-1.1.0b.tar.gz
-	tar xf openssl-1.1.0b.tar.gz
+	wget https://www.openssl.org/source/openssl-1.1.0e.tar.gz
+	tar xf openssl-1.1.0e.tar.gz
 
-贴出configure配置，这里选用了几个我用到的模块，还有add_module上文的模块
+安装依赖。至于依赖什么，取决于编译nginx开启的模块。即下文的configure参数。
 
+	apt install -y \
+	  libgeoip-dev \
+	  libgd-dev \
+	  libxslt1-dev \
+	  zlib1g-dev \
+	  libpcre3-dev
+
+configure参数控制要编译哪些模块
+
+	# 切换到Nginx源码目录
+	cd ~/nginx_my/nginx-1.13.0
+	
 	./configure \
-	--conf-path=/etc/nginx/nginx.conf  \
+	--with-cc-opt='-O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2' --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
+	--conf-path=/etc/nginx/nginx.conf \
+	--with-debug \
 	--with-pcre-jit \
-	--with-http_ssl_module  \
-	--with-http_stub_status_module  \
-	--with-http_realip_module  \
-	--with-http_auth_request_module  \
-	--with-http_addition_module  \
-	--with-http_dav_module  \
-	--with-http_geoip_module  \
-	--with-http_gunzip_module  \
-	--with-http_gzip_static_module  \
-	--with-http_image_filter_module  \
-	--with-http_v2_module  \
-	--with-http_sub_module  \
-	--with-http_xslt_module  \
-	--with-stream  \
-	--with-stream_ssl_module  \
-	--with-threads  \
-	--add-module=../ngx_http_google_filter_module  \
+	--with-http_ssl_module \
+	--with-http_stub_status_module \
+	--with-http_realip_module \
+	--with-http_auth_request_module \
+	--with-http_addition_module \
+	--with-http_dav_module \
+	--with-http_geoip_module \
+	--with-http_gunzip_module \
+	--with-http_gzip_static_module \
+	--with-http_image_filter_module \
+	--with-http_v2_module \
+	--with-http_sub_module \
+	--with-http_xslt_module \
+	--with-stream \
+	--with-stream_ssl_module \
+	--with-threads \
+	--without-mail_pop3_module \
+	--without-mail_imap_module \
+	--without-mail_smtp_module \
+	--with-openssl=../openssl-1.1.0e \
+	--add-module=../ngx_http_google_filter_module \
 	--add-module=../ngx_http_substitutions_filter_module \
 	--add-module=../ngx_brotli \
-	--add-module=../nginx-ct \
-	--with-openssl=../openssl
+	--add-module=../nginx-ct
+
+以上的configure意义是
+
+- 没有指定prefix，采用系统默认的前缀目录，如/usr/local/
+- 指定配置文件路径为/etc/nginx/nginx.conf
+- 开启basic_auth等模块，关闭邮件模块
+- 指定好openssl源码目录
+- 添加几个额外的模块，如ngx_http_google_filter
+
 	
 直接编译即可
 
@@ -178,7 +203,7 @@ nginx.conf中的server标签中添加
 
 在https服务器中添加
 
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains;" always;
+	add_header Strict-Transport-Security "max-age=31536000;" always;
 	
 有兴趣可以加入google chrome的Preload List里面，将从浏览器自动强制使用https。需要申请，审批需要几天。但是加进去preload list后很难从其中移除，需要发邮件移除。。
 

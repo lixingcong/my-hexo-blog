@@ -26,9 +26,9 @@ LUCI -> Network -> Interface
 
 NAT6转换的ULA网段要求是2fff::/64网段，因此把ULA前缀改为2fff::/64内的任意网段，比如以下都是合法的ULA
 
-	2fff：3333:4444::/64
-	2fff：cccc:dddd:eeee:/64
-	2fff：1:1::/64
+	2fff:3333:4444::/64
+	2fff:cccc:dddd:eeee:/64
+	2fff:1:1::/64
 
 ![](/images/ipv6-nat-lede/ula.png)
 
