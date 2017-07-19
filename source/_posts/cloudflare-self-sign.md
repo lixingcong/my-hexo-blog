@@ -7,6 +7,8 @@ categories: 网络
 <!-- more -->
 let's encrypt的证书每三个月都要续签，即便可以用脚本实现，但是我这个懒人还是想一劳永逸：签证一次以后也不需要再签名，而且证书“不会过期”，那是坠吼的！
 
+2017-07-19更新：修复Chrome 58+后的提示ERR\_CERT\_COMMON\_NAME\_INVALID错误，原文出自[日志](https://sqzryang.com/blog/2015/07/09/openssl-since-the-visa-book-with-nginx-bi-directional-SSL-certificate-guarantee/)
+
 ## 前戏
 
 确保cloudflare中的DNS记录为DNS only（仅解析DNS），先不急着上CDN。待调试成功再开启HTTP Proxy CDN。
@@ -25,11 +27,12 @@ let's encrypt的证书每三个月都要续签，即便可以用脚本实现，�
 
 	openssl ecparam -genkey -name prime256v1 -out ca.key
 	
-生成CA根证书，参数days后面的7305是指证书的有效期，这里设置成了20年，也就是CA是20年有效。执行后随意填信息，但是Common Name必须填上自己的域名，比如example.com
+生成CA根证书，参数days后面的7305是指证书的有效期，这里设置成了20年
 
-	openssl req -new -x509 -days 7305 -key ca.key -out ca.crt
+	openssl req -new -x509 -days 7305 -key ca.key -out ca.crt \
+	  -subj "/C=CN/ST=Sichuan/L=Chengdu/O=fuck/OU=fuck/CN=example.com"
 
-ca.crt就是自造的根域名CA证书。
+ca.crt就是自造的根域名CA证书。拷贝给其它设备安装它即可信任该自签CA
 
 ### 泛域名证书
 
@@ -39,37 +42,40 @@ ca.crt就是自造的根域名CA证书。
 	
 生成签名请求：遇到Common Name必须填上自己的泛域名（带星号），比如*.example.com
 
-	openssl req -new -sha256 -key domain.key -out domain.csr
+	openssl req -new -sha256 -key domain.key -out domain.csr\
+	  -subj "/C=CN/ST=Sichuan/L=Chengdu/O=fuck/OU=fuck/CN=*.example.com"
 	
 domain.csr就是自造的域名CSR，用于下文的签证书。
 	
 ### CA自签证
 
-找到openssl.cnf文件，拷贝一份，我的是ubuntu，不同系统也许位置不一样。但是内容是一致的。
+新建一个extended.ext文件，内容如下，修改最后的subjectAltName字段为泛域名。
 
-	cp /etc/ssl/openssl.cnf ./openssl.cnf
+	[ req ]
+	default_bits        = 2048
+	distinguished_name  = req_distinguished_name
+	req_extensions      = san
+	extensions          = san
+	[ req_distinguished_name ]
+	countryName         = CN
+	stateOrProvinceName = Sichuan
+	localityName        = Chengdu
+	organizationName    = fuck
+
+	[SAN]
+	authorityKeyIdentifier=keyid,issuer
+	basicConstraints=CA:FALSE
+	keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+	subjectAltName = DNS:*.example.com
 	
-打开这个openssl.cnf，发现有如下两行，指定了新生成的证书目录，根据实际情况修改dir的值。这个dir目录下存放的应该是签证的中间文件，一般没什么用途。签完证书可以忽略掉这个目录。
+开始签名，使用指定的extended.ext文件，签名有效期20年。。。
 
-	dir  = ./demoCA   # TSA root directory
-	dir  = ./demoCA   # Where everything is kept
-	
-由于我没有改dir的值，那么就在当前目录下建立一个demoCA文件夹。
-
-	mkdir demoCA
-	
-修改各种默认参数，用于openssl自签名，我直接抄来的：
-
-	mkdir demoCA/newcerts
-	touch demoCA/index.txt
-	echo "01" > demoCA/serial
-	
-开始签名，使用指定的openssl.cnf文件，签名有效期20年。。。
-
-	openssl ca -policy policy_anything \
-	  -days 7305 -cert ca.crt -keyfile ca.key \
+	openssl x509 -req \
+	  -days 7305 \
+	  -sha256 \
+	  -CA ca/ca.crt -CAkey ca/ca.key -CAcreateserial \
 	  -in domain.csr -out signed.crt \
-	  -config ./openssl.cnf
+	  -extfile extended.ext -extensions SAN
 
 将根证书和泛域名证书合成一个full-chain证书
 
