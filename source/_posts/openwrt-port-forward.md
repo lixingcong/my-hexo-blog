@@ -1,9 +1,9 @@
-title: openwrt端口转发
+title: NAT穿透和内网访问
 date: 2016-10-03 22:55:18
 tags: openwrt
 categories: 网络
 ---
-利用minivtun实现点对点非公网NAT穿透，在学校轻松访问家里的路由器。
+利用minivtun实现点对点非公网NAT穿透，在学校轻松访问家里的路由器。需要一个中心化公网服务器（VPS）作为打洞实现内网访问。
 <!-- more -->
 一般这种情况用于
 
@@ -11,6 +11,7 @@ categories: 网络
 - 家里的WEB网络摄像头监控
 - 远程修改某些路由设置
 - 远程控制路由器相关的“智能家居”
+- 远程访问家里的内网或一个网段
 
 现在仅考虑以下拓朴图，本文的目的是想让路由C访问路由A，实现C远程控制A。其中A是非智能路由器，使用非Openwrt系统。A下面挂接一个Openwrt路由器B
 
@@ -75,7 +76,36 @@ categories: 网络
 
 ![](/images/openwrt_port_fwd/new_port_forward.png)
 
-## 测试方法
+### 测试方法
 
 从路由器C浏览器地址栏输入```http://172.16.0.3:800```即可访问路由A的800端口
 
+## 公网访问家里内网
+
+考虑以下拓朴，按照上文已经实现B-C互访（即ping成功），现在我的需求是，在C节点上实现访问A路由上的192.168.200.0/24网段（做视频监控等应用）
+
+![](/images/openwrt_port_fwd/topology.png)
+
+实现原理是：将A节点的路由表在VPS上面宣告一下，参考minivtun项目的github issue[服务端访问客户端内网](https://github.com/rssnsj/minivtun/issues/12)进行配置。
+
+### 添加节点A的路由表
+
+服务端运行监听555端口，增加-v选项宣告路由表，192.168.200.0/24网段的默认网关是节点B，即172.16.0.3
+
+	/usr/sbin/minivtun -l 0.0.0.0:555 -a 172.16.0.1/24 -e password -n mv0 -d -v "192.168.200.0/24=172.16.0.3"
+
+然后服务器端Linux系统的路由表增加默认路由，192.168.200.0/24走minivtun接口。
+
+	ip route add 192.168.200.0/24 dev mv0
+
+服务器端测试一下能否ping到节点A，若成功就说明公网下使用minivtun可以实现访问192.168.200.0网段。
+
+	ping 192.168.200.1
+
+### 配合shadowsocks进行访问内网
+
+假设服务器上已经有ss-server在运行。在shadowsocks-android上新建一个服务器配置，路由设置为自定义规则，自定义规则可以根据实际修改，满足规则才走ss转发，这样可以实现手机访问节点A内网
+
+![](/images/openwrt_port_fwd/ss-custom-rule.png)
+
+若电脑windows实现内网访问，个人猜测可使用ss的全局模式，或者配合SwitchyOmega等浏览器指定走socks5代理，我没有测试过。
