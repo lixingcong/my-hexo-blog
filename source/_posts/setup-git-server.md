@@ -229,6 +229,23 @@ categories: 网络
 
 经常性使用git pull以拉取服务器上最新的代码版本。
 
+## 安全设置
+
+修改默认的shell为gitolite专用的，而不是默认的bash
+
+	sudo vi /etc/passwd
+	# 修改git用户的shell程序为/home/git/bin/gitolite-shell
+
+不允许git用户使用密码登陆
+
+	sudo vi /etc/ssh/sshd_config
+	# 增加以下
+	Match User git
+		PasswordAuthentication no
+	
+	# 重启ssh服务
+	sudo service ssh restart
+
 ## 参考链接
 
 [ssh key配置](/2016/01/21/ssh-key-usage)
