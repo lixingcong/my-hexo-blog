@@ -87,19 +87,19 @@ font:
   enable: true
 
   # Uri of fonts host. E.g. //fonts.googleapis.com (Default)
-  host: //fonts.lug.ustc.edu.cn
+  host: //static.mdzz.ru
 
   # Global font settings used on <body> element.
   global:
     # external: true will load this font family from host.
     external: true
-    family: Lato
+    family: Noto Sans SC
 
   # Font settings for Headlines (h1, h2, h3, h4, h5, h6)
   # Fallback to `global` font settings.
   headings:
     external: true
-    family: Roboto Slab
+    family: Source Sans Pro
 
   # Font settings for posts
   # Fallback to `global` font settings.
@@ -118,7 +118,7 @@ font:
   # Font settings for <code> and code blocks.
   codes:
     external: true
-    family: PT Mono
+    family: Fira Sans
     size:
 
 
