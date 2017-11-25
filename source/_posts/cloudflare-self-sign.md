@@ -23,13 +23,17 @@ let's encrypt的证书每三个月都要续签，即便可以用脚本实现，�
 
 ### 自造CA证书
 
+新建一个ca目录，存放自造ca
+
+	mkdir ca
+
 创建一个私钥用于CA，这里使用ECC证书（如果使用RSA证书，可以使用genrsa参数）
 
-	openssl ecparam -genkey -name prime256v1 -out ca.key
+	openssl ecparam -genkey -name prime256v1 -out ca/ca.key
 	
 生成CA根证书，参数days后面的7305是指证书的有效期，这里设置成了20年
 
-	openssl req -new -x509 -days 7305 -key ca.key -out ca.crt \
+	openssl req -new -x509 -days 7305 -key ca/ca.key -out ca/ca.crt \
 	  -subj "/C=CN/ST=Sichuan/L=Chengdu/O=fuck/OU=fuck/CN=example.com"
 
 ca.crt就是自造的根域名CA证书。拷贝给其它设备安装它即可信任该自签CA
