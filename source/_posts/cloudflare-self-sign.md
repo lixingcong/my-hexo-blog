@@ -7,8 +7,6 @@ categories: 网络
 <!-- more -->
 let's encrypt的证书每三个月都要续签，即便可以用脚本实现，但是我这个懒人还是想一劳永逸：签证一次以后也不需要再签名，而且证书“不会过期”，那是坠吼的！
 
-2017-07-19更新：修复Chrome 58+后的提示ERR\_CERT\_COMMON\_NAME\_INVALID错误，原文出自[日志](https://sqzryang.com/blog/2015/07/09/openssl-since-the-visa-book-with-nginx-bi-directional-SSL-certificate-guarantee/)
-
 ## 前戏
 
 确保cloudflare中的DNS记录为DNS only（仅解析DNS），先不急着上CDN。待调试成功再开启HTTP Proxy CDN。
@@ -34,7 +32,7 @@ let's encrypt的证书每三个月都要续签，即便可以用脚本实现，�
 生成CA根证书，参数days后面的7305是指证书的有效期，这里设置成了20年
 
 	openssl req -new -x509 -days 7305 -key ca/ca.key -out ca/ca.crt \
-	  -subj "/C=CN/ST=Sichuan/L=Chengdu/O=fuck/OU=fuck/CN=example.com"
+	  -subj "/C=CN/ST=Sichuan/L=Chengdu/CN=example.com"
 
 ca.crt就是自造的根域名CA证书。拷贝给其它设备安装它即可信任该自签CA
 
@@ -44,33 +42,33 @@ ca.crt就是自造的根域名CA证书。拷贝给其它设备安装它即可信
 
 	openssl ecparam -genkey -name prime256v1 -out domain.key
 	
-生成签名请求：遇到Common Name必须填上自己的泛域名（带星号），比如*.example.com
+生成签名请求CSR：
 
 	openssl req -new -sha256 -key domain.key -out domain.csr\
-	  -subj "/C=CN/ST=Sichuan/L=Chengdu/O=fuck/OU=fuck/CN=*.example.com"
+	  -subj "/C=CN/ST=Sichuan/L=Chengdu/CN=example.com"
 	
 domain.csr就是自造的域名CSR，用于下文的签证书。
 	
 ### CA自签证
 
-新建一个extended.ext文件，内容如下，修改最后的subjectAltName字段为泛域名。
+新建一个extended.ext文件，内容如下，修改最后的subjectAltName字段为主域名+泛域名。
 
 	[ req ]
 	default_bits        = 2048
 	distinguished_name  = req_distinguished_name
 	req_extensions      = san
 	extensions          = san
+	
 	[ req_distinguished_name ]
 	countryName         = CN
 	stateOrProvinceName = Sichuan
 	localityName        = Chengdu
-	organizationName    = fuck
-
-	[SAN]
+	
+	[ SAN ]
 	authorityKeyIdentifier=keyid,issuer
 	basicConstraints=CA:FALSE
 	keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-	subjectAltName = DNS:*.example.com
+	subjectAltName = DNS:example.com,DNS:*.example.com
 	
 开始签名，使用指定的extended.ext文件，签名有效期20年。。。
 
@@ -78,16 +76,17 @@ domain.csr就是自造的域名CSR，用于下文的签证书。
 	  -days 7305 \
 	  -sha256 \
 	  -CA ca/ca.crt -CAkey ca/ca.key -CAcreateserial \
-	  -in domain.csr -out signed.crt \
+	  -in domain.csr -out cert.crt \
 	  -extfile extended.ext -extensions SAN
 
 将根证书和泛域名证书合成一个full-chain证书
 
-	cat signed.crt ca.crt > fullchain.pem
+	cat cert.crt ca.crt > fullchain.crt
 	
-在下一步部署nginx，我们只需要以下两个文件
+在下一步部署nginx，我们只需要以下三个文件
 - domain.key
-- fullchain.pem
+- cert.crt
+- fullchain.crt
 
 自造CA可以选择留存下来，下次可以再签新证书。再签的时候需要重新删除并做一个demoCA目录。否则提示*TXT_DB error number 2*
 
@@ -104,8 +103,9 @@ domain.csr就是自造的域名CSR，用于下文的签证书。
 在监听443端口server标签中修改
 
 	listen 443 ssl;
-	ssl_certificate /tmp/test-cert/fullchain.pem
-	ssl_certificate_key /tmp/test-cert/domain.key
+	ssl_certificate /tmp/test-cert/cert.crt;
+	ssl_certificate_key /tmp/test-cert/domain.key;
+	ssl_trusted_certificate /tmp/test-cert/fullchain.crt;
 	
 测试配置是否正确(test)，正确就reload
 
