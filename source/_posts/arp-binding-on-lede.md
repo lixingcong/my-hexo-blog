@@ -53,6 +53,40 @@ ARP表负责ip地址到MAC地址的映射，如果在arp表中找不到对应mac
 
 这时候使用ip neigh change即可强制修改该项目。
 
+# 支持热插拔
+
+接口被断开和重连时候，ARP表失效，可以写入到hotplug脚本中
+
+	vi /etc/hotplug.d/iface/99-arpbind
+	
+	# 添加内容
+	#! /bin/sh
+
+	[ "$ACTION" = ifup ] || exit 0
+
+	ITEMS="
+	00:22:44:66:88:aa;192.168.200.1;eth0.2 \
+	00:11:22:33:dc:bc;192.168.0.250;eth0.2 \
+	"
+
+	for item in $ITEMS; do
+		mac_addr=`echo $item | awk -F ';' '{print $1}'`
+		ip_addr=`echo $item | awk -F ';' '{print $2}'`
+		intf=`echo $item | awk -F ';' '{print $3}'`
+		
+		# echo "$mac_addr $ip_addr $intf"
+		
+		ip neigh add $ip_addr lladdr $mac_addr nud permanent dev $intf || ip neigh change $ip_addr lladdr $mac_addr nud permanent dev $intf
+	done
+
+让其可执行
+
+	chmod a+x /etc/hotplug.d/iface/99-arpbind
+
+这样以后往这个脚本的ITEMS添加类似于下行的内容即可实现热插拔添加静态ARP条目
+
+	00:22:44:66:88:aa;192.168.200.1;eth0.2 \
+
 # 其它方法
 
 使用busybox中arp命令，需要重新编译Busybox，因为太麻烦，就没有尝试了。但是还是写一下
