@@ -4,7 +4,6 @@ node_js:
 branches:
   only:
   - master
-  - test
 before_install:
   - openssl aes-256-cbc -K $encrypted_f88d79a9e3f2_key -iv $encrypted_f88d79a9e3f2_iv -in .travis/id_rsa.enc -out ~/.ssh/id_rsa -d
   - chmod 600 ~/.ssh/id_rsa
@@ -16,7 +15,7 @@ before_install:
   - hexo init temp_lxc
   - cd temp_lxc
 install:
-  - npm install hexo-deployer-git hexo-util --save
+  - npm install hexo hexo-deployer-git hexo-util --save
 before_script:
   - cp -R ../source ./
   - cp -R ../themes ./
