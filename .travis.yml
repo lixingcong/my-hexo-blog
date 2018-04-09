@@ -22,6 +22,4 @@ before_script:
   - git config --global user.name 'lixingcong'
   - git config --global user.email 'lixingcong@live.com'
 script:
-  - hexo g
-  - [ ! $? = 0 ] || bash deploy.sh
-
+  - hexo g && bash deploy.sh
