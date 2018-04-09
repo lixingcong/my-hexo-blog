@@ -86,17 +86,6 @@ tag_generator:
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 theme: next
-
-
-# Deployment
-## Docs: http://hexo.io/docs/deployment.html
-## 卧槽 注意空格啊，少了空格就无法部署！！
-deploy:
-  type: git
-  #repo: https://github.com/lixingcong/lixingcong.github.io.git
-  repo: git@github.com:lixingcong/lixingcong.github.io.git
-  branch: master
-  
   
 # 社交链接
 social:

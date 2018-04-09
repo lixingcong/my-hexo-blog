@@ -11,15 +11,17 @@ before_install:
   - ssh-add ~/.ssh/id_rsa
   - cp .travis/ssh_config ~/.ssh/config
 install:
-  - npm install hexo-cli hexo-deployer-git -g
+  - npm install hexo-cli -g
   - hexo init temp_lxc
   - cd temp_lxc
 before_script:
   - cp -R ../source ./
   - cp -R ../themes ./
-  - cp -R ../_config.yml ./
+  - cp ../_config.yml ./
+  - cp ../deploy.sh ./
   - git config --global user.name 'lixingcong'
   - git config --global user.email 'lixingcong@live.com'
 script:
-  - hexo d -g
+  - hexo g
+  - [ ! $? = 0 ] || bash deploy.sh
 
