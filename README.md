@@ -1,6 +1,6 @@
 Travis CI build status: [![Travis CI](https://travis-ci.org/lixingcong/my-hexo-blog.svg?branch=master)](https://travis-ci.org/lixingcong/my-hexo-blog?branch=master)
 
-使用主题：[Next](https://github.com/iissnan/hexo-theme-next)
+使用主题：[Next](https://github.com/theme-next/hexo-theme-next)
 
 ## Hexo部署
 
