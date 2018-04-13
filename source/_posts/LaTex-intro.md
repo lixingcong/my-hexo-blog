@@ -1,6 +1,7 @@
 title: LaTex数学公式语法
 date: 2016-04-04 15:05:54
 tags: [html, LaTex]
+mathjax: true
 categories: 网络
 ---
 如果用写代码的方式创造公式的话，那就可以装逼了！本文是我翻译自[LaTex数学符号手册](https://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
