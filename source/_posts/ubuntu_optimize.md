@@ -214,7 +214,7 @@ Android Studio杂项
 
 	sudo apt install lib32stdc++6
 
-输入法：fcixt支持
+输入法：fcitx支持
 	
 	vi android studio/bin/studio.sh
 	# 文件上方加入
@@ -222,7 +222,7 @@ Android Studio杂项
 	export GTK_IM_MODULE=”fcitx” 
 	export QT_IM_MODULE=”fcitx”
 	
-可以支持fcixt输入法框架，但是AS仍然无法跟踪光标。
+可以支持fcitx输入法框架，但是AS仍然无法跟踪光标。
 
 KDE环境快捷键修改
 
@@ -249,3 +249,18 @@ KDE环境快捷键修改
 	KERNEL=="ttyUSB[0-9]*",MODE="0666"
 
 效果是：不需要使用sudo 来进行open串口
+
+fcitx在zsh环境下的环境变量。解决部份窗口无法切换输入法，和无法自启动的问题。
+    
+    # ~/.zprofile
+    
+    export XIM=fcitx  
+    export XIM_PROGRAM=fcitx
+    export GTK_IM_MODULE=fcitx
+    export QT_IM_MODULE=fcitx
+    export XMODIFIERS="@im=fcitx"
+    
+    # auto start fcitx
+    exec fcitx &
+
+
