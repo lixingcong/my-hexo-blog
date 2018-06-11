@@ -25,7 +25,7 @@ categories: 网络
 
 创建并编辑/etc/sockd.conf，修改为如下，该配置参考自[这篇博客](https://www.binarytides.com/setup-dante-socks5-server-on-ubuntu)
 
-	# /etc/danted.conf
+	# /etc/sockd.conf
 
 	logoutput: syslog
 	user.privileged: root
@@ -47,12 +47,12 @@ categories: 网络
 
 	client pass {
 		from: 0.0.0.0/0 to: 0.0.0.0/0
-		log: connect disconnect error
+		#log: connect disconnect error
 	}
 
 	socks pass {
 		from: 0.0.0.0/0 to: 0.0.0.0/0
-		log: connect disconnect error
+		#log: connect disconnect error
 	}
 
 将上述配置文件中的external修改为VPS实际的流量出口interface，比如我的openVZ机子是venet0:0
@@ -82,7 +82,7 @@ categories: 网络
 
 	socks pass {
 		from: 0.0.0.0/0 to: 0.0.0.0/0
-		log: connect disconnect error
+		#log: connect disconnect error
 	}
 
 替换为

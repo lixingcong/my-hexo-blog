@@ -261,6 +261,6 @@ fcitx在zsh环境下的环境变量。解决部份窗口无法切换输入法，
     export XMODIFIERS="@im=fcitx"
     
     # auto start fcitx
-    exec fcitx &
+    exec fcitx-autostart &
 
 
