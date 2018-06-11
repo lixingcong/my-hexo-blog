@@ -105,7 +105,10 @@ ARM
 
 ## phuslu版本
 
+
 项目地址 https://github.com/phuslu/goproxy
+
+友情提示：该项目已被移除。可以寻找fork仓库审阅代码。
 
 ### 服务端(openshift)
 

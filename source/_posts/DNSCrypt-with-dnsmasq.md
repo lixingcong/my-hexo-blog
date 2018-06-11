@@ -5,6 +5,9 @@ categories: 网络
 ---
 很久以前使用clowwindy的ChinaDNS清洗DNS方法会遇到经常失效，具体表现为dns解析没有国外返回结果，一直是timeout，甚是懊恼。因此我更换了另一种抗DNS污染的方案，达到与ChinaDNS相同的效果，并且更强大、可靠。推荐使用这个dnscrypt
 <!-- more -->
+
+```2018-06-11```友情提示：鉴于国内ISP对UDP数据包疯狂丢包，不建议使用dnscrypt，更好的方式是使用udp2raw伪装TCP流量，建立到8.8.8.8的隧道。
+
 ## dnscrypt-wrapper
 
 PS:搭建私人转发器非必要步骤。可以不搭建，直接[跳到dnscrypt-proxy部份](#dnscrypt-proxy)。

@@ -7,6 +7,8 @@ categories: 编程
 <!-- more -->
 [原文链接](http://blog.chinaunix.net/uid-28977986-id-3852467.html)
 
+```2018-06-11```友情提示：本文提到的emacs版本较老，可能Emacs最新版不再适用。
+
 于是自己下载了一个emacs-24.5.tar.gz的压缩包，[（官方地址）](http://ftp.gnu.org/gnu/emacs/)，解压
 	
     tar xf emacs-24.5.tar.xz 
