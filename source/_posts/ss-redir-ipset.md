@@ -4,9 +4,11 @@ date: 2018-06-11 16:47:36
 tags: shadowsocks
 categories: 网络
 ---
-在Ubuntu上使用ipset与chnroute，实现ss-redir分流，支持TCP+UDP流量。
+想要使用ss-redir代理所有非中国大陆的UDP流量（用于打游戏），需要将ss的项目脚本稍作修改。本文提出一种修改后的脚本方案，可以支持代理不仅仅是53端口的UDP流量，而是所有境外IP的UDP流量。
 <!-- more -->
 我的电脑是Ubuntu 18.04，现假设ss的服务器IP为```123.123.123.123```，本地ss-redir端口为```12345```（下文同）
+
+要想代理UDP流量，首先要在服务端开启UDP转发（这不是废话）。ss-server启动参数带上```-u```即可。
 
 ## 最简单的例子
 
@@ -47,7 +49,7 @@ categories: 网络
 
 	wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > ~/route.txt
 
-为了精简路由表，可以使用cidrmerge精简合并（可选步骤）
+为了减少路由表的体积，可以使用cidrmerge精简合并（可选步骤，实测体积减少20KB左右）
 
 给出完整的启动脚本
 
@@ -168,3 +170,9 @@ categories: 网络
 最后修改为正常的运营商DNS即可。
 
 另一种方法，是启动ss-redir前使用iptables-save备份，使用完毕后iptables-restore还原。
+
+## 参考文章
+
+[luci-app-shadowsocks](https://github.com/shadowsocks/luci-app-shadowsocks)
+[iptables基础命令(英文)](https://www.frozentux.net/iptables-tutorial/iptables-tutorial.html)
+[ipset官方文档(英文)](http://ipset.netfilter.org/ipset.man.html)
