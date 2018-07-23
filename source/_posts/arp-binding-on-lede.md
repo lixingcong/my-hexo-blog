@@ -16,10 +16,12 @@ ARP表负责ip地址到MAC地址的映射，如果在arp表中找不到对应mac
 
 # LEDE修改ARP表
 
-默认的arp命令实际上只能打印出arp表，无法修改。这里使用ip neigh修改
+默认的arp命令实际上只能打印出arp表，无法修改。这里使用iproute2或者ip-full（新版）修改
 
 	opkg update
-	opkg install iproute2
+	opkg install iproute2    # LEDE 17.01
+	opkg install ip-full     # OpenWrt 18.06
+	
 
 使用neigh可以打印出当前的ARP表
 

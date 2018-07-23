@@ -169,7 +169,7 @@ grub_iso.cfg不确定的部分，可以不做修改，稍后在GRUB2终端界面
 
 重启后遇到EFI Shell或者无法进入GRUB2，可以尝试在EFI Shell手动添加引导项。
 
-看这篇[ How to permanently add Linux entry in UEFI menu ](https://gnu-linux.org/how-to-permanently-add-linux-entry-in-uefi-menu.html)在EFI Shell中操作EFI Entry
+参考文章[UEFI Shell](/2018/06/12/uefi-shell/)
 
 ## Notes
 
