@@ -19,7 +19,7 @@ categories: 网络
 
 首先通过使用网线插拔不同的物理LAN口，看看哪个灯亮就是对应哪个。实测这机子网口序号是正确的。
 
-|Luci界面的网口|机子标签上的网口|划分VLAN ID|用途|
+|Luci界面的Port|机子标签上的网口|划分VLAN ID|用途|
 |-|-|-|-|
 |LAN1|LAN1|1|网段1（Openwrt预置）|
 |LAN2|LAN2|1|网段1（Openwrt预置）|
@@ -32,15 +32,15 @@ categories: 网络
 ![](/images/openwrt-lan-switch/vlan.png)
 
 对于tagged/untagged的解释：
-1. Port状态untagged时，该port作为本VLAN成员，进行二层交换。
-2. Port状态tagged时，Ports之间没有二层交换，而是以冲突广播（类似于HUB的工作方式）
-3. 一个port有且只能设置某个VID下的Untagged（该VID为默认VID），除去这个Untagged默认VID，这个port还能另外设置属于多个VID的Tagged。
+1. Port状态Untagged时，该Port作为本VLAN成员，进行二层交换。
+2. Port状态Tagged时，Ports之间没有二层交换，而是以冲突广播（类似于HUB的工作方式）
+3. 一个Port最多能设置属于一个VID下的Untagged，该VID为Port的默认VID
 
 按照上图设置会把eth接口瓜分为三个：```eth0.1 eth0.2 eth0.3```
 
 ## 添加接口
 
-由于Openwrt预置了eth0.1和eth0.2接口，对应VLAN ID为1，2的VLAN。新划出的eth0.3需要手动添加到Luci interface中。
+由于Openwrt预置了eth0.1和eth0.2接口，对应ID为1，2的VLAN。新划出的eth0.3需要手动添加到Luci interface中。
 
 ![](/images/openwrt-lan-switch/create-intf.png)
 
