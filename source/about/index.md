@@ -3,8 +3,9 @@ layout: "post"
 date: 2015-08-12 00:21:14
 ---
 
-# 学历
-- 本科在读生
+# 学历工作
+- 本科
+- 嵌入式软件工程师
 
 # 兴趣
 - Linux爱好者
@@ -12,12 +13,13 @@ date: 2015-08-12 00:21:14
 - Rap Singing
 
 # 技能
-- 简单C/C++/Java/汇编程序
-- 简单的网页HTML/Javascript/php编程
+- 简单C/C++/Java/Lua/汇编程序
+- 简单的网页HTML/JavaScript/PHP编程
 - Python：曾[注释](https://github.com/lixingcong/shadowsocks_analysis)过shadowsocks代码
-- 翻越GFW无障碍
+- 捣鼓OpenWrt路由器
 - 马拉松
 - 摄影
+- 乐器：尤克里里
 - 路痴克星：我会认路
 
 # 爆照
