@@ -8,6 +8,8 @@ categories: 网络
 <!-- more -->
 我的电脑是Ubuntu 18.04，现假设ss的服务器IP为```123.123.123.123```，本地ss-redir端口为```12345```（下文同）
 
+广告：推荐使用搬瓦工(BandwagonHost)，一键部署shadowsocks，轻松切换机房，[点我直达购买](https://bandwagonhost.com/aff.php?aff=17660)搬瓦工!
+
 要想代理UDP流量，首先要在服务端开启UDP转发（这不是废话）。ss-server启动参数带上```-u```即可。
 
 ## 最简单的例子
