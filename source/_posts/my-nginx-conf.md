@@ -8,7 +8,6 @@ categories: 网络
 
 ## 需求
 
-- 反向代理谷歌
 - 较高的压缩率，加快网页传输
 - https安全性提高
 
@@ -18,21 +17,19 @@ categories: 网络
 |----|---|
 |[ngx_http_substitutions_filter_module](https://github.com/yaoweibin/ngx_http_substitutions_filter_module)|正则表达式|
 |[ngx_brotli](https://github.com/google/ngx_brotli)|谷歌开源压缩brotli库|
-|[nginx-ct](https://github.com/grahamedgecombe/nginx-ct)|CT证书透明|
-
-其中需要系统编译或者配合的其它非nginx模块有
-
-|模块|功能|
-|----|---|
-|[ct-submit](https://github.com/grahamedgecombe/ct-submit)|提交CT，golang版|
 |[libbrotli](https://github.com/bagder/libbrotli)|动态库，谷歌的字典压缩|
 
 ## 编译
+
+在这个目录下工作：
+
+	mkdir ~/nginx_my && cd nginx_my
 
 ### libbrotli
 
 编译安装字典压缩库
 
+	cd ~/nginx_my
 	git clone https://github.com/bagder/libbrotli
 	cd libbrotli
 	./autogen.sh
@@ -45,33 +42,31 @@ categories: 网络
 
 	# 增加
 	export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
-
-### ct-submit
-
-用于每次签证书后提交证书透明度报告
-
-	apt install golang
-	wget https://github.com/grahamedgecombe/ct-submit/archive/v1.1.2.zip
-	unzip v1.1.2.zip
-	cd ct-submit-1.1.2
-	go build
 	
-可执行文件备用，需要签证书后提交 *cert + intermediates*的合成文件，称为chained.pem
+ngx模块：
+
+	cd ~/nginx_my
+	git clone https://github.com/google/ngx_brotli
+	cd ngx_brotli
+	git submodule update --init
 
 ### nginx
 
-模块下载
+编译
 
-	mkdir ~/nginx_my && cd nginx_my
+	cd ~/nginx_my
+	
+	# nginx
+	wget http://nginx.org/download/nginx-1.15.6.tar.gz
+	tar xf nginx-1.15.6.tar.gz
+	
+	# modules
 	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
-	git clone https://github.com/cuber/ngx_http_google_filter_module
-	git clone https://github.com/google/ngx_brotli
-	git clone https://github.com/grahamedgecombe/nginx-ct
 	
 openssl取最新版
 
-	wget https://www.openssl.org/source/openssl-1.1.0e.tar.gz
-	tar xf openssl-1.1.0e.tar.gz
+	wget https://www.openssl.org/source/openssl-1.1.0j.tar.gz
+	tar xf openssl-1.1.0j.tar.gz
 
 安装依赖。至于依赖什么，取决于编译nginx开启的模块。即下文的configure参数。
 
@@ -111,11 +106,9 @@ configure参数控制要编译哪些模块
 	--without-mail_pop3_module \
 	--without-mail_imap_module \
 	--without-mail_smtp_module \
-	--with-openssl=../openssl-1.1.0e \
-	--add-module=../ngx_http_google_filter_module \
+	--with-openssl=../openssl-1.1.0j \
 	--add-module=../ngx_http_substitutions_filter_module \
-	--add-module=../ngx_brotli \
-	--add-module=../nginx-ct
+	--add-module=../ngx_brotli
 
 以上的configure意义是
 
@@ -123,7 +116,7 @@ configure参数控制要编译哪些模块
 - 指定配置文件路径为/etc/nginx/nginx.conf
 - 开启basic_auth等模块，关闭邮件模块
 - 指定好openssl源码目录
-- 添加几个额外的模块，如ngx_http_google_filter
+- 添加几个额外的模块
 
 	
 直接编译即可
@@ -172,26 +165,19 @@ nginx.conf中的server标签中添加
 
 	ssl_dhparam /root/dhparam.pem;
 	
-二、开启OCSP
-
-nginx.conf中的server标签中添加
-
-	ssl_stapling               on;
-	ssl_stapling_verify        on;
-	
-三、手动指定优先的加密算法
+二、手动指定优先的加密算法
 
 	ssl_ciphers                EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
 	ssl_prefer_server_ciphers  on;
 	ssl_protocols              TLSv1 TLSv1.1 TLSv1.2;
 	
-四、跨站攻击
+三、跨站攻击
 
 	add_header X-Frame-Options SAMEORIGIN;
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection 1;
 	
-五、强制HSTS
+四、强制HSTS
 
 新建一个http服务器，强制跳转到https:
 
@@ -206,8 +192,4 @@ nginx.conf中的server标签中添加
 	add_header Strict-Transport-Security "max-age=31536000;" always;
 	
 有兴趣可以加入google chrome的Preload List里面，将从浏览器自动强制使用https。需要申请，审批需要几天。但是加进去preload list后很难从其中移除，需要发邮件移除。。
-
-六、证书透明度
-
-CT证书透明这部份实测不好用。。貌似只对chrome有用，还没有大规模部署。下次补回来。
 	
