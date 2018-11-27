@@ -11,9 +11,10 @@ before_install:
   - ssh-add ~/.ssh/id_rsa
   - cp .travis/ssh_config ~/.ssh/config
 install:
-  - npm install hexo-cli -g
+  - npm install -g hexo-cli
   - hexo init temp_lxc
   - cd temp_lxc
+  - npm install
 before_script:
   - cp -R ../source ./
   - cp -R ../themes ./
