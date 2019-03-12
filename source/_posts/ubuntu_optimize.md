@@ -34,13 +34,16 @@ categories: 编程
 
 	vi /etc/default/rcS //将UTC改为no，保存退出
 	sudo rm /etc/localtime
-	sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+	sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	sudo hwclock --systohc --localtime    //将sys-clock与cmos同步
 
 检查是否设置正常：硬件和系统时间一致，且时区为CST。
 
-	sudo hwclock --show //显示cmos中的时间
-	sudo date	 //显示当前时间
+	# 显示cmos中的时间
+	sudo hwclock --show
+	
+	# 显示当前时间
+	date
 
 网上看到另一种方法：手动设置时区
 

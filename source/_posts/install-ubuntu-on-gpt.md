@@ -4,37 +4,39 @@ tags: ubuntu
 categories: 编程
 ---
 ubuntu我一直都是使用硬盘安装，没有试过烧录到u盘引导安装，因为不想浪费一个优盘。
-在gpt分区表电脑上用传统的MBR引导+grub4dos安装方式，或者使用U盘安装，能安装完毕，但是重启后的grub-efi引导失败，尚不清楚是什么原因，但是本文末尾给出了通用的解决方案。
 <!-- more -->
 
-## 新建小分区
+## 前戏
 
-新建一个fat32分区（uefi引导不支持ntfs），大约2GB，能装得下ubuntu的镜像，复制iso到该分区下
+确保U盘为fat32分区（uefi引导不支持ntfs），大约2GB，能装得下ubuntu的iso镜像，复制iso到该分区根目录下
 
-WinRAR打开iso镜像文件，提取两个文件夹解压到FAT32分区中
-- boot
-- EFI
+打开iso中的/boot/grub/grub.cfg，另存为到U盘根目录下。
 
 ## 修改grub配置
 
-使用Notepad++或者类似的第三方记事本应用程序修改FAT32分区的/boot/grub/grub.cfg
+使用Notepad++或者类似的第三方记事本应用程序修改U盘根目录下grub.cfg
 *不使用系统自带记事本，因记事本这个坑爹货无法保存为Unix格式+UTF8*
 
 文件中部找到以 menuentry 开头的四段，把它们都删除了，换成下面的menuentry内容，
 
-    menuentry "Install Ubuntu on GPT" {
-		set root=(hd1,gpt4)
+    menuentry "Install Ubuntu" {
+		set root=(hd1,msdos1)
 		loopback loop /ubuntu-14.04-desktop-amd64.iso
 		linux (loop)/casper/vmlinuz.efi persistent boot=casper iso-scan/filename="/ubuntu-14.04-desktop-amd64.iso" quiet splash ro locale=zh_CN.UTF-8 noprompt --
 		initrd (loop)/casper/initrd.lz
     }
 
 以上内容，根据每个人电脑实际情况，要修改的地方有：
-- set root=(hd6,gpt6) 这个值随意写，反正都是错误的，后面步骤会改成正确的
+- set root=(hd1,msdos1) 这个值随意写，反正都是错误的，后面步骤会改成正确的
 - ubuntu-14.04-desktop-amd64.iso 镜像文件名，需要修改两次
 - initrd.lz 和 vmlinuz.efi 根据iso中的casper文件夹下对应名称改动
 
 ## 添加LiveCD引导项
+
+在Win10下，使用DiskGenius等工具，挂载系统的ESP分区
+
+WinRAR打开ubuntu的iso镜像文件，提取grubx64.efi解压到系统ESP分区中
+- /EFI/Boot/grubx64.efi
 
 最后使用 bootice x64 1.3.3 以上的版本:
 ![](/images/install_ubuntu_on_gpt/bootice.jpeg)
@@ -43,24 +45,28 @@ WinRAR打开iso镜像文件，提取两个文件夹解压到FAT32分区中
 
 	\EFI\BOOT\grubx64.efi
 
-该引导项起个名字，例如ubuntu_install
+该引导项起个名字，例如 my-grub
 顺便勾选“下次从该引导项启动”，重启。
+
+记得插着U盘。
 
 注意：Win10如果直接重启无法进入LiveCD。正确做法：开始菜单-> “设置”-> “恢复”-> “使用高级启动”-> 选择“ubuntu_install”。
 
 ## 设置LiveCD分区
 
-点击"Install Ubuntu on GPT"是进不了的，因为上面的某个参数是随意写的。
-
-敲击c，进入GRUB command line，这时候可以查看当前的所有分区
+启动到grub2后，进入GRUB command line，这时候可以查看当前的所有分区
 
 	ls 或者 ls -l
 
 ![](/images/install_ubuntu_on_gpt/grub_4.png)
 
-选择正确的分区号，比如我的是(hd1,gpt7)，那么Esc退出gurb command line后，按e编辑"Install Ubuntu on GPT"启动项参数，修改
+记下U盘所在正确的分区号，比如我的U盘是(hd1,msdos1)，输入加载grub.cfg内容如下
 
-	set root=(hd1,gpt7)
+	configfile (hd1,msdos1)/grub.cfg
+
+屏幕会出现"Install Ubuntu"启动项。按e编辑"Install Ubuntu"启动项参数，修改
+
+	set root=(hd1,msdos1)
 
 修改后直接按F10启动系统，进入LiveCD。
 
@@ -70,13 +76,7 @@ WinRAR打开iso镜像文件，提取两个文件夹解压到FAT32分区中
 
 	sudo umount -l /isodevice
 
-最后到分区那一个步骤时候，选择安装grub2引导器到整个硬盘（例如/dev/sda，即安装程序的预置值）
-
-原因有下两个
-- 如果你要用ubuntu的引导器代替windows的引导器，就选/dev/sda。可以在开机时候按ESC或者F12选择EFI启动项是Windows Boot Loader还是GRUB
-- 如果你要保留windows的引导器，就选/boot分区，但这样一来，装完ubuntu重启后，只能启动windows，还必须在windows上面安装easybcd或者grub4dos等等之类软件来添加ubuntu启动项。显得更麻烦。
-
-正常安装，安装后可以进入win。使用DiskGenius等磁盘分区软件将liveCD那个分区隐藏，不建议删掉该分区（才占2GB），某天又要重装可以直接重新进入LiveCD。
+最后到分区那一个步骤时候，选择安装grub2引导器到整个硬盘
 
 ## 引导失败处理
 
