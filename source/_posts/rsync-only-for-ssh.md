@@ -96,7 +96,7 @@ rsync自带的rrsync脚本可以控制只允许客户使用rsync而不能进入b
 测试
 
 	cd /tmp
-	rsync -a --progress sync-host:/home/Tom/testDir /tmp/
+	rsync -a --progress sync-host:/testDir /tmp/
 	
 测试安全性
 
