@@ -78,7 +78,7 @@ categories: 网络
 创建一个目录存放gitolite二进制文件,然后安装
 
 	mkdir -p ~/bin
-	./gitolite/install -to ~/bin
+	./install -to ~/bin
 
 设置Alice的公钥，这样Alice就成为了gitolite管理员
 

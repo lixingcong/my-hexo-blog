@@ -76,16 +76,27 @@ categories: 编程
 
 ## 转移chrome缓存
 
-最好的就是关机自动清除缓存，懒人必备，利用ramdisk实现，vi /etc/fstab添加
+最好的就是关机自动清除缓存，懒人必备，利用ramdisk实现，vi /etc/fstab有一句是将部份内存挂载到/dev/shm
 
 	tmpfs /dev/shm tmpfs defaults,size=512M 0 0
     
-然后退出chrome，建立硬链接。
+然后退出chrome，建立一个bash脚本存为~/.chrome-cache.sh，运行这个脚本测试一下。
 
-	sudo rm -rf ~/.cache/google-chrome
-	sudo ln -s /dev/shm ~/.cache/google-chrome
+	#! /bin/bash
 
-测试chrome是否成功：chrome:cache
+	CACHE_DIR=~/.cache/google-chrome/Default
+	MEMORY_DIR=/dev/shm/chrome-cache
+
+	if [ ! -L $MEMORY_DIR ];then
+		echo "creating $MEMORY_DIR"
+		rm -rf $CACHE_DIR
+		mkdir -p $MEMORY_DIR
+		ln -s $MEMORY_DIR $CACHE_DIR
+	fi
+	
+测试没问题就将脚本写到~/.zprofile里面，当进入X11桌面时，自动执行该脚本
+
+	bash ~/.chrome-cache.sh
 
 
 ## 创建快捷方式

@@ -33,7 +33,7 @@ categories: 网络
 修改/etc/passwd取消bash作为默认的tty
 
 	vi /etc/passwd
-	# 修改为
+	# 删掉末尾/bin/bash，修改为
 	Tom:x:1000:1000:,,,:/home/Tom:
 
 生成的追加粘贴到VPS上的authorized_keys
@@ -54,18 +54,24 @@ rsync自带的rrsync脚本可以控制只允许客户使用rsync而不能进入b
 	chmod a+x /home/Tom/bin/rrsync
 	chown -R Tom /home/Tom
 
+新建一个目录，专门作为使用ssh密钥登陆后的rsync的根目录。
+
+	mkdir /home/Tom/rsync-root
+	chown -R Tom /home/Tom
+
 把下面的内容追加到/home/Tom/.ssh/authorized_keys里面
 
-	command="$HOME/bin/rrsync -ro /",no-agent-forwarding,no-port-forwarding,no-pty,no-user-rc,no-X11-forwarding RSA_PUBLIC_KEY
+	command="$HOME/bin/rrsync -ro /home/Tom/rsync-root",no-agent-forwarding,no-port-forwarding,no-pty,no-user-rc,no-X11-forwarding RSA_PUBLIC_KEY
 
-这样完成了设置认证及公钥。RSA_PUBLIC_KEY即为上文的公钥内容。目的是让VPS的shell认识客户端的公钥，然后选择rrsync作为默认TTY。
+这样完成了设置认证及公钥。RSA_PUBLIC_KEY即为上文的公钥内容。目的是让VPS的shell认识客户端的公钥，然后选择rrsync作为默认TTY，根目录设置为刚新建的rsync-root。
 
-提示：去掉"-ro"可以去掉只读属性。
+提示：去掉"-ro"可以去掉只读属性，即允许客户rsync修改文件。
 
-我们可以在/home/Tom目录下，新建一个testDir目录作为测试rsync
+我们可以在/home/Tom/rsync-root目录下，新建一个testDir目录作为测试rsync
 
-	mkdri -p /home/Tom/testDir
-	echo "helloWorld" > /home/Tom/testDir/README.md
+	cd /home/Tom/rsync-root
+	mkdir testDir
+	echo "helloWorld" > testDir/README.md
 	chown -R Tom /home/Tom
 
 ## 客户端测试同步
